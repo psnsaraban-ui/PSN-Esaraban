@@ -1,0 +1,93 @@
+<div class="py-4"> 
+<ul class="box-info">
+  <li>
+    <lord-icon
+        src="https://cdn.lordicon.com/pyarizrk.json"
+        trigger="loop"
+        delay="2000"
+        state="in-reveal"
+        style="width:80px;height:80px;">
+    </lord-icon>
+    <span class="text">
+      <p>ผู้ใช้งานระบบ</p>
+      <h3 id="countingUserA">0 <span style="font-size: 12px">(คน)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+        src="https://cdn.lordicon.com/szoiozyr.json"
+        trigger="loop"
+        delay="2000"
+        state="in-reveal"
+        style="width:80px;height:80px;">
+    </lord-icon>
+    <span class="text">
+      <p>ผู้ดูแลระบบ</p>
+      <h3 id="countingUserB">0 <span style="font-size: 12px">(คน)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+        src="https://cdn.lordicon.com/mebvgwrs.json"
+        trigger="loop"
+        delay="2000"
+        state="in-reveal"
+        style="width:80px;height:80px;">
+    </lord-icon>
+    <span class="text">
+      <p>ผู้จัดการระบบ</p>
+      <h3 id="countingUserC">0 <span style="font-size: 12px">(คน)</span></h3>        
+    </span>
+  </li>
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/rymzvwiu.json"
+      trigger="loop"
+      delay="2000"
+      state="in-reveal"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>ผู้ใช้งานทั่วไป</p>
+      <h3 id="countingUserD">0 <span style="font-size: 12px">(คน)</span></h3>               
+    </span>
+  </li>
+</ul>
+</div>
+<div class="row g-3">
+  <div class="col-12 col-lg-12 col-xl-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white">
+        <div class="row g-3">
+          <div class="col-4">
+            👦 ข้อมูลผู้ใช้งาน
+          </div>
+          <div class="col-8 d-flex justify-content-end">
+          <select id="Userfilter2" class="form-select me-2" style="width: 200px;">
+            <option selected value="">ทั้งหมด</option>
+            <option value="IT Management">IT Management</option>
+            <option value="IT Support">IT Support</option>
+            <option value="หน่วยงานA">หน่วยงานA</option>
+            <option value="หน่วยงานB">หน่วยงานB</option>
+            <option value="หน่วยงานC">หน่วยงานC</option>
+            <option value="หน่วยงานD">หน่วยงานD</option>
+            <option value="หน่วยงานE">หน่วยงานE</option>
+          </select>
+
+          <select id="Userfilter3" class="form-select me-2" style="width: 200px;">
+            <option selected value="">ทั้งหมด</option>
+            <option value="SuperAdmin">SuperAdmin</option>
+            <option value="Admin">Admin</option>
+            <option value="SuperUser">SuperUser</option>
+            <option value="User">User</option>
+          </select>
+            <button type="button" class="btn set-button" data-bs-target="#RegisterModal" data-bs-toggle="modal">ลงทะเบียน</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body rounded-4">
+        <table id="showDataUs" class="table table-sm nowrap" style="width:100%"></table>
+      </div>
+    </div>
+  </div>
+</div>

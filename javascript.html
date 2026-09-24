@@ -1,0 +1,890 @@
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://unpkg.com/pdf-lib@1.4.0"></script>
+<script src="https://unpkg.com/@pdf-lib/fontkit@0.0.4"></script>
+<script src="https://unpkg.com/downloadjs@1.4.7"></script>
+
+<!-- SweetAlret -->
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.4/signature_pad.umd.min.js"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+<!-- FullCalerder -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.js'></script>
+
+<!-- dataTables -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.20.0/dist/bootstrap-table.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table/dist/locale/bootstrap-table-th-TH.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+
+<script>
+  var signaturePadUser = new SignaturePad(document.getElementById('signatureCanvas'));
+  var clearButtonA = document.getElementById('clearButtonA');
+  var colorPickerA = document.getElementById('colorPickerA');
+  var currentColorA = '#000000'; 
+    clearButtonA.addEventListener('click', function () {
+      signaturePadUser.clear();  
+    });
+    colorPickerA.addEventListener('input', function () {
+      currentColorA = colorPickerA.value;
+      signaturePadUser.penColor = currentColorA;
+});
+
+$(document).ready(function() {
+  $('.sidebar-dropdown-menu').slideUp('fast');
+
+  $('.sidebar-menu-item.has-dropdown > a, .sidebar-dropdown-menu-item.has-dropdown > a').click(function(e) {
+    e.preventDefault();
+    $('.sidebar-dropdown-menu').css('overflow-y', 'hidden');
+    if(!($(this).parent().hasClass('focused'))) {
+      $(this).parent().parent().find('.sidebar-dropdown-menu').slideUp('fast');
+      $(this).parent().parent().find('.has-dropdown').removeClass('focused');
+    }
+    $(this).next().slideToggle('fast');
+    $(this).parent().toggleClass('focused');
+  });
+
+  $('.sidebar-toggle').click(function() {
+    $('.sidebar').toggleClass('collapsed');
+
+    $('.sidebar.collapsed').mouseleave(function() {
+      $('.sidebar-dropdown-menu').slideUp('fast');
+      $('.sidebar-menu-item.has-dropdown, .sidebar-dropdown-menu-item.has-dropdown').removeClass('focused');
+    });
+  });
+
+  $('.sidebar-overlay').click(function() {
+    $('.sidebar').addClass('collapsed');
+    $('.sidebar-dropdown-menu').slideUp('fast');
+    $('.sidebar-menu-item.has-dropdown, .sidebar-dropdown-menu-item.has-dropdown').removeClass('focused');
+  });
+
+  if(window.innerWidth < 768) {
+    $('.sidebar').addClass('collapsed');
+  }
+});
+
+function reLoad() {
+  google.script.run.withSuccessHandler(function(url){
+    window.open(url,'_top');
+  }).getURL();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  google.script.run.withSuccessHandler(data => {
+    data.forEach((value, index) => {
+      $(`#setData${index + 1}`).val(value);
+    });
+      $("#logoSystem").attr("src", data[13]);
+      $("#textSystem").text(data[15]);
+      $("#nameSystem").text(data[14]);
+      $("#logoLogin").attr("src", data[13]);
+      $("#textLogin").text(data[14]);
+  }).getSet();
+});
+
+const addSetting = () => {
+  $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+  let data = {};
+  for (let i = 1; i <= 16; i++) {
+    data[`set${i}`] = document.getElementById(`setData${i}`).value;
+  }
+  google.script.run.withSuccessHandler(response => {
+    $("#xModalsetting").click();
+    google.script.run.withSuccessHandler(data => {
+      $("#logoSystem").attr("src", data[13]);
+      $("#textSystem").text(data[15]);
+      $("#nameSystem").text(data[14]);
+      $("#logoLogin").attr("src", data[13]);
+      $("#textLogin").text(data[14]);
+    }).getSet();
+    $.LoadingOverlay("hide");
+    createToast("🛠️ บันทึกการตั้งค่าสำเร็จ", 1);
+  }).settingGS(data);
+}
+
+const setDisPlayMenu = (status, menuItems) => {
+  const allMenuItems = Object.keys(menuItems);
+  allMenuItems.forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.style.display = "none";
+    }
+  });
+  for (const item in menuItems) {
+    if (menuItems[item][status]) {
+      const element = document.getElementById(item);
+      if (element) {
+        element.style.display = "block";
+      }
+    }
+  }
+}
+
+let logoutTimer;
+
+function resetTimer() {
+  clearTimeout(logoutTimer);
+  logoutTimer = setTimeout(() => {
+      Logout();
+  }, 60000);
+}
+
+window.addEventListener('load', function() {
+  const userData = JSON.parse(localStorage.getItem('userName'));
+  if (userData) {
+    const { idmember, user, pass, fname, dpm, status, profileuser, siguser } = userData;
+    localStorage.setItem('UserID', idmember);
+    localStorage.setItem('User', user);
+    localStorage.setItem('Password', pass);
+    localStorage.setItem('Name', fname);
+    localStorage.setItem('Depart', dpm);
+    localStorage.setItem('Level', status);
+    localStorage.setItem('Img', profileuser);
+    localStorage.setItem('Sig', siguser);
+    statususer = user;
+    showGetDataTable()
+    $("#pageformLogin").hide();
+    $("#dashboardPage").show();
+    $("#onsideManu").click();
+    $('#user-show1').html(fname);
+    $('#user-show2').html(dpm);
+    $('#user-show3').html(status);
+    $('#user-show4').html(siguser);
+    $('#picadmin1').attr('src',profileuser);
+    $('#picadmin2').attr('src',profileuser);
+    $('#regictorNewPreview').attr('src',profileuser);
+    document.getElementById('dataDataAInput10').value = fname
+    document.getElementById('dataDataBInput8').value = fname
+    document.getElementById('dataDataCInput6').value = dpm 
+    document.getElementById('dataDataCInput7').value = fname
+    document.getElementById('dataDataDInput4').value = dpm 
+    document.getElementById('dataDataDInput5').value = fname 
+    document.getElementById('dataDataEInput4').value = dpm 
+    document.getElementById('dataDataEInput5').value = fname
+    document.getElementById('dataDataFInput4').value = dpm 
+    document.getElementById('dataDataFInput5').value = fname 
+    document.getElementById('dataDataGInput4').value = fname
+    document.getElementById('dataDataHInput3').value = fname   
+    document.getElementById('agencyDataInput6').value = fname  
+    createToast("🔍 โหลดฐานข้อมูลสำเร็จ", 1);
+    manu1()
+    resetTimer();
+    ['mousemove', 'keydown', 'scroll', 'click'].forEach(event => {
+        window.addEventListener(event, resetTimer);
+    });
+    google.script.run.withSuccessHandler(function(menuItems) {
+      setDisPlayMenu(status, menuItems);
+    }).getMenuItems(); 
+    } else {
+    $("#pageformLogin").show();
+    $("#dashboardPage").hide();
+  }
+})
+
+async function getIPAddress() {
+  const ipAPI = "//api.ipify.org?format=json";
+  const response = await fetch(ipAPI); 
+  const data = await response.json(); 
+  const inputValue = data.ip;
+  return inputValue;
+}
+
+async function login(){
+  event.preventDefault();
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  if (username.trim() === '' || password.trim() === '') {
+    createToast("❌ ข้อมูลไม่ถูกต้องโปรดตรวจสอบอีกครั้ง", 0);
+    return;
+  }
+  $.LoadingOverlay("show", {  image : "", fontawesome : "fa fa-spinner fa-spin" });
+  const ipCheck = await getIPAddress();
+  const userAgent = navigator.userAgent;
+  google.script.run.withSuccessHandler(function(data) {
+    if (data) {
+      const [idmember, user, pass, fname, dpm, status, profileuser, siguser] = data;
+      const userData = { idmember, user, pass, fname, dpm, status, profileuser, siguser };
+      localStorage.setItem('userName', JSON.stringify(userData));
+      localStorage.setItem('UserID', idmember);
+      localStorage.setItem('User', user);
+      localStorage.setItem('Password', pass);
+      localStorage.setItem('Name', fname);
+      localStorage.setItem('Depart', dpm);
+      localStorage.setItem('Level', status);
+      localStorage.setItem('Img', profileuser);
+      localStorage.setItem('Sig', siguser);
+      statususer = user;
+      showGetDataTable()
+      $.LoadingOverlay("hide");
+      $("#pageformLogin").hide();
+      $("#dashboardPage").show();
+      $("#onsideManu").click();
+      $('#user-show1').html(fname);
+      $('#user-show2').html(dpm);
+      $('#user-show3').html(status);
+      $('#user-show4').html(siguser);
+      $('#picadmin1').attr('src',profileuser);
+      $('#picadmin2').attr('src',profileuser);
+      $('#regictorNewPreview').attr('src',profileuser);
+      document.getElementById('dataDataAInput10').value = fname
+      document.getElementById('dataDataBInput8').value = fname
+      document.getElementById('dataDataCInput6').value = dpm 
+      document.getElementById('dataDataCInput7').value = fname
+      document.getElementById('dataDataDInput4').value = dpm 
+      document.getElementById('dataDataDInput5').value = fname 
+      document.getElementById('dataDataEInput4').value = dpm 
+      document.getElementById('dataDataEInput5').value = fname
+      document.getElementById('dataDataFInput4').value = dpm 
+      document.getElementById('dataDataFInput5').value = fname
+      document.getElementById('dataDataGInput4').value = fname    
+      document.getElementById('dataDataHInput3').value = fname
+      document.getElementById('agencyDataInput6').value = fname 
+      createToast("🔓 เข้าสู่ระบบสำเร็จ", 1);
+      resetTimer();
+      ['mousemove', 'keydown', 'scroll', 'click'].forEach(event => {
+          window.addEventListener(event, resetTimer);
+      });
+      google.script.run.withSuccessHandler(function(menuItems) {
+        setDisPlayMenu(status, menuItems);
+      }).getMenuItems(); 
+    }else{      
+      $.LoadingOverlay("hide");    
+      createToast("❌ ไม่พบข้อมูลผู้ใช้งาน กรุณาตรวจสอบอีกครั้ง", 3);
+      $('#formLogin')[0].reset();
+      $("#pageformLogin").show();
+      $("#dashboardPage").hide();
+      localStorage.clear();
+    }
+  }).checkLogin(username, password, ipCheck, userAgent);   
+}
+
+async function Logout() {
+  $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+  const userData = JSON.parse(localStorage.getItem('userName'));
+  const usernameGeneral = userData ? userData.user : null;
+  const ipCheck = await getIPAddress();
+  const userAgent = navigator.userAgent;
+  if (usernameGeneral) {
+    google.script.run.withSuccessHandler(function() {
+      $.LoadingOverlay("hide");
+      localStorage.clear();
+      $('#picadmin1').attr('src', "");
+      $('#picadmin2').attr('src', "");
+      $('#formLogin')[0].reset();
+      $("#dashboardPage").hide();
+      $('#pageformLogin').show();
+    clearTimeout(logoutTimer);
+    ['mousemove', 'keydown', 'scroll', 'click'].forEach(event => {
+        window.removeEventListener(event, resetTimer);
+    });
+    }).checkLogoutUser(usernameGeneral, ipCheck, userAgent);
+    reLoad();
+  } else {
+    $.LoadingOverlay("hide");
+    createToast("❌ ไม่สามารถออกจากระบบได้", 0);
+  }
+}
+
+const toggleUploadFile = (uploadSwitchId, uploadFileSectionId, fileInputId) => {
+  const uploadSwitch = document.getElementById(uploadSwitchId);
+  const uploadFileSection = document.getElementById(uploadFileSectionId);
+  const fileInput = document.getElementById(fileInputId);
+  
+  if (uploadSwitch.checked) {
+    uploadFileSection.style.display = 'block';
+  } else {
+    uploadFileSection.style.display = 'none';
+    fileInput.value = "";
+  }
+}
+
+const toggleUploadFileA1 = () => toggleUploadFile('uploadSwitchA1', 'uploadFileSectionA1', 'fileDataA11');
+const toggleUploadFileA2 = () => toggleUploadFile('uploadSwitchA2', 'uploadFileSectionA2', 'fileDataA12');
+const toggleUploadFileA3 = () => toggleUploadFile('uploadSwitchA3', 'uploadFileSectionA3', 'fileDataA13');
+const toggleUploadFileB1 = () => toggleUploadFile('uploadSwitchB1', 'uploadFileSectionB1', 'fileDataB9');
+const toggleUploadFileB2 = () => toggleUploadFile('uploadSwitchB2', 'uploadFileSectionB2', 'fileDataB10');
+const toggleUploadFileC1 = () => toggleUploadFile('uploadSwitchC1', 'uploadFileSectionC1', 'fileDataC8');
+const toggleUploadFileD1 = () => toggleUploadFile('uploadSwitchD1', 'uploadFileSectionD1', 'fileDataD6');
+const toggleUploadFileE1 = () => toggleUploadFile('uploadSwitchE1', 'uploadFileSectionE1', 'fileDataE6');
+const toggleUploadFileF1 = () => toggleUploadFile('uploadSwitchF1', 'uploadFileSectionF1', 'fileDataF6');
+const toggleUploadFileG1 = () => toggleUploadFile('uploadSwitchG1', 'uploadFileSectionG1', 'fileDataG5');
+const toggleUploadFileH1 = () => toggleUploadFile('uploadSwitchH1', 'uploadFileSectionH1', 'fileDataH5');
+
+const resetUploadSwitches = () => {
+  const switches = ['uploadSwitchA1', 'uploadSwitchA2', 'uploadSwitchA3', 'uploadSwitchB1', 'uploadSwitchB2', 'uploadSwitchC1', 'uploadSwitchD1', 'uploadSwitchE1', 'uploadSwitchF1', 'uploadSwitchG1', 'uploadSwitchH1'];
+  const sections = ['uploadFileSectionA1', 'uploadFileSectionA2', 'uploadFileSectionA3', 'uploadFileSectionB1', 'uploadFileSectionB2', 'uploadFileSectionC1', 'uploadFileSectionD1', 'uploadFileSectionE1', 'uploadFileSectionF1', 'uploadFileSectionG1', 'uploadFileSectionH1'];
+  const inputs = ['fileDataA11', 'fileDataA12', 'fileDataA13', 'fileDataB9', 'fileDataB10', 'fileDataC8', 'fileDataD6', 'fileDataE6', 'fileDataF6', 'fileDataG5', 'fileDataH5'];
+
+  switches.forEach((switchId, index) => {
+    const uploadSwitch = document.getElementById(switchId);
+    uploadSwitch.checked = false;
+    const uploadFileSection = document.getElementById(sections[index]);
+    uploadFileSection.style.display = 'none';
+    const fileInput = document.getElementById(inputs[index]);
+    fileInput.value = "";
+  });
+}
+
+$(document).ready(() => {
+  getDropdownAgency();
+  getDropdownPosition();
+  
+  $("#searchBtnInput7").click(() => {
+    $("#ModalDataSetA").modal("show");
+    $("#DataASetModal").modal("hide");
+  });
+
+  $("#SetdataDataAInput7").change(() => {
+    if ($("#SetdataDataAInput7").val() === "อื่น ๆ") {
+      $("#dataDataAInput7").prop("readonly", false).val("");
+    } else {
+      $("#dataDataAInput7").prop("readonly", true);
+    }
+  });
+
+  $("#confirmSetA").click(() => {
+    var selectedValue = $("#SetdataDataAInput7").val();
+    if (selectedValue === "อื่น ๆ") {
+      selectedValue = $("#dataDataAInput7").val();
+    }
+    $("#dataDataAInput7").val(selectedValue);
+    $("#ModalDataSetA").modal("hide");
+    $("#DataASetModal").modal("show");
+  });
+
+  $('#ModalDataSetA').on('hidden.bs.modal', function (e) {
+    $("#DataASetModal").modal("show");
+  });
+
+  $("#searchBtnInput4").click(() => {
+    $("#ModalDataSetD").modal("show");
+    $("#DataCSetModal").modal("hide");
+  });
+
+  $("#SetdataDataCInput4").change(() => {
+    if ($("#SetdataDataCInput4").val() === "อื่น ๆ") {
+      $("#dataDataCInput4").prop("readonly", false).val("");
+    } else {
+      $("#dataDataCInput4").prop("readonly", true);
+    }
+  });
+
+  $("#confirmSetD").click(() => {
+    var selectedValue = $("#SetdataDataCInput4").val();
+    if (selectedValue === "อื่น ๆ") {
+      selectedValue = $("#dataDataCInput4").val();
+    }
+    $("#dataDataCInput4").val(selectedValue);
+    $("#ModalDataSetD").modal("hide");
+    $("#DataCSetModal").modal("show");
+  });
+
+  $('#ModalDataSetD').on('hidden.bs.modal', function (e) {
+    $("#DataCSetModal").modal("show");
+  });
+
+  $("#searchBtnInput8").click(() => {
+    $("#ModalDataSetB").modal("show");
+    $("#DataASetModal").modal("hide");
+  });
+
+  $("#SetdataDataAInput8").change(() => {
+    if ($("#SetdataDataAInput8").val() === "อื่น ๆ") {
+      $("#dataDataAInput8").prop("readonly", false).val("");
+    } else {
+      $("#dataDataAInput8").prop("readonly", true);
+    }
+  });
+
+  $("#confirmSetB").click(() => {
+    var selectedValue = $("#SetdataDataAInput8").val();
+    if (selectedValue === "อื่น ๆ") {
+      selectedValue = $("#dataDataAInput8").val();
+    }
+    $("#dataDataAInput8").val(selectedValue);
+    $("#ModalDataSetB").modal("hide");
+    $("#DataASetModal").modal("show");
+  });
+
+  $('#ModalDataSetB').on('hidden.bs.modal', function (e) {
+    $("#DataASetModal").modal("show");
+  });
+
+  $("#searchBtnInput3").click(() => {
+    $("#ModalDataSetC").modal("show");
+    $("#DataCSetModal").modal("hide");
+  });
+
+  $("#SetdataDataCInput3").change(() => {
+    if ($("#SetdataDataCInput3").val() === "อื่น ๆ") {
+      $("#dataDataCInput3").prop("readonly", false).val("");
+    } else {
+      $("#dataDataCInput3").prop("readonly", true);
+    }
+  });
+
+  $("#confirmSetC").click(() => {
+    var selectedValue = $("#SetdataDataCInput3").val();
+    if (selectedValue === "อื่น ๆ") {
+      selectedValue = $("#dataDataCInput3").val();
+    }
+    $("#dataDataCInput3").val(selectedValue);
+    $("#ModalDataSetC").modal("hide");
+    $("#DataCSetModal").modal("show");
+  });
+
+  $('#ModalDataSetC').on('hidden.bs.modal', function (e) {
+    $("#DataCSetModal").modal("show");
+  });
+});
+
+function getDropdownAgency() {
+  google.script.run.withSuccessHandler((data) => {
+    populateDropdown(data, "SetdataDataAInput7");
+    populateDropdown(data, "SetdataDataCInput4");
+  }).selectAgency();
+}
+
+function getDropdownPosition() {
+  google.script.run.withSuccessHandler((data) => {
+    populateDropdown(data, "SetdataDataAInput8");
+    populateDropdown(data, "SetdataDataCInput3");
+  }).selectPosition();
+}
+
+function populateDropdown(data, elementId) {
+  var selectElement = document.getElementById(elementId);
+  selectElement.innerHTML = "";
+  data.forEach(item => {
+    let option = document.createElement("option");
+    option.value = item;
+    option.text = item;
+    selectElement.appendChild(option);
+  });
+  let otherOption = document.createElement("option");
+  otherOption.value = "อื่น ๆ";
+  otherOption.text = "อื่น ๆ";
+  selectElement.appendChild(otherOption);
+}
+
+const sendData = (el, dataType) => {
+  const row = el.parentNode.parentNode.cells;
+  let idSend, sendDataInput1, sendFile1, sendFile2, sendFile3;
+
+  switch (dataType) {
+    case 'DataA':
+      dataTypeSend = 'ภายนอก';
+      idSend = row[0].textContent.trim();
+      sendDataInput1 = row[9].textContent.trim();
+      sendFile1 = row[11].getAttribute('data-file');
+      sendFile2 = row[12].getAttribute('data-file');
+      sendFile3 = row[13].getAttribute('data-file');
+      break;
+    case 'DataB':
+      dataTypeSend = 'ภายใน';
+      idSend = row[0].textContent.trim();
+      sendDataInput1 = row[7].textContent.trim();
+      sendFile1 = row[9].getAttribute('data-file');
+      sendFile2 = row[10].getAttribute('data-file');
+      break;
+    case 'DataD':
+      dataTypeSend = 'บันทึก';
+      idSend = row[0].textContent.trim();
+      sendDataInput1 = row[3].textContent.trim();
+      sendFile1 = row[6].getAttribute('data-file');
+      break;
+    case 'DataE':
+      dataTypeSend = 'คำสั่ง';
+      idSend = row[0].textContent.trim();
+      sendDataInput1 = row[3].textContent.trim();
+      sendFile1 = row[6].getAttribute('data-file');
+      break;
+    default:
+      console.error("Unknown data type");
+      return;
+  }
+  document.getElementById('dataSendTitle').innerText = `(${dataTypeSend})`;
+  $('#dataSendModal').modal('show');
+  $('#sendDataInputKey').val(idSend);
+  $('#sendDataInput1').val(sendDataInput1);
+  $('#sendFileData1').val(sendFile1 || '');
+  $('#sendFileData2').val(sendFile2 || '');
+  $('#sendFileData3').val(sendFile3 || '');
+  $('#sendDataType').val(dataType);
+}
+
+const submitSendData = (obj) => {
+  event.preventDefault();
+  $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+    if (selectedUsers.length === 0) {
+      createToast("⚠️ กรุณาเลือกส่งข้อมูล", 3);
+      $.LoadingOverlay("hide");
+      return;
+    }
+  const dataType = document.getElementById('sendDataType').value;
+  const dataInputKey = document.getElementById('sendDataInputKey').value;
+  const dataInput1 = document.getElementById('sendDataInput1').value;
+  const dataInput2 = document.getElementById('sendDataInput2').value;
+  const fileData1 = document.getElementById('sendFileData1').value;
+  const fileData2 = document.getElementById('sendFileData2').value;
+  const fileData3 = document.getElementById('sendFileData3').value;
+  const selectedUserData = selectedUsers.map(userTK => ({
+    fullname: userTK.sendFullname,
+    department: userTK.sendDepartment
+  }));
+  const data = {
+    dataType,
+    dataInputKey,
+    dataInput1,
+    selectedUsers: JSON.stringify(selectedUserData),
+    dataInput2,
+    fileData1,
+    fileData2,
+    fileData3
+  };
+  google.script.run.withSuccessHandler(function(response) {
+    $('#dataSendModal').modal('hide');
+    $.LoadingOverlay("hide");
+    createToast("✅ ส่งข้อมูลสำเร็จ", 1);
+    clearSendData();
+  }).sendAddDataSA(data);
+}
+
+const submitSendAgency = (obj) => {
+  event.preventDefault();
+  $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+  if (selectedAgency.length === 0) {
+    createToast("⚠️ กรุณาเลือกส่งข้อมูล", 3);
+    $.LoadingOverlay("hide");
+    return;
+  }
+  const ageInputKey = document.getElementById('agencyDataInputKey').value;
+  const ageInput1 = document.getElementById('agencyDataInput1').value;
+  const ageInput2 = document.getElementById('agencyDataInput2').value;
+  const ageInput3 = document.getElementById('agencyDataInput3').value;
+  const ageInput4 = document.getElementById('agencyDataInput4').value;
+  const ageInput5 = document.getElementById('agencyDataInput5').value;
+  const ageInput6 = document.getElementById('agencyDataInput6').value;
+  const fileDataAge1 = document.getElementById('agencyFileData1').value;
+  const selectedAgeData = selectedAgency.map((rowAge, index) => {
+    const emailInput = document.querySelector(`#selectedAgencyTable tr:nth-child(${index + 1}) input[type="text"]`).value;
+    const aliasSelect = document.querySelector(`#selectedAgencyTable tr:nth-child(${index + 1}) select`).value;
+    return {
+      fullname: rowAge.agencyName,
+      email: emailInput + aliasSelect
+    };
+  });
+  const data = {
+    ageInputKey,
+    ageInput1,
+    ageInput2,
+    ageInput3,
+    ageInput4,
+    ageInput5,
+    ageInput6,
+    fileDataAge1,
+    selectedAgency: JSON.stringify(selectedAgeData)
+  };
+  google.script.run.withSuccessHandler(function(response) {
+    $('#AgencySendModal').modal('hide');
+    $.LoadingOverlay("hide");
+    createToast("✅ ส่งข้อมูลสำเร็จ", 1);
+    $('#formSendAgency')[0].reset();
+    agencyResetCheckboxes();
+  }).sendDataAgency(data);
+};
+
+const clearSendData = () => {
+  $('#formSendData')[0].reset();
+  resetCheckboxes();
+}
+
+
+$(document).ready(() => {
+  updateAllDropdowns();
+});
+
+const updateAllDropdowns = () => {
+  const dropdownsConfig = [
+    { functionName: 'selectDepartment', selectIds: ['registerData1', 'Userfilter2', 'searchDataSend'] },
+    { functionName: 'selectObjectivet', selectIds: ['agencyDataInput5'] },
+    { functionName: 'selectClassSpeed', selectIds: ['dataDataAInput2', 'dataDataBInput2'] },
+    { functionName: 'selectClassSecret', selectIds: ['dataDataAInput3', 'dataDataBInput3'] }
+  ];
+
+  dropdownsConfig.forEach(config => {
+    updateDropdowns(config.functionName, config.selectIds);
+  });
+}
+
+const updateDropdowns = (functionName, selectIds) => {
+  google.script.run.withSuccessHandler((options) => {
+    populateSelectElements(selectIds, options);
+  })[functionName]();
+}
+
+const populateSelectElements = (selectIds, options) => {
+  selectIds.forEach(selectId => {
+    let selectElement = document.getElementById(selectId);
+    if (selectElement) {
+      selectElement.innerHTML = '';
+
+      let defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.text = "กรุณาเลือกรายการ";
+      defaultOption.selected = true;
+      selectElement.appendChild(defaultOption);
+
+      options.forEach(optionText => {
+        let option = document.createElement("option");
+        option.value = optionText;
+        option.text = optionText;
+        selectElement.appendChild(option);
+      });
+    }
+  });
+}
+
+const resetSelectElements = (selectIds) => {
+  selectIds.forEach(selectId => {
+    var selectElement = document.getElementById(selectId);
+    if (selectElement) {
+      selectElement.value = "";
+    }
+  });
+}
+
+const saveTodosSet = () => {
+  $.LoadingOverlay("show", {image: "", fontawesome: "fa fa-spinner fa-spin"});
+    google.script.run.withSuccessHandler(() => {
+    $.LoadingOverlay("hide");
+    createToast("✅ บันทึกข้อมูลสำเร็จ", 1);
+    $('#todoInput').val("");
+      loadTodos(currentSheet);
+    $('#ModalDataSetting').modal('show');
+      getDropdownPosition();
+      getDropdownAgency();
+      updateAllDropdowns();
+  }).saveTodos({todos: todoList, sheetName: currentSheet});
+}
+
+const showPage = (pageNumber) => {
+  event.preventDefault();
+  $.LoadingOverlay("show", {image: "", fontawesome: "fa fa-spinner fa-spin"});
+  for (let i = 1; i <= 15; i++) {
+    $(`#page${i}`).toggle(i === pageNumber);
+    $(`#manuLi${i}`).toggleClass("active", i === pageNumber);
+  }
+  $.LoadingOverlay("hide");
+  if (pageNumber === 1) {
+    insertShowDataG();
+    insertShowDataH();
+  }
+  if (pageNumber === 2) {
+    insertDataSearch();
+  }
+  if (pageNumber === 3) {
+    insertDataA();
+  }
+  if (pageNumber === 4) {
+    insertDataB();
+  }
+  if (pageNumber === 5) {
+    insertDataC();
+  }
+  if (pageNumber === 6) {
+    insertDataD();
+  }
+  if (pageNumber === 7) {
+    insertDataE();
+  }
+  if (pageNumber === 8) {
+    insertDataF();
+  }
+  if (pageNumber === 9) {
+    insertDataG();
+  }
+  if (pageNumber === 10) {
+    insertDataH();
+  }
+  if (pageNumber === 11) {
+    insertDataSA();
+  }
+  if (pageNumber === 12) {
+    insertDataSB();
+  }
+}
+const nextPage = (pageNumber) => {
+  return () => showPage(pageNumber);
+}
+const manu1 = nextPage(1);
+const manu2 = nextPage(2);
+const manu3 = nextPage(3);
+const manu4 = nextPage(4);
+const manu5 = nextPage(5);
+const manu6 = nextPage(6);
+const manu7 = nextPage(7);
+const manu8 = nextPage(8);
+const manu9 = nextPage(9);
+const manu10 = nextPage(10);
+const manu11 = nextPage(11);
+const manu12 = nextPage(12);
+const manu13 = nextPage(13);
+const manu14 = nextPage(14);
+const manu15 = nextPage(15);
+
+const showGetDataTable = () =>{
+  reviewdivprofile()
+  insertDataUser()
+  insertDataRecordUser()
+  loadUsers()
+  loadAgencyLoad()
+  showAlert();
+  insertsetMenu();
+}
+
+const showAlert = () => {
+  google.script.run.withSuccessHandler((data) => {
+    renderAlertData(data);
+  }).getDataAlSA();
+}
+
+const renderAlertData = (data) => {
+  const container = document.getElementById('sendes-log');
+  const bellIcon = document.querySelector('.set-icons');
+  container.innerHTML = '';
+
+  if (data.length === 0) {
+    container.innerHTML = '<p class="fw-bold text-danger text-center p-4"><i class="fa-solid fa-circle-info text-danger"></i> ไม่มีแจ้งเตือน!</p>';
+    bellIcon.classList.remove('bx-tada');
+  } else {
+    data.sort((a, b) => {
+      const idA = parseInt(a.idstatus.split('/')[0].replace('SA-', ''));
+      const idB = parseInt(b.idstatus.split('/')[0].replace('SA-', ''));
+      return idB - idA;
+    });
+
+    data.forEach(item => {
+      const element = `
+        <a href="javascript:void(0)" class="py-2 px-3 d-flex align-items-center dropdown-item">
+          <span class="me-3">
+            <img src="${item.img}" alt="user" class="rounded-circle" width="48" height="48">
+          </span>
+          <div class="w-75 d-inline-block v-middle">
+            <div class="d-flex align-items-center justify-content-between">
+              <h6 class="mb-0 fw-semibold lh-base limited-text">🔔 ${item.status}</h6>
+              <span class="text-body-secondary">📍 ${item.idstatus} (${item.type})</span>  
+            </div>
+            <span class="d-block fw-bold text-body-dark limited-text">🙋‍♂️ ${item.name}</span>
+          </div>
+        </a>`;
+      container.innerHTML += element;
+    });
+    bellIcon.classList.add('bx-tada');
+  }
+}
+
+function exportExcel(tableIndex) {
+  let tableId;
+  let tableName;
+  
+  switch (tableIndex) {
+    case 1:
+      tableId = "#showDataA";
+      tableName = "ทะเบียนหนังสือรับ";
+      break;
+    case 2:
+      tableId = "#showDataB";
+      tableName = "ทะเบียนหนังสือรับภายใน";
+      break;
+    case 3:
+      tableId = "#showDataC";
+      tableName = "ทะเบียนส่งออก";
+      break;
+    case 4:
+      tableId = "#showDataD";
+      tableName = "ทะเบียนบันทึกข้อความ";
+      break;
+    case 5:
+      tableId = "#showDataE";
+      tableName = "ทะเบียนคำสั่ง";
+      break;
+    case 6:
+      tableId = "#showDataF";
+      tableName = "ทะเบียนสัญญา";
+      break;
+    case 7:
+      tableId = "#showDataG";
+      tableName = "ประกาศ";
+      break;
+    case 8:
+      tableId = "#showDataH";
+      tableName = "ประชาสัมพันธ์";
+      break;
+    default:
+      createToast("⚠️ ไม่พบตารางที่ต้องการส่งออก!", 3);
+      return;
+  }
+
+  if (!$.fn.DataTable.isDataTable(tableId)) {
+    createToast("⚠️ ตารางยังไม่ถูกโหลด!", 3);
+    return;
+  }
+
+  const table = $(tableId).DataTable();
+  const tableData = table.rows({ search: "applied" }).data().toArray();
+
+  if (tableData.length === 0) {
+    createToast("⚠️ ไม่มีข้อมูลให้ส่งออก!", 3);
+    return;
+  }
+
+  const headers = $(tableId).find("thead th").map(function () {
+    return $(this).text();
+  }).get();
+
+  const data = tableData.map(row => {
+    return row.map(cell => {
+      if (typeof cell === "string") {
+        const parsed = $.parseHTML(cell);
+        const link = $(parsed).find("a").attr("href");
+        return link ? link : $(parsed).text();
+      }
+      return cell;
+    });
+  });
+
+  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
+
+  const wscols = headers.map(() => ({ width: 20 }));
+  worksheet["!cols"] = wscols;
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, tableName);
+
+  const fileName = `${tableName}.xlsx`;
+  XLSX.writeFile(workbook, fileName);
+}
+</script>

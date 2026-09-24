@@ -1,0 +1,270 @@
+<div class="modal fade" id="RegisterModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="RegisterModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4">
+        <div class="text-center mb-2">
+          <h5 class="mb-0 fw-bold mt-2" id="textAddregis1" style="color: var(--box1);">👦 เพิ่มข้อมูลผู้ใช้งาน</h5>
+          <h5 class="mb-0 fw-bold mt-2" id="textAddregis2" style="display:none; color: var(--box1)">👦 แก้ไขข้อมูลผู้ใช้งาน</h5>
+        </div>
+        <form id="addRegicter">
+          <input type="text" class="form-control" id="registerDataID" name="registerDataID" hidden>
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <div class="d-flex align-items-center justify-content-center">
+                  <div style="width: 150px; height: 150px; overflow: hidden; border-radius: 50%; box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); border:3px solid white;" class="mb-3">
+                    <img id="regictorPreview" src="https://img2.pic.in.th/pic/vsvds.png" alt="รูปประจำตัว" style="width: 100%; height: 100%; object-fit: cover;">
+                  </div>
+                  <input type="file" name="regictorImg" id="regictorImg" style="display:none">
+                </div>
+                <div class="mb-3">
+                  <label class="control-label">หน่วยงาน <span class="text-danger">*</span></label>
+                  <select class="form-select" id="registerData1" name="registerData1" required></select>
+                </div>
+                <div class="mb-3">
+                  <label class="control-label">ระดับผู้ใช้งาน <span class="text-danger">*</span></label>
+                  <select class="form-select" id="registerData2" name="registerData2" required>
+                    <option selected value="">กรุณาเลือกรายการ</option>
+                    <option value="SuperAdmin">SuperAdmin</option>
+                    <option value="Admin">Admin</option>
+                    <option value="SuperUser">SuperUser</option>
+                    <option value="User">User</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="control-label">ชื่อผู้ใช้งาน <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="registerData3" name="registerData3" placeholder="กรุณากรอกชื่อผู้ใช้งาน" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Username <span class="text-danger me-2">*</span><span id="resultMessage"></span></label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" id="registerData4" name="registerData4" placeholder="กรุณากรอก Username" onkeyup="checkDuplicate()" required>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Password <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <input type="password" class="form-control" id="registerData5" name="registerData5" placeholder="กรุณากรอก Password" required>
+                  <button class="btn set-button" type="button" onclick="password_showAdd_hide()">
+                    <i class="fa-regular fa-eye" id="showadd_eye"></i>
+                    <i class="fa-regular fa-eye-slash d-none" id="hideadd_eye"></i>
+                  </button>
+                  </div>
+                </div>
+        <div class="mt-2 text-center">
+          <button type="submit" class="btn set-button" id="addusers1" onclick="saveRegister()">บันทึกข้อมูล</button>
+          <button type="submit" class="btn edit-button" id="addusers2" onclick="editRegister()" style="display:none">แก้ไขข้อมูล</button>
+          <button type="button" class="btn del-button" onclick="closeModalRegistor()" data-bs-dismiss="modal">ยกเลิก</button>
+        </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-2">
+                <div class="d-flex align-items-center justify-content-center mb-2">
+                <label for="regictorImg" class="btn edit-button w-100">อัพโหลดรูปคลิกที่นี่</label>
+                </div>
+                <div id="reviewdivprofile"></div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const password_showAdd_hide = () => {
+  var x = document.getElementById("registerData5");
+  var showadd_eye = document.getElementById("showadd_eye");
+  var hideadd_eye = document.getElementById("hideadd_eye");
+  hideadd_eye.classList.remove("d-none");
+  if (x.type === "password") {
+    x.type = "text";
+    showadd_eye.style.display = "none";
+    hideadd_eye.style.display = "block";
+  } else {
+    x.type = "password";
+    showadd_eye.style.display = "block";
+    hideadd_eye.style.display = "none";
+  }
+}
+
+document.addEventListener('DOMContentLoaded', (ev) => {
+  let input = document.querySelector('input[id="regictorImg"]');
+  input.addEventListener('change', (ev) => {
+      if (input.files[0].type.indexOf("image/") > -1) {
+        let img = document.getElementById('regictorPreview');
+        img.src = window.URL.createObjectURL(input.files[0]);
+      }
+  });
+});
+
+const checkDuplicate = () => {
+      var inputValue = document.getElementById('registerData4').value;
+
+      google.script.run.withSuccessHandler(function(result) {
+        var resultMessage = document.getElementById('resultMessage');
+        if (result.isDuplicate) {
+          resultMessage.innerHTML = "<i class='fa-solid fa-circle-xmark'></i>";
+          resultMessage.className = "text-danger"; 
+          $("#registerData4").addClass("is-invalid");
+        } else {
+          resultMessage.innerHTML = "<i class='fa-solid fa-circle-check'></i>";
+          resultMessage.className = "text-success"; 
+          $("#registerData4").removeClass("is-invalid");
+        }
+  }).checkFnameUser(inputValue);
+}
+
+const saveRegister = (obj) =>{
+  event.preventDefault();
+  $.LoadingOverlay("show", {  image : "", fontawesome : "fa fa-spinner fa-spin" }); 
+    var formData = {}
+    formData.registerData4 = document.getElementById("registerData4").value;
+    formData.registerData5 = document.getElementById("registerData5").value;
+    formData.registerData3 = document.getElementById("registerData3").value;
+    formData.registerData1 = document.getElementById("registerData1").value;
+    formData.registerData2 = document.getElementById("registerData2").value;
+    formData.check = $("#regictorImg").val();
+
+    if (formData.check === "") {
+        formData.profile = $("#regictorPreview").attr("src");
+    } else {
+      var imgElement = document.getElementById("regictorPreview");
+      var canvas = document.createElement("canvas");
+      var context = canvas.getContext("2d");
+      canvas.width = imgElement.naturalWidth;
+      canvas.height = imgElement.naturalHeight;
+      context.drawImage(imgElement, 0, 0, imgElement.naturalWidth, imgElement.naturalHeight);
+      var imageDataUrlA = canvas.toDataURL("image/png"); 
+      formData.imageDataUrlA = imageDataUrlA;
+      formData.filetype = "image/png"; 
+      formData.filename = formData.registerData4;
+    }
+  
+    google.script.run.withSuccessHandler(function(res) {
+      insertDataUser();
+      $('#addRegicter')[0].reset();
+      $('#regictorPreview').attr('src', 'https://img2.pic.in.th/pic/vsvds.png');
+      $('#resultMessage').hide();
+      $('#RegisterModal').modal('hide');
+      $.LoadingOverlay("hide");
+      createToast("🧑 เพิ่มผู้ใช้งานสำเร็จ", 1);
+    }).saveUser(formData);
+}
+
+const editData = (el) => {
+  const idUsers = el.parentNode.parentNode.cells[0].textContent.trim();
+  const registerData4 = el.parentNode.parentNode.cells[1].textContent.trim();
+  const registerData5 = el.parentNode.parentNode.cells[2].textContent.trim();
+  const registerData3 = el.parentNode.parentNode.cells[3].textContent.trim();
+  const registerData1 = el.parentNode.parentNode.cells[4].textContent.trim();
+  const registerData2 = el.parentNode.parentNode.cells[5].textContent.trim();
+  const imageRegister = el.parentNode.parentNode.cells[6].querySelector('img').src;
+
+  $('#RegisterModal').modal('show');
+  $("#addusers1").hide();
+  $("#addusers2").show();
+  $("#textAddregis1").hide();
+  $("#textAddregis2").show();
+  $('#registerDataID').val(idUsers);
+  $('#registerData4').val(registerData4);
+  $('#registerData5').val(registerData5);
+  $('#registerData3').val(registerData3);
+  $('#registerData1').val(registerData1);
+  $('#registerData2').val(registerData2);
+  $('#regictorPreview').attr('src', imageRegister);
+}
+
+
+const editRegister = (obj) =>{
+  event.preventDefault();
+  $.LoadingOverlay("show", {  image : "", fontawesome : "fa fa-spinner fa-spin" }); 
+    var formData = {}
+    formData.registerDataID = document.getElementById("registerDataID").value;
+    formData.registerData4 = document.getElementById("registerData4").value;
+    formData.registerData5 = document.getElementById("registerData5").value;
+    formData.registerData3 = document.getElementById("registerData3").value;
+    formData.registerData1 = document.getElementById("registerData1").value;
+    formData.registerData2 = document.getElementById("registerData2").value;
+    formData.check = $("#regictorImg").val();
+
+    if (formData.check === "") {
+        formData.profile = $("#regictorPreview").attr("src");
+    } else {
+      var imgElement = document.getElementById("regictorPreview");
+      var canvas = document.createElement("canvas");
+      var context = canvas.getContext("2d");
+      canvas.width = imgElement.naturalWidth;
+      canvas.height = imgElement.naturalHeight;
+      context.drawImage(imgElement, 0, 0, imgElement.naturalWidth, imgElement.naturalHeight);
+      var imageDataUrlA = canvas.toDataURL("image/png"); 
+      formData.imageDataUrlA = imageDataUrlA;
+      formData.filetype = "image/png"; 
+      formData.filename = formData.registerData4;
+    }
+  
+    google.script.run.withSuccessHandler(function(res) {
+       insertDataUser();
+      $('#addRegicter')[0].reset();
+      $('#regictorPreview').attr('src', 'https://img2.pic.in.th/pic/vsvds.png');
+      $('#resultMessage').hide();
+      $('#RegisterModal').modal('hide');
+      $("#addusers1").show();
+      $("#addusers2").hide();
+      $("#textAddregis1").show();
+      $("#textAddregis2").hide();
+      $.LoadingOverlay("hide");
+      createToast("🧑 แก้ไขผู้ใช้งานสำเร็จ", 1);
+    }).editUser(formData);
+}
+
+const delDataUser = (el) => {
+  const record = el.parentNode.parentNode.cells[0].innerText;
+  $('#confirmBtnDel').off('click').on('click', function() {
+    $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+    $('#DelDataModal').modal('hide');
+    google.script.run.withSuccessHandler(function() {
+      $.LoadingOverlay("hide");
+      insertDataUser();
+      createToast("⛔ ลบข้อมูลสำเร็จ", 0);
+    }).delRecordU(record);
+  });
+  $('#xDelconfirmData').off('click').on('click', function() {
+    $('#DelDataModal').modal('hide');
+  });
+  $('#DelDataModal').modal('show');
+}
+
+const reviewdivprofile = () => {
+  var divcontainer = document.getElementById('reviewdivprofile');
+  divcontainer.innerHTML = "";
+  var row = document.createElement('div');
+  row.className = "row row-cols-6";
+  for (let i = 1; i <= 50; i++) {
+    var image = "https://cdn.jsdelivr.net/gh/EPICCODING17/image/user-" + i + ".png";
+    var col = document.createElement('div');
+    col.className = "col p-2";
+    var img = document.createElement('img');
+    img.className = "rounded-circle w-100 imageuser"; 
+    img.src = image;
+    img.style.cursor = "pointer";
+    img.addEventListener('click', () => {
+      let imgPreview = document.getElementById('regictorPreview');
+      imgPreview.src = "https://cdn.jsdelivr.net/gh/EPICCODING17/image/user-" + i + ".png";
+    });
+    col.appendChild(img);
+    row.appendChild(col);
+  }
+  divcontainer.appendChild(row); 
+}
+
+const closeModalRegistor = () =>{
+  $("#addusers1").show();
+  $("#addusers2").hide();
+  $("#textAddregis1").show();
+  $("#textAddregis2").hide();
+  $('#addRegicter')[0].reset();
+  $('#regictorPreview').attr('src', 'https://img2.pic.in.th/pic/vsvds.png');
+  $('#resultMessage').hide();
+}
+</script>

@@ -1,0 +1,1675 @@
+<script>
+const getUserStatus = () => {
+  const userData = JSON.parse(localStorage.getItem('userName'));
+  return userData ? userData.status : '';
+}
+let tableSearch;
+let tableA;
+let tableB;
+let tableC;
+let tableD;
+let tableE;
+let tableF;
+let tableG;
+let tableH;
+let tableSA;
+let tableSB;
+let tableUs;
+let tableLogUs;
+
+const insertDataSearch = () => {
+  google.script.run.withSuccessHandler(function(dataArray) {
+  var countingSearch1 = 0;
+  var countingSearch2 = 0;
+  var countingSearch3 = 0;
+  var countingSearch4 = 0;
+  var uniqueValues = {};
+
+  for (var i = 0; i < dataArray.length; i++) {
+  var value = dataArray[i][1]; 
+      countingSearch1++;
+  if (value === "รอดำเนินการ") {
+      countingSearch2++;
+  } else if (value === "เสร็จสิ้น") {
+      countingSearch3++;
+  } else if (value === "ยกเลิก") {
+      countingSearch4++;
+  }
+  if (!uniqueValues[value]) {
+      uniqueValues[value] = true;
+    }
+  }
+  tableSearch = $('#showDataSearch').DataTable({
+  data:dataArray, 
+  columns:[
+  { title: '#',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'เลขที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'สถานะ',
+    render: (data)=>{
+    if(data == 'รอดำเนินการ'){
+      return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-clock"></i> รอดำเนินการ</span>'
+    }else if(data == 'เสร็จสิ้น'){
+      return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-circle-check"></i> เสร็จสิ้น</span>'
+    }else if(data == 'ยกเลิก'){
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-circle-xmark"></i> ยกเลิก</span>'
+    }
+    }  
+  },
+  { title: 'ประเภท',
+    render: (data)=>{
+    if(data == 'หนังสือรับ'){
+      return '<span style="color: var(--box2);font-size: 14px;"> หนังสือรับ</span>'
+    }else if(data == 'หนังสือส่ง'){
+      return '<span style="color: var(--box1);font-size: 14px;"> หนังสือส่ง</span>'
+    }else if(data == 'บันทึกข้อความ'){
+      return '<span style="color: var(--box3);font-size: 14px;"> บันทึกข้อความ</span>'
+    }else if(data == 'คำสั่ง'){
+      return '<span style="color: var(--box4);font-size: 14px;"> คำสั่ง</span>'
+    }else if(data == 'สัญญา'){
+      return '<span style="color: var(--box4);font-size: 14px;"> สัญญา</span>'
+    }
+    } 
+  },
+  { title: 'งบประมาณ',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'เรื่อง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ไฟล์1',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  },
+  { title: 'ไฟล์2',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  },
+  { title: 'ไฟล์3',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  }],
+      lengthMenu: [[10, 25, 50, 100, -1 ],['10', '25', '50','100', 'ทั้งหมด' ]],
+      order: [[0, 'abc']],
+      responsive: true,
+      ordering: true,
+      destroy:true,
+      columnDefs: [{targets: [0,-1,-2,-3],className: 'all',},],
+      language: {url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/th.json',},       
+      createdRow: function(row, data, dataIndex) {
+        $(row).attr('data-bs-toggle', 'tooltip');
+        $(row).attr('title', data[5]);
+        $(row).addClass('custom-tooltip');
+      },
+      drawCallback: function() {
+        $('[data-bs-toggle="tooltip"]').tooltip({ customClass: 'custom-tooltip' });
+      }
+    });
+    $('#countingSearch1').text(countingSearch1);
+    $('#countingSearch2').text(countingSearch2);
+    $('#countingSearch3').text(countingSearch3);
+    $('#countingSearch4').text(countingSearch4);
+    $("#searchSearch1").on("change", function() {
+      var searchText = $(this).val();
+      if (searchText) {
+        tableSearch.column(2).search(searchText).draw();
+      } else {
+        tableSearch.column(2).search('').draw();
+      }
+    });
+    $("#searchSearch2").on("change", function() {
+      var searchText = $(this).val();
+      if (searchText) {
+        tableSearch.column(3).search(searchText).draw();
+      } else {
+        tableSearch.column(3).search('').draw();
+      }
+    });
+    $("#searchSearch3").on("change", function() {
+      var searchText = $(this).val();
+      if (searchText) {
+        tableSearch.column(4).search(searchText).draw();
+      } else {
+        tableSearch.column(4).search('').draw();
+      }
+    });
+  }).getDataSearch();
+}
+
+const insertDataA = () => {
+  const userStatus = getUserStatus();
+  const userData = JSON.parse(localStorage.getItem('userName'));
+  const userName = userData ? userData.fname : '';
+  google.script.run.withSuccessHandler(function(dataArray) {
+  var countingDataA1 = 0;
+  var countingDataA2 = 0;
+  var countingDataA3 = 0;
+  var countingDataA4 = 0;
+  var uniqueValues = {};
+
+  for (var i = 0; i < dataArray.length; i++) {
+  var value = dataArray[i][1]; 
+      countingDataA1++;
+  if (value === "รอดำเนินการ") {
+      countingDataA2++;
+  } else if (value === "เสร็จสิ้น") {
+      countingDataA3++;
+  } else if (value === "ยกเลิก") {
+      countingUserA4++;
+  }
+  if (!uniqueValues[value]) {
+      uniqueValues[value] = true;
+    }
+  }
+  tableA = $('#showDataA').DataTable({
+  data:dataArray, 
+  columns:[
+  { title: 'เลขที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'สถานะ',
+    render: (data)=>{
+    if(data == 'รอดำเนินการ'){
+      return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-clock"></i> รอดำเนินการ</span>'
+    }else if(data == 'เสร็จสิ้น'){
+      return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-circle-check"></i> เสร็จสิ้น</span>'
+    }else if(data == 'ยกเลิก'){
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-circle-xmark"></i> ยกเลิก</span>'
+    }
+    }  
+  },
+  { title: 'ความเร่งด่วน',
+    render: (data)=>{
+    if(data == 'ปกติ'){
+      return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-circle-check" ></i> ปกติ</span>'
+    }else if(data == 'ด่วน'){
+      return '<span style="color: var(--box1);font-size: 14px;"><i class="fa-solid fa-exclamation"></i> ด่วน</span>'
+    }else if(data == 'ด่วนมาก'){
+      return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-circle-exclamation"></i> ด่วนมาก</span>'
+    }else if(data == 'ด่วนที่สุด'){
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-triangle-exclamation"></i> ด่วนที่สุด</span>'
+    }
+    } 
+  },
+  { title: 'ชั้นความลับ',
+    render: (data)=>{
+    if(data == 'ปกติ'){
+      return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-circle-check" ></i> ปกติ</span>'
+    }else if(data == 'ลับ'){
+      return '<span style="color: var(--box1);font-size: 14px;"><i class="fa-solid fa-exclamation"></i> ลับ</span>'
+    }else if(data == 'ลับมาก'){
+      return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-circle-exclamation"></i> ลับมาก</span>'
+    }else if(data == 'ลับที่สุด'){
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-triangle-exclamation"></i> ลับที่สุด</span>'
+    }
+    } 
+  },
+  { title: 'รับวันที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'เลขที่หนังสือ',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ลงวันที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'จาก',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ถึง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'เรื่อง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ผู้ลงทะเบียน',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ไฟล์1',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  },
+  { title: 'ไฟล์2',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  },
+  { title: 'ไฟล์3',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  },
+  {title: 'Action',defaultContent: "",
+    createdCell: function (td, cellData, rowData, row, col) {
+      if (userStatus === 'User') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataA(this);'><i class='fa-solid fa-pen-to-square'></i></button>");
+      } else if (userStatus === 'SuperUser') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataA(this);'><i class='fa-solid fa-pen-to-square'></i></button>");
+      } else if (userStatus === 'SuperAdmin') {
+        if (rowData[1] === 'รอดำเนินการ' || rowData[1] === 'ยกเลิก') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 del-button' ><i class='fa-solid fa-ban'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataA(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataA(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          } else {
+          $(td).html("<button type='button' class='btn btn-sm me-2 set-button' onclick='sendData(this, \"DataA\");'><i class='fa-solid fa-paper-plane'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataA(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataA(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          }
+      } else if (userStatus === 'Admin') {
+        if (rowData[1] === 'รอดำเนินการ' || rowData[1] === 'ยกเลิก') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 del-button' ><i class='fa-solid fa-ban'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataA(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataA(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          } else {
+          $(td).html("<button type='button' class='btn btn-sm me-2 set-button' onclick='sendData(this, \"DataA\");'><i class='fa-solid fa-paper-plane'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataA(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataA(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          }
+      }
+    }
+  }],
+      lengthMenu: [[10, 25, 50, 100, -1 ],['10', '25', '50','100', 'ทั้งหมด' ]],
+      order: [[0, 'abc']],
+      responsive: true,
+      ordering: true,
+      destroy:true,
+      columnDefs: [{targets: [0,1,2,3,-1,-2,-3,-4],className: 'all',},],
+      language: {url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/th.json',},       
+      createdRow: function(row, data, dataIndex) {
+        $(row).attr('data-bs-toggle', 'tooltip');
+        $(row).attr('title', data[9]);
+        $(row).addClass('custom-tooltip');
+      },
+      drawCallback: function() {
+        $('[data-bs-toggle="tooltip"]').tooltip({ customClass: 'custom-tooltip' });
+      }
+    });
+    $('#countingDataA1').text(countingDataA1);
+    $('#countingDataA2').text(countingDataA2);
+    $('#countingDataA3').text(countingDataA3);
+    $('#countingDataA4').text(countingDataA4);
+    $("#searchDataA").on("change", function() {
+      var searchText = $(this).val();
+      if (searchText) {
+        tableA.column(1).search(searchText).draw();
+      } else {
+        tableA.column(1).search('').draw();
+      }
+    });
+  }).getDataA(userName, userStatus);
+}
+
+const insertDataB = () => {
+  const userStatus = getUserStatus();
+  const userData = JSON.parse(localStorage.getItem('userName'));
+  const userName = userData ? userData.fname : '';
+  google.script.run.withSuccessHandler(function(dataArray) {
+  var countingDataB1 = 0;
+  var countingDataB2 = 0;
+  var countingDataB3 = 0;
+  var countingDataB4 = 0;
+  var uniqueValues = {};
+
+  for (var i = 0; i < dataArray.length; i++) {
+  var value = dataArray[i][1]; 
+      countingDataB1++;
+  if (value === "รอดำเนินการ") {
+      countingDataB2++;
+  } else if (value === "เสร็จสิ้น") {
+      countingDataB3++;
+  } else if (value === "ยกเลิก") {
+      countingDataB4++;
+  }
+  if (!uniqueValues[value]) {
+      uniqueValues[value] = true;
+    }
+  }
+  tableB = $('#showDataB').DataTable({
+  data:dataArray, 
+  columns:[
+  { title: 'เลขที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'สถานะ',
+    render: (data)=>{
+    if(data == 'รอดำเนินการ'){
+      return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-clock"></i> รอดำเนินการ</span>'
+    }else if(data == 'เสร็จสิ้น'){
+      return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-circle-check"></i> เสร็จสิ้น</span>'
+    }else if(data == 'ยกเลิก'){
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-circle-xmark"></i> ยกเลิก</span>'
+    }
+    }  
+  },
+  { title: 'ความเร่งด่วน',
+    render: (data)=>{
+    if(data == 'ปกติ'){
+      return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-circle-check" ></i> ปกติ</span>'
+    }else if(data == 'ด่วน'){
+      return '<span style="color: var(--box1);font-size: 14px;"><i class="fa-solid fa-exclamation"></i> ด่วน</span>'
+    }else if(data == 'ด่วนมาก'){
+      return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-circle-exclamation"></i> ด่วนมาก</span>'
+    }else if(data == 'ด่วนที่สุด'){
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-triangle-exclamation"></i> ด่วนที่สุด</span>'
+    }
+    } 
+  },
+  { title: 'ชั้นความลับ',
+    render: (data)=>{
+    if(data == 'ปกติ'){
+      return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-circle-check" ></i> ปกติ</span>'
+    }else if(data == 'ลับ'){
+      return '<span style="color: var(--box1);font-size: 14px;"><i class="fa-solid fa-exclamation"></i> ลับ</span>'
+    }else if(data == 'ลับมาก'){
+      return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-circle-exclamation"></i> ลับมาก</span>'
+    }else if(data == 'ลับที่สุด'){
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-triangle-exclamation"></i> ลับที่สุด</span>'
+    }
+    } 
+  },
+  { title: 'รับวันที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'เลขที่หนังสือ',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ลงวันที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'เรื่อง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ผู้ลงทะเบียน',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ไฟล์1',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  },
+  { title: 'ไฟล์2',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  },
+  {title: 'Action',defaultContent: "",
+    createdCell: function (td, cellData, rowData, row, col) {
+      if (userStatus === 'User') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataB(this);'><i class='fa-solid fa-pen-to-square'></i></button>");
+      } else if (userStatus === 'SuperUser') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataB(this);'><i class='fa-solid fa-pen-to-square'></i></button>");
+      } else if (userStatus === 'SuperAdmin') {
+        if (rowData[1] === 'รอดำเนินการ' || rowData[1] === 'ยกเลิก') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 del-button' ><i class='fa-solid fa-ban'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataB(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataB(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          } else {
+          $(td).html("<button type='button' class='btn btn-sm me-2 set-button' onclick='sendData(this, \"DataB\");'><i class='fa-solid fa-paper-plane'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataB(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataB(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          }
+      } else if (userStatus === 'Admin') {
+        if (rowData[1] === 'รอดำเนินการ' || rowData[1] === 'ยกเลิก') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 del-button' ><i class='fa-solid fa-ban'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataB(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataB(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          } else {
+          $(td).html("<button type='button' class='btn btn-sm me-2 set-button' onclick='sendData(this, \"DataB\");'><i class='fa-solid fa-paper-plane'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataB(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataB(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          }
+      }
+    }
+  }],
+      lengthMenu: [[10, 25, 50, 100, -1 ],['10', '25', '50','100', 'ทั้งหมด' ]],
+      order: [[0, 'abc']],
+      responsive: true,
+      ordering: true,
+      destroy:true,
+      columnDefs: [{targets: [0,1,2,3,-1,-2,-3],className: 'all',},],
+      language: {url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/th.json',},       
+      createdRow: function(row, data, dataIndex) {
+        $(row).attr('data-bs-toggle', 'tooltip');
+        $(row).attr('title', data[7]);
+        $(row).addClass('custom-tooltip');
+      },
+      drawCallback: function() {
+        $('[data-bs-toggle="tooltip"]').tooltip({ customClass: 'custom-tooltip' });
+      }
+    });
+    $('#countingDataB1').text(countingDataB1);
+    $('#countingDataB2').text(countingDataB2);
+    $('#countingDataB3').text(countingDataB3);
+    $('#countingDataB4').text(countingDataB4);
+    $("#searchDataB").on("change", function() {
+      var searchText = $(this).val();
+      if (searchText) {
+        tableB.column(1).search(searchText).draw();
+      } else {
+        tableB.column(1).search('').draw();
+      }
+    });
+  }).getDataB(userName, userStatus);
+}
+
+const insertDataC = () => {
+  const userStatus = getUserStatus();
+  const userData = JSON.parse(localStorage.getItem('userName'));
+  const userName = userData ? userData.fname : '';
+  google.script.run.withSuccessHandler(function(dataArray) {
+  var countingDataC1 = 0;
+  var countingDataC2 = 0;
+  var countingDataC3 = 0;
+  var countingDataC4 = 0;
+  var uniqueValues = {};
+
+  for (var i = 0; i < dataArray.length; i++) {
+  var value = dataArray[i][1]; 
+      countingDataC1++;
+  if (value === "รอดำเนินการ") {
+      countingDataC2++;
+  } else if (value === "เสร็จสิ้น") {
+      countingDataC3++;
+  } else if (value === "ยกเลิก") {
+      countingDataC4++;
+  }
+  if (!uniqueValues[value]) {
+      uniqueValues[value] = true;
+    }
+  }
+  tableC = $('#showDataC').DataTable({
+  data:dataArray, 
+  columns:[
+  { title: 'เลขที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'สถานะ',
+    render: (data)=>{
+    if(data == 'รอดำเนินการ'){
+      return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-clock"></i> รอดำเนินการ</span>'
+    }else if(data == 'เสร็จสิ้น'){
+      return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-circle-check"></i> เสร็จสิ้น</span>'
+    }else if(data == 'ยกเลิก'){
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-circle-xmark"></i> ยกเลิก</span>'
+    }
+    }  
+  },
+  { title: 'ลงวันที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'จาก',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ถึง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'เรื่อง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'หน่วยงาน',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ผู้ลงทะเบียน',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ไฟล์',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  },
+  {title: 'Action',defaultContent: "",
+    createdCell: function (td, cellData, rowData, row, col) {
+      if (userStatus === 'User') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataC(this);'><i class='fa-solid fa-pen-to-square'></i></button>");
+      } else if (userStatus === 'SuperUser') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataC(this);'><i class='fa-solid fa-pen-to-square'></i></button>");
+      } else if (userStatus === 'SuperAdmin') {
+        if (rowData[1] === 'รอดำเนินการ' || rowData[1] === 'ยกเลิก') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 del-button' ><i class='fa-solid fa-ban'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataC(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataC(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          } else {
+          $(td).html("<button type='button' class='btn btn-sm me-2 set-button' onclick='sendAgency(this);'><i class='fa-solid fa-paper-plane'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataC(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataC(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          }
+      } else if (userStatus === 'Admin') {
+        if (rowData[1] === 'รอดำเนินการ' || rowData[1] === 'ยกเลิก') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 del-button' ><i class='fa-solid fa-ban'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataC(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataC(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          } else {
+          $(td).html("<button type='button' class='btn btn-sm me-2 set-button' onclick='sendAgency(this);'><i class='fa-solid fa-paper-plane'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataC(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataC(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          }
+      }
+    }
+  }],
+      lengthMenu: [[10, 25, 50, 100, -1 ],['10', '25', '50','100', 'ทั้งหมด' ]],
+      order: [[0, 'abc']],
+      responsive: true,
+      ordering: true,
+      destroy:true,
+      columnDefs: [{targets: [0,-1,-2,-3],className: 'all',},],
+      language: {url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/th.json',},       
+      createdRow: function(row, data, dataIndex) {
+        $(row).attr('data-bs-toggle', 'tooltip');
+        $(row).attr('title', data[3]);
+        $(row).addClass('custom-tooltip');
+      },
+      drawCallback: function() {
+        $('[data-bs-toggle="tooltip"]').tooltip({ customClass: 'custom-tooltip' });
+      }
+    });
+    $('#countingDataC1').text(countingDataC1);
+    $('#countingDataC2').text(countingDataC2);
+    $('#countingDataC3').text(countingDataC3);
+    $('#countingDataC4').text(countingDataC4);
+    $("#searchDataC").on("change", function() {
+      var searchText = $(this).val();
+      if (searchText) {
+        tableC.column(1).search(searchText).draw();
+      } else {
+        tableC.column(1).search('').draw();
+      }
+    });
+  }).getDataC(userName, userStatus);
+}
+
+const insertDataD = () => {
+  const userStatus = getUserStatus();
+  const userData = JSON.parse(localStorage.getItem('userName'));
+  const userName = userData ? userData.fname : '';
+  google.script.run.withSuccessHandler(function(dataArray) {
+  var countingDataD1 = 0;
+  var countingDataD2 = 0;
+  var countingDataD3 = 0;
+  var countingDataD4 = 0;
+  var uniqueValues = {};
+
+  for (var i = 0; i < dataArray.length; i++) {
+  var value = dataArray[i][1]; 
+      countingDataD1++;
+  if (value === "รอดำเนินการ") {
+      countingDataD2++;
+  } else if (value === "เสร็จสิ้น") {
+      countingDataD3++;
+  } else if (value === "ยกเลิก") {
+      countingDataD4++;
+  }
+  if (!uniqueValues[value]) {
+      uniqueValues[value] = true;
+    }
+  }
+  tableD = $('#showDataD').DataTable({
+  data:dataArray, 
+  columns:[
+  { title: 'เลขที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'สถานะ',
+    render: (data)=>{
+    if(data == 'รอดำเนินการ'){
+      return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-clock"></i> รอดำเนินการ</span>'
+    }else if(data == 'เสร็จสิ้น'){
+      return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-circle-check"></i> เสร็จสิ้น</span>'
+    }else if(data == 'ยกเลิก'){
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-circle-xmark"></i> ยกเลิก</span>'
+    }
+    }  
+  },
+  { title: 'ลงวันที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'เรื่อง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'หน่วยงาน',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ผู้ลงทะเบียน',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ไฟล์',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  },
+  {title: 'Action',defaultContent: "",
+    createdCell: function (td, cellData, rowData, row, col) {
+      if (userStatus === 'User') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataD(this);'><i class='fa-solid fa-pen-to-square'></i></button>");
+      } else if (userStatus === 'SuperUser') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataD(this);'><i class='fa-solid fa-pen-to-square'></i></button>");
+      } else if (userStatus === 'SuperAdmin') {
+        if (rowData[1] === 'รอดำเนินการ' || rowData[1] === 'ยกเลิก') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 del-button' ><i class='fa-solid fa-ban'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataD(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataD(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          } else {
+          $(td).html("<button type='button' class='btn btn-sm me-2 set-button' onclick='sendData(this, \"DataD\");'><i class='fa-solid fa-paper-plane'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataD(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataD(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          }
+      } else if (userStatus === 'Admin') {
+        if (rowData[1] === 'รอดำเนินการ' || rowData[1] === 'ยกเลิก') {
+          $(td).html("<button type='button' class='btn btn-sm me-2 del-button' ><i class='fa-solid fa-ban'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataD(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataD(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          } else {
+          $(td).html("<button type='button' class='btn btn-sm me-2 set-button' onclick='sendData(this, \"DataD\");'><i class='fa-solid fa-paper-plane'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataD(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataD(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          }
+      }
+    }
+  }],
+      lengthMenu: [[10, 25, 50, 100, -1 ],['10', '25', '50','100', 'ทั้งหมด' ]],
+      order: [[0, 'abc']],
+      responsive: true,
+      ordering: true,
+      destroy:true,
+      columnDefs: [{targets: [0,-1,-2],className: 'all',},],
+      language: {url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/th.json',},       
+      createdRow: function(row, data, dataIndex) {
+        $(row).attr('data-bs-toggle', 'tooltip');
+        $(row).attr('title', data[3]);
+        $(row).addClass('custom-tooltip');
+      },
+      drawCallback: function() {
+        $('[data-bs-toggle="tooltip"]').tooltip({ customClass: 'custom-tooltip' });
+      }
+    });
+    $('#countingDataD1').text(countingDataD1);
+    $('#countingDataD2').text(countingDataD2);
+    $('#countingDataD3').text(countingDataD3);
+    $('#countingDataD4').text(countingDataD4);
+    $("#searchDataD").on("change", function() {
+      var searchText = $(this).val();
+      if (searchText) {
+        tableD.column(1).search(searchText).draw();
+      } else {
+        tableD.column(1).search('').draw();
+      }
+    });
+  }).getDataD(userName, userStatus);
+}
+
+const insertDataE = () => {
+  const userStatus = getUserStatus();
+  const userData = JSON.parse(localStorage.getItem('userName'));
+  const userName = userData ? userData.fname : '';
+  google.script.run.withSuccessHandler(function(dataArray) {
+  var countingDataE1 = 0;
+  var countingDataE2 = 0;
+  var countingDataE3 = 0;
+  var countingDataE4 = 0;
+  var uniqueValues = {};
+
+  for (var i = 0; i < dataArray.length; i++) {
+  var value = dataArray[i][1]; 
+      countingDataE1++;
+  if (value === "รอดำเนินการ") {
+      countingDataE2++;
+  } else if (value === "เสร็จสิ้น") {
+      countingDataE3++;
+  } else if (value === "ยกเลิก") {
+      countingDataE4++;
+  }
+  if (!uniqueValues[value]) {
+      uniqueValues[value] = true;
+    }
+  }
+  tableE = $('#showDataE').DataTable({
+  data:dataArray, 
+  columns:[
+      { title: 'เลขที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+      { title: 'สถานะ',
+        render: (data)=>{
+        if(data == 'รอดำเนินการ'){
+          return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-clock"></i> รอดำเนินการ</span>'
+        }else if(data == 'เสร็จสิ้น'){
+          return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-circle-check"></i> เสร็จสิ้น</span>'
+        }else if(data == 'ยกเลิก'){
+          return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-circle-xmark"></i> ยกเลิก</span>'
+        }
+        }  
+      },
+      { title: 'ลงวันที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+      { title: 'เรื่อง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+      { title: 'หน่วยงาน',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+      { title: 'ผู้ลงทะเบียน',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+      { title: 'ไฟล์',
+        render: (data, type, row) => {
+          return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+        },
+        createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+      },
+      {title: 'Action',defaultContent: "",
+        createdCell: function (td, cellData, rowData, row, col) {
+          if (userStatus === 'User') {
+              $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataE(this);'><i class='fa-solid fa-pen-to-square'></i></button>");
+          } else if (userStatus === 'SuperUser') {
+              $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataE(this);'><i class='fa-solid fa-pen-to-square'></i></button>");
+          } else if (userStatus === 'SuperAdmin') {
+            if (rowData[1] === 'รอดำเนินการ' || rowData[1] === 'ยกเลิก') {
+              $(td).html("<button type='button' class='btn btn-sm me-2 del-button' ><i class='fa-solid fa-ban'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataE(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataE(this);'><i class='fa-solid fa-trash-can'></i></button>");
+              } else {
+              $(td).html("<button type='button' class='btn btn-sm me-2 set-button' onclick='sendData(this, \"DataE\");'><i class='fa-solid fa-paper-plane'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataE(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataE(this);'><i class='fa-solid fa-trash-can'></i></button>");
+              }
+          } else if (userStatus === 'Admin') {
+            if (rowData[1] === 'รอดำเนินการ' || rowData[1] === 'ยกเลิก') {
+              $(td).html("<button type='button' class='btn btn-sm me-2 del-button' ><i class='fa-solid fa-ban'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataE(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataE(this);'><i class='fa-solid fa-trash-can'></i></button>");
+              } else {
+              $(td).html("<button type='button' class='btn btn-sm me-2 set-button' onclick='sendData(this, \"DataE\");'><i class='fa-solid fa-paper-plane'></i></button><button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataE(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataE(this);'><i class='fa-solid fa-trash-can'></i></button>");
+              }
+          }
+        }
+      }],
+      lengthMenu: [[10, 25, 50, 100, -1 ],['10', '25', '50','100', 'ทั้งหมด' ]],
+      order: [[0, 'abc']],
+      responsive: true,
+      ordering: true,
+      destroy:true,
+      columnDefs: [{targets: [0,-1,-2],className: 'all',},],
+      language: {url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/th.json',},       
+      createdRow: function(row, data, dataIndex) {
+        $(row).attr('data-bs-toggle', 'tooltip');
+        $(row).attr('title', data[3]);
+        $(row).addClass('custom-tooltip');
+      },
+      drawCallback: function() {
+        $('[data-bs-toggle="tooltip"]').tooltip({ customClass: 'custom-tooltip' });
+      }
+    });
+    $('#countingDataE1').text(countingDataE1);
+    $('#countingDataE2').text(countingDataE2);
+    $('#countingDataE3').text(countingDataE3);
+    $('#countingDataE4').text(countingDataE4);
+    $("#searchDataE").on("change", function() {
+      var searchText = $(this).val();
+      if (searchText) {
+        tableE.column(1).search(searchText).draw();
+      } else {
+        tableE.column(1).search('').draw();
+      }
+    });
+  }).getDataE(userName, userStatus);
+}
+
+const insertDataF = () => {
+  const userStatus = getUserStatus();
+  const userData = JSON.parse(localStorage.getItem('userName'));
+  const userName = userData ? userData.fname : '';
+  google.script.run.withSuccessHandler(function(dataArray) {
+  var countingDataF1 = 0;
+  var countingDataF2 = 0;
+  var countingDataF3 = 0;
+  var countingDataF4 = 0;
+  var uniqueValues = {};
+
+  for (var i = 0; i < dataArray.length; i++) {
+  var value = dataArray[i][1]; 
+      countingDataF1++;
+  if (value === "รอดำเนินการ") {
+      countingDataF2++;
+  } else if (value === "เสร็จสิ้น") {
+      countingDataF3++;
+  } else if (value === "ยกเลิก") {
+      countingDataF4++;
+  }
+  if (!uniqueValues[value]) {
+      uniqueValues[value] = true;
+    }
+  }
+  tableF = $('#showDataF').DataTable({
+  data:dataArray, 
+  columns:[
+      { title: 'เลขที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+      { title: 'สถานะ',
+        render: (data)=>{
+        if(data == 'รอดำเนินการ'){
+          return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-clock"></i> รอดำเนินการ</span>'
+        }else if(data == 'เสร็จสิ้น'){
+          return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-circle-check"></i> เสร็จสิ้น</span>'
+        }else if(data == 'ยกเลิก'){
+          return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-circle-xmark"></i> ยกเลิก</span>'
+        }
+        }  
+      },
+      { title: 'ลงวันที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+      { title: 'เรื่อง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+      { title: 'หน่วยงาน',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+      { title: 'ผู้ลงทะเบียน',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+      { title: 'ไฟล์',
+        render: (data, type, row) => {
+          return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+        },
+        createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+      },
+      {title: 'Action',defaultContent: "",
+        createdCell: function (td, cellData, rowData, row, col) {
+          if (userStatus === 'User') {
+              $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataF(this);'><i class='fa-solid fa-pen-to-square'></i></button>");
+          } else if (userStatus === 'SuperUser') {
+              $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataF(this);'><i class='fa-solid fa-pen-to-square'></i></button>");
+          } else if (userStatus === 'SuperAdmin') {
+            $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataF(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataF(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          } else if (userStatus === 'Admin') {
+            $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataF(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataF(this);'><i class='fa-solid fa-trash-can'></i></button>");
+          }
+        }
+      }],
+      lengthMenu: [[10, 25, 50, 100, -1 ],['10', '25', '50','100', 'ทั้งหมด' ]],
+      order: [[0, 'abc']],
+      responsive: true,
+      ordering: true,
+      destroy:true,
+      columnDefs: [{targets: [0,-1,-2],className: 'all',},],
+      language: {url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/th.json',},       
+      createdRow: function(row, data, dataIndex) {
+        $(row).attr('data-bs-toggle', 'tooltip');
+        $(row).attr('title', data[3]);
+        $(row).addClass('custom-tooltip');
+      },
+      drawCallback: function() {
+        $('[data-bs-toggle="tooltip"]').tooltip({ customClass: 'custom-tooltip' });
+      }
+    });
+    $('#countingDataF1').text(countingDataF1);
+    $('#countingDataF2').text(countingDataF2);
+    $('#countingDataF3').text(countingDataF3);
+    $('#countingDataF4').text(countingDataF4);
+    $("#searchDataF").on("change", function() {
+      var searchText = $(this).val();
+      if (searchText) {
+        tableF.column(1).search(searchText).draw();
+      } else {
+        tableF.column(1).search('').draw();
+      }
+    });
+  }).getDataF(userName, userStatus);
+}
+
+const insertDataG = () => {
+  google.script.run.withSuccessHandler(function(dataArray) {
+  var countingDataG1 = 0;
+  var countingDataG2 = 0;
+  var countingDataG3 = 0;
+  var countingDataG4 = 0;
+  var uniqueValues = {};
+
+  for (var i = 0; i < dataArray.length; i++) {
+  var value = dataArray[i][1]; 
+      countingDataG1++;
+  if (value === "รอประกาศ") {
+      countingDataG2++;
+  } else if (value === "ประกาศ") {
+      countingDataG3++;
+  } else if (value === "ยกเลิก") {
+      countingDataG4++;
+  }
+  if (!uniqueValues[value]) {
+      uniqueValues[value] = true;
+    }
+  }
+  tableG = $('#showDataG').DataTable({
+  data:dataArray, 
+  columns:[
+  { title: 'เลขที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'สถานะ',
+    render: (data)=>{
+    if(data == 'รอประกาศ'){
+      return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-clock"></i> รอประกาศ</span>'
+    }else if(data == 'ประกาศ'){
+      return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-circle-check"></i> ประกาศ</span>'
+    }else if(data == 'ยกเลิก'){
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-circle-xmark"></i> ยกเลิก</span>'
+    }
+    }  
+  },
+  { title: 'เรื่อง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'วันที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ผู้ลงทะเบียน',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ไฟล์',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  },
+  {title: 'Action',defaultContent: "",
+    createdCell: function (td, cellData, rowData, row, col) {
+    $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataG(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataG(this);'><i class='fa-solid fa-trash-can'></i></button>");
+    }
+  }],
+      lengthMenu: [[10, 25, 50, 100, -1 ],['10', '25', '50','100', 'ทั้งหมด' ]],
+      order: [[0, 'abc']],
+      responsive: true,
+      ordering: true,
+      destroy:true,
+      columnDefs: [{targets: [0,-1,-2,-3],className: 'all',},],
+      language: {url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/th.json',},       
+      createdRow: function(row, data, dataIndex) {
+        $(row).attr('data-bs-toggle', 'tooltip');
+        $(row).attr('title', data[2]);
+        $(row).addClass('custom-tooltip');
+      },
+      drawCallback: function() {
+        $('[data-bs-toggle="tooltip"]').tooltip({ customClass: 'custom-tooltip' });
+      }
+    });
+    $('#countingDataG1').text(countingDataG1);
+    $('#countingDataG2').text(countingDataG2);
+    $('#countingDataG3').text(countingDataG3);
+    $('#countingDataG4').text(countingDataG4);
+    $("#searchDataG").on("change", function() {
+      var searchText = $(this).val();
+      if (searchText) {
+        tableG.column(1).search(searchText).draw();
+      } else {
+        tableG.column(1).search('').draw();
+      }
+    });
+  }).getDataG();
+}
+
+const insertDataH = () => {
+  google.script.run.withSuccessHandler(function(dataArray) {
+  tableH = $('#showDataH').DataTable({
+  data:dataArray, 
+  columns:[
+  { title: 'เลขที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'เรื่อง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'รายละเอียด',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ผู้โพสต์',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'วันที่โพสต์',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ไฟล์',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  },
+  {title: 'Action',defaultContent: "",
+    createdCell: function (td, cellData, rowData, row, col) {
+    $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editDataH(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataH(this);'><i class='fa-solid fa-trash-can'></i></button>");
+    }
+  }],
+      lengthMenu: [[10, 25, 50, 100, -1 ],['10', '25', '50','100', 'ทั้งหมด' ]],
+      order: [[0, 'abc']],
+      responsive: true,
+      ordering: true,
+      destroy:true,
+      columnDefs: [{targets: [0,-1],className: 'all',},],
+      language: {url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/th.json',},       
+      createdRow: function(row, data, dataIndex) {
+        $(row).attr('data-bs-toggle', 'tooltip');
+        $(row).attr('title', data[2]);
+        $(row).addClass('custom-tooltip');
+      },
+      drawCallback: function() {
+        $('[data-bs-toggle="tooltip"]').tooltip({ customClass: 'custom-tooltip' });
+      }
+    });
+  }).getDataH();
+}
+
+const insertDataSA = () => {
+  const userStatus = getUserStatus();
+  const userData = JSON.parse(localStorage.getItem('userName'));
+  const userName = userData ? userData.fname : '';
+  google.script.run.withSuccessHandler(function(dataArray) {
+  var countingDataSA1 = 0;
+  var countingDataSA2 = 0;
+  var countingDataSA3 = 0;
+  var countingDataSA4 = 0;
+  var uniqueValues = {};
+
+  for (var i = 0; i < dataArray.length; i++) {
+  var value = dataArray[i][2]; 
+      countingDataSA1++;
+  if (value === "รอตรวจสอบ") {
+      countingDataSA2++;
+  } else if (value === "เสร็จสิ้น") {
+      countingDataSA3++;
+  } else if (value === "ติดตาม") {
+      countingDataSA4++;
+  }
+  if (!uniqueValues[value]) {
+      uniqueValues[value] = true;
+    }
+  }
+  tableSA = $('#showDataSA').DataTable({
+  data:dataArray, 
+  columns:[
+  { title: 'ID',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ประเภท',
+    render: (data)=>{
+    if(data == 'หนังสือรับ'){
+      return '<span style="color: var(--box2);font-size: 14px;"> หนังสือรับ</span>'
+    }else if(data == 'หนังสือส่ง'){
+      return '<span style="color: var(--box1);font-size: 14px;"> หนังสือส่ง</span>'
+    }else if(data == 'บันทึกข้อความ'){
+      return '<span style="color: var(--box3);font-size: 14px;"> บันทึกข้อความ</span>'
+    }else if(data == 'คำสั่ง'){
+      return '<span style="color: var(--box4);font-size: 14px;"> คำสั่ง</span>'
+    }else if(data == 'สัญญา'){
+      return '<span style="color: var(--box4);font-size: 14px;"> สัญญา</span>'
+    }
+    } 
+  },
+  { title: 'สถานะ',
+    render: (data)=>{
+    if(data == 'รอตรวจสอบ'){
+      return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-clock"></i> รอตรวจสอบ</span>'
+    }else if(data == 'เสร็จสิ้น'){
+      return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-circle-check"></i> เสร็จสิ้น</span>'
+    }else if(data == 'ตีกลับ'){
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-rotate-left"></i> ตีกลับ</span>'
+    }else if(data == 'ติดตาม'){
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-triangle-exclamation"></i> ติดตาม</span>'
+    }
+    }  
+  },
+  { title: 'วันที่ส่ง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'เลขที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'เรื่อง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ชื่อผู้รับ',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'หน่วยงาน',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'รายละเอียด',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ไฟล์1',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  },
+  { title: 'ไฟล์2',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  },
+  { title: 'ไฟล์3',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  },
+  { title: 'ลายเซ็น',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm set-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-signature"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => { $(td).attr('data-file', cellData); }
+  },
+  { title: 'วันที่รับ',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'หมายเหตุ',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ครั้งที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  {title: 'Action',defaultContent: "",
+    createdCell: function (td, cellData, rowData, row, col) {
+      if (userStatus === 'User') {
+        if (rowData[12]) {
+          $(td).html("<button type='button' class='btn btn-sm me-2 upload-button'>เสร็จสิ้น</button>");
+        } else {
+          $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='sendDataSA(this);'>รับทราบ</button>");
+        }
+      } else if (userStatus === 'SuperUser') {
+        if (rowData[12]) {
+          $(td).html("<button type='button' class='btn btn-sm me-2 upload-button'>เสร็จสิ้น</button>");
+        } else {
+          $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='sendDataSA(this);'>รับทราบ</button>");
+        }
+      } else if (userStatus === 'SuperAdmin') {
+        if (rowData[12]) {
+          $(td).html("<button type='button' class='btn btn-sm me-2 upload-button'>เสร็จสิ้น</button><button type='button' class='btn btn-sm me-2 del-button' onclick='followDataSA(this);'>ติดตาม</button>");
+        } else {
+          $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='sendDataSA(this);'>รับทราบ</button><button type='button' class='btn btn-sm me-2 del-button' onclick='followDataSA(this);'>ติดตาม</button>");
+        }
+      } else if (userStatus === 'Admin') {
+        if (rowData[12]) {
+          $(td).html("<button type='button' class='btn btn-sm me-2 upload-button'>เสร็จสิ้น</button><button type='button' class='btn btn-sm me-2 del-button' onclick='followDataSA(this);'>ติดตาม</button>");
+        } else {
+          $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='sendDataSA(this);'>รับทราบ</button><button type='button' class='btn btn-sm me-2 del-button' onclick='followDataSA(this);'>ติดตาม</button>");
+        }
+      }
+    }
+  }],
+      lengthMenu: [[10, 25, 50, 100, -1 ],['10', '25', '50','100', 'ทั้งหมด' ]],
+      order: [[0, 'abc']],
+      responsive: true,
+      ordering: true,
+      destroy:true,
+      columnDefs: [{targets: [0,9,10,11,-1,-2],className: 'all',},],
+      language: {url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/th.json',},       
+      createdRow: function(row, data, dataIndex) {
+        $(row).attr('data-bs-toggle', 'tooltip');
+        $(row).attr('title', data[5]);
+        $(row).addClass('custom-tooltip');
+      },
+      drawCallback: function() {
+        $('[data-bs-toggle="tooltip"]').tooltip({ customClass: 'custom-tooltip' });
+      }
+    });
+    $('#countingDataSA1').text(countingDataSA1);
+    $('#countingDataSA2').text(countingDataSA2);
+    $('#countingDataSA3').text(countingDataSA3);
+    $('#countingDataSA4').text(countingDataSA4);
+    $("#searchDataSA1").on("change", function() {
+      var searchText = $(this).val();
+      if (searchText) {
+        tableSA.column(1).search(searchText).draw();
+      } else {
+        tableSA.column(1).search('').draw();
+      }
+    });
+    $("#searchDataSA2").on("change", function() {
+      var searchText = $(this).val();
+      if (searchText) {
+        tableSA.column(2).search(searchText).draw();
+      } else {
+        tableSA.column(2).search('').draw();
+      }
+    });
+  }).getDataSA(userName, userStatus);
+}
+
+const insertDataSB = () => {
+  google.script.run.withSuccessHandler(function(dataArray) {
+  tableSB = $('#showDataSB').DataTable({
+  data:dataArray, 
+  columns:[
+  { title: 'ID',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'วันที่ส่ง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'เลขที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'จาก',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ถึง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'เรื่อง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'หน่วยงาน',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'Email',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'รายละเอียด',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'การแจ้ง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ผู้ส่ง',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'ไฟล์',
+    render: (data, type, row) => {
+      return data ? `<a class="btn btn-sm upload-button me-2" href="${data}" target="_blank" data-file="${data}"><i class="fa-solid fa-download"></i></a>` : '<a class="btn btn-sm del-button me-2" href="#"><i class="fa-solid fa-file-circle-xmark"></i></a>';
+    },
+    createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
+  }],
+      lengthMenu: [[10, 25, 50, 100, -1 ],['10', '25', '50','100', 'ทั้งหมด' ]],
+      order: [[0, 'abc']],
+      responsive: true,
+      ordering: true,
+      destroy:true,
+      columnDefs: [{targets: [0,-1,-2,-3],className: 'all',},],
+      language: {url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/th.json',},       
+      createdRow: function(row, data, dataIndex) {
+        $(row).attr('data-bs-toggle', 'tooltip');
+        $(row).attr('title', data[5]);
+        $(row).addClass('custom-tooltip');
+      },
+      drawCallback: function() {
+        $('[data-bs-toggle="tooltip"]').tooltip({ customClass: 'custom-tooltip' });
+      }
+    });
+  }).getDataSB();
+}
+
+const insertShowDataG = () => {
+  var tableBody = document.getElementById("ActiveTableDataG-body");
+  google.script.run.withSuccessHandler(function(data) {
+    tableBody.innerHTML = "";
+    if (data.length === 0) {
+      var noDataRow = document.createElement("tr");
+      var noDataCell = document.createElement("td");
+      
+      noDataCell.innerHTML = "<i class='fa-solid fa-circle-info text-danger'></i> ไม่พบข้อมูล!";
+      noDataCell.className = "fw-bold text-danger text-center p-4";
+      noDataCell.colSpan = "1"; 
+      noDataRow.appendChild(noDataCell);
+      tableBody.innerHTML = "";
+      tableBody.appendChild(noDataRow);
+      return;
+    }
+    var countingDataG = 0;
+    var uniqueValues = {};
+    data.sort((a, b) => {
+      return parseInt(b[0].split('/')[0]) - parseInt(a[0].split('/')[0]);
+    });
+    for (var i = 0; i < data.length; i++) {
+    var value = data[i][0];
+        countingDataG++;
+
+    if (!uniqueValues[value]) {
+        uniqueValues[value] = true;
+    } 
+
+      var row = tableBody.insertRow(i);
+
+      var cell0 = row.insertCell(0);
+      var iconsHtml = '';
+      iconsHtml += "<span style='font-size:15px; font-weight:bold;'>ฉบับที่ : </span><span style='font-size:15px; font-weight:bold;'>" + data[i][0] + "</span><br>" +
+                    "<span style='font-size:13px; font-weight:bold;'>เรื่อง : </span><span class='text-primary' style='font-size:14px; font-weight:bold;'>" + data[i][2] + "</span><br>" +
+                    "<span style='font-size:13px; font-weight:bold;'>ผู้ลงทะเบียน : </span><span style='font-size:14px;'>" + data[i][4] + "</span> <span style='font-size:13px; font-weight:bold;'>วันที่เผยแพร่ : </span><span style='font-size:14px;'>" + data[i][3] + "</span><br>";
+      iconsHtml += '<span style="font-size:13px; font-weight:bold;">File PDF : </span><span><a href="' + data[i][5] + '" target="_blank" class="set-icons-folder1"><img src="https://cdn.jsdelivr.net/gh/EPICCODING17/LOGO/pdf.png" height="25px" width="25px"></a></span>';
+      cell0.innerHTML = iconsHtml;                      
+    }
+
+    $('#ActiveTableDataG').bootstrapTable({
+      pagination: true,
+      locale: 'th-TH',
+      classes: 'table',
+      pageSize: 5,
+      pageList: [5, 10, 20, 30, 40, 50]
+    });
+
+    $("#DataGAction").on("input", function() {
+      var searchText = $(this).val().toLowerCase();
+      var rows = $("#ActiveTableDataG-body").find("tr");
+
+      rows.each(function() {
+        var dataAllSearch = $(this).text().toLowerCase();
+        if (dataAllSearch.includes(searchText)) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+    });
+  $('#countingDataG').text(countingDataG);
+  }).getDataG();
+}
+
+const insertShowDataH = () => {
+  var tableBody = document.getElementById("ActiveTableDataH-body");
+  google.script.run.withSuccessHandler(function(data) {
+    tableBody.innerHTML = "";
+    if (data.length === 0) {
+      var noDataRow = document.createElement("tr");
+      var noDataCell = document.createElement("td");
+      
+      noDataCell.innerHTML = "<i class='fa-solid fa-circle-info text-danger'></i> ไม่พบข้อมูล!";
+      noDataCell.className = "fw-bold text-danger text-center p-4";
+      noDataCell.colSpan = "4"; 
+      noDataRow.appendChild(noDataCell);
+      tableBody.innerHTML = "";
+      tableBody.appendChild(noDataRow);
+      return;
+    }
+    var countingDataH = 0;
+    var uniqueValues = {};
+    data.sort((a, b) => {
+      return parseInt(b[0].split('/')[0]) - parseInt(a[0].split('/')[0]);
+    });
+    for (var i = 0; i < data.length; i++) {
+    var value = data[i][0];
+        countingDataH++;
+
+    if (!uniqueValues[value]) {
+        uniqueValues[value] = true;
+    } 
+      var row = tableBody.insertRow(i);
+
+      var cell0 = row.insertCell(0);
+      var iconsHtml = '';
+      iconsHtml += "<span style='font-size:15px; font-weight:bold;'>เลขที่ : </span><span style='font-size:15px; font-weight:bold;'>" + data[i][0] + "</span><br>" +
+                    "<span style='font-size:13px; font-weight:bold;'>เรื่อง : </span><span class='text-primary' style='font-size:14px; font-weight:bold;'>" + data[i][1] + "</span><br>" +   
+                    "<span style='font-size:13px; font-weight:bold;'>รายละเอียด : </span><span style='font-size:14px;'>" + data[i][2] + "</span><br>" +
+                    "<span style='font-size:13px; font-weight:bold;'>ผู้โพสต์ : </span><span style='font-size:14px;'>" + data[i][3] + "</span> <span style='font-size:13px; font-weight:bold;'>วันที่เผยแพร่ : </span><span style='font-size:14px;'>" + data[i][4] + "</span><br>";                      
+      if (data[i][5]) {
+        iconsHtml += '<span style="font-size:13px; font-weight:bold;">File PDF : </span> <a href="' + data[i][5] + '" target="_blank" class="set-icons-folder1"><img src="https://cdn.jsdelivr.net/gh/EPICCODING17/LOGO/pdf.png" height="25px" width="25px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="เปิดดูไฟล์"></a> ';
+      }
+      cell0.innerHTML = iconsHtml;
+    }
+
+    $('#ActiveTableDataH').bootstrapTable({
+      pagination: true,
+      locale: 'th-TH',
+      classes: 'table',
+      pageSize: 5,
+      pageList: [5, 10, 20, 30, 40, 50]
+    });
+
+    $("#DataHAction").on("input", function() {
+      var searchText = $(this).val().toLowerCase();
+      var rows = $("#ActiveTableDataH-body").find("tr");
+
+      rows.each(function() {
+        var dataAllSearch = $(this).text().toLowerCase();
+        if (dataAllSearch.includes(searchText)) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+    });
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+  $('#countingDataH').text(countingDataH);
+  }).getDataH();
+}
+
+const insertDataUser = () => {
+  google.script.run.withSuccessHandler(function(dataArray) {
+  var countingUserA = 0;
+  var countingUserB = 0;
+  var countingUserC = 0;
+  var countingUserD = 0;
+  var countingRecUser = 0;
+  var uniqueValues = {};
+
+  for (var i = 0; i < dataArray.length; i++) {
+    var value = dataArray[i][4];
+        countingUserA++;
+        countingRecUser++;
+
+    if (value === "IT Management") {
+      countingUserB++;
+    } else if (value === "IT Support") {
+      countingUserC++;
+    } else {
+      countingUserD++;
+    }
+  if (!uniqueValues[value]) {
+      uniqueValues[value] = true;
+    }
+  }
+  tableUs = $('#showDataUs').DataTable({
+  data:dataArray, 
+  columns:[
+  { title: 'ID',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'Username',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'Password',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'Fullname',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'Department',
+    render: (data)=>{
+    if(data == 'IT Management'){
+      return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-circle-user fa-lg"></i> IT Management</span>'
+    }else if(data == 'IT Support'){
+      return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-circle-user fa-lg"></i> IT Support</span>'
+    }else{
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-circle-user fa-lg"></i> ' + data + '</span>'
+    }
+    }  
+  },
+  { title: 'Status',
+    render: (data)=>{
+    if(data == 'SuperAdmin'){
+      return '<span style="color: var(--box3);font-size: 14px;"><i class="fa-solid fa-star fa-lg" ></i> SuperAdmin</span>'
+    }else if(data == 'Admin'){
+      return '<span style="color: var(--box2);font-size: 14px;"><i class="fa-solid fa-star fa-lg" ></i> Admin</span>'
+    }else if(data == 'SuperUser'){
+      return '<span style="color: var(--box1);font-size: 14px;"><i class="fa-solid fa-star fa-lg" ></i> SuperUser</span>'
+    }else if(data == 'User'){
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-star fa-lg" ></i> User</span>'
+    }
+    }  
+  },
+  { title: 'รูป', render: (data, type, row) => { return "<a href=" + data + " target='_blank'><img src=" + data + " height='25px' width='25px' style='border-radius: 25px;'></a>"} },
+    {title: 'Action',defaultContent: "",
+      createdCell: function (td, cellData, rowData, row, col) {
+        $(td).html("<button type='button' class='btn btn-sm me-2 edit-button' onclick='editData(this);'><i class='fa-solid fa-pen-to-square'></i></button><button type='button' class='btn btn-sm me-2 del-button' onclick='delDataUser(this);'><i class='fa-solid fa-trash-can'></i></button>");
+      }
+    }],
+      lengthMenu: [[10, 25, 50, 100, -1 ],['10', '25', '50','100', 'ทั้งหมด' ]],
+      order: [[0, 'abc']],
+      responsive: true,
+      ordering: true,
+      destroy:true,
+      columnDefs: [{targets: [0,1],className: 'all',},],
+      language: {url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/th.json',},       
+    });
+    $("#Userfilter2").on("change", function() {
+      let searchText = $(this).val();
+      if (searchText) {
+        tableUs.column(4).search(searchText).draw();
+      } else {
+        tableUs.column(4).search('').draw();
+      }
+    });
+    $("#Userfilter3").on("change", function() {
+      let searchText = $(this).val();
+      if (searchText) {
+        tableUs.column(5).search(searchText).draw();
+      } else {
+        tableUs.column(5).search('').draw();
+      }
+    });
+  $('#countingUserA').text(countingUserA);
+  $('#countingUserB').text(countingUserB);
+  $('#countingUserC').text(countingUserC);
+  $('#countingUserD').text(countingUserD);
+  $('#countingRecUser').text(countingRecUser);
+  }).getDataLU();
+}
+
+const insertDataRecordUser = () => {
+  google.script.run.withSuccessHandler(function(dataArray) {
+  tableLogUs = $('#showDataLogUs').DataTable({
+  data:dataArray, 
+  columns:[
+  { title: 'user',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'สถานะ',
+    render: (data)=>{
+    if(data == 'เข้าสู่ระบบ'){
+      return '<span style="color: var(--box1);font-size: 14px;"><i class="fa-solid fa-circle-right fa-lg"></i> เข้าสู่ระบบ</span>'
+    }else if(data == 'ออกจากระบบ'){
+      return '<span style="color: var(--box4);font-size: 14px;"><i class="fa-solid fa-circle-left fa-lg"></i> ออกจากระบบ</span>'
+    }
+    }  
+  },
+  { title: 'IP',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'Location',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} },
+  { title: 'วันที่',render: (data)=>{return '<span style="font-size: 14px;">' + data + '</span>'} }],
+      lengthMenu: [[10, 25, 50, 100, -1 ],['10', '25', '50','100', 'ทั้งหมด' ]],
+      order: [[0, 'abc']],
+      responsive: true,
+      ordering: true,
+      destroy:true,
+      columnDefs: [{targets: [0,1],className: 'all',},],
+      language: {url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/th.json',},       
+    });
+  }).getDataLogUS(statususer);
+}
+
+let users = [];
+let selectedUsers = [];
+
+const loadUsers = () => {
+  google.script.run.withSuccessHandler(function(retrievedUsers) {
+    users = retrievedUsers;
+    renderUserTable(users);
+  }).selectUsersToken();
+};
+
+const renderUserTable = (usersToRender) => {
+    const table = document.getElementById('userTable');
+    table.innerHTML = ''; 
+    usersToRender.forEach((userTK, index) => {
+        const row = table.insertRow();
+        row.insertCell(0).innerHTML = index + 1;
+        row.insertCell(1).innerHTML = userTK.sendFullname;
+        row.insertCell(2).innerHTML = userTK.sendDepartment;
+        const selectCell = row.insertCell(3);
+        const switchDiv = document.createElement('div');
+        switchDiv.className = 'form-check form-switch';
+        const switchInput = document.createElement('input');
+        switchInput.className = 'form-check-input';
+        switchInput.type = 'checkbox';
+        switchInput.role = 'switch';
+        switchInput.id = 'flexSwitchCheckDefault_' + users.indexOf(userTK);
+        switchInput.addEventListener('change', function() {
+            const icon = this.nextElementSibling.querySelector('i');
+            if (this.checked) {
+                icon.className = 'fa-solid fa-square-check text-success';
+                selectedUsers.push(userTK);
+            } else {
+                icon.className = 'fa-solid fa-square text-light';
+                selectedUsers = selectedUsers.filter(u => u !== userTK);
+            }
+            updateSelectedUsers();
+        });
+        const switchLabel = document.createElement('label');
+        switchLabel.className = 'form-check-label';
+        switchLabel.htmlFor = 'flexSwitchCheckDefault_' + users.indexOf(userTK);
+        const icon = document.createElement('i');
+        icon.className = 'fa-solid fa-square text-light';
+        switchLabel.appendChild(icon);
+        switchDiv.appendChild(switchInput);
+        switchDiv.appendChild(switchLabel);
+        selectCell.appendChild(switchDiv);
+
+        const checkbox = document.getElementById('flexSwitchCheckDefault_' + users.indexOf(userTK));
+        if (checkbox) {
+            checkbox.checked = selectedUsers.includes(userTK);
+            const icon = checkbox.nextElementSibling.querySelector('i');
+            if (icon) {
+                icon.className = checkbox.checked ? 'fa-solid fa-square-check text-success' : 'fa-solid fa-square text-light';
+            }
+        }
+    });
+};
+
+const filterUsersByDepartment = () => {
+const department = document.getElementById('searchDataSend').value;
+  if (department) {
+const filteredUsers = users.filter(userTK => userTK.sendDepartment === department);
+      renderUserTable(filteredUsers);
+  } else {
+    renderUserTable(users);
+  }
+  updateCheckboxes();
+};
+
+const updateSelectedUsers = () => {
+const selectedTable = document.getElementById('selectedUserTable');
+  selectedTable.innerHTML = '';
+  selectedUsers.forEach((userTK, index) => {
+  const row = selectedTable.insertRow();
+        row.insertCell(0).innerHTML = index + 1;
+        row.insertCell(1).innerHTML = userTK.sendFullname;
+        row.insertCell(2).innerHTML = userTK.sendDepartment;
+  const deleteCell = row.insertCell(3);
+  const deleteButton = document.createElement('button');
+        deleteButton.className = 'btn del-button btn-sm';
+        deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+        deleteButton.addEventListener('click', function() {
+        selectedUsers = selectedUsers.filter(u => u !== userTK);
+        updateSelectedUsers();
+  const checkbox = document.getElementById('flexSwitchCheckDefault_' + users.indexOf(userTK));
+        if (checkbox) {
+            checkbox.checked = false;
+  const icon = checkbox.nextElementSibling.querySelector('i');
+            if (icon) {
+              icon.className = 'fa-solid fa-square text-light';
+            }
+          }
+        });
+       deleteCell.appendChild(deleteButton);
+    });
+  updateCheckboxes();
+};
+
+const updateCheckboxes = () => {
+  users.forEach((userTK, index) => {
+  const checkbox = document.getElementById('flexSwitchCheckDefault_' + index);
+  if (checkbox) {
+      checkbox.checked = selectedUsers.includes(userTK);
+  const icon = checkbox.nextElementSibling.querySelector('i');
+      if (icon) {
+        icon.className = checkbox.checked ? 'fa-solid fa-square-check text-success' : 'fa-solid fa-square text-light';
+      }
+    }
+  });
+};
+
+const resetCheckboxes = () => {
+  selectedUsers = [];
+  users.forEach((userTK, index) => {
+  const checkbox = document.getElementById('flexSwitchCheckDefault_' + index);
+    if (checkbox) {
+        checkbox.checked = false;
+  const icon = checkbox.nextElementSibling.querySelector('i');
+    if (icon) {icon.className = 'fa-solid fa-square text-light';}
+    }
+  });
+  updateSelectedUsers();
+};
+
+var todoList = [];
+var currentSheet = 'Department';
+
+const loadTodos = (sheetName) => {
+      currentSheet = sheetName;
+  $.LoadingOverlay("show", {image: "", fontawesome: "fa fa-spinner fa-spin"});
+  google.script.run.withSuccessHandler(function(todos) {
+    todoList = todos;
+    renderTodoList();
+  $.LoadingOverlay("hide");
+    document.getElementById('ModalDataSetting').querySelector('#dataSettingTitle').textContent = sheetName;
+  $('#ModalDataSetting').modal('show');
+  }).getTodos(sheetName);
+}
+
+const addTodoSet = () => {
+const todoInput = document.getElementById('todoInput');
+const todoText = todoInput.value.trim();
+  if (todoText) {
+    todoList.push(todoText);
+    renderTodoList();
+    todoInput.value = '';
+  }
+}
+
+const removeTodo = (index) => {
+  todoList.splice(index, 1);
+  renderTodoList();
+}
+
+const editTodo = (index) => {
+const todoTextElement = document.getElementById(`todo-text-${index}`);
+      todoTextElement.removeAttribute('readonly');
+      todoTextElement.focus();
+}
+
+const updateTodo = (index) => {
+const todoTextElement = document.getElementById(`todo-text-${index}`);
+      todoList[index] = todoTextElement.value.trim();
+      todoTextElement.setAttribute('readonly', 'readonly');
+      renderTodoList();
+}
+
+const renderTodoList = () => {
+const todoListElement = document.getElementById('todoList');
+      todoListElement.innerHTML = `
+        <li class="list-group-item header-item" style="color: var(--bs-white); font-size: 18px;">
+          <div class="d-flex justify-content-between">
+            <span>🛠️ รายการ</span>
+            <span>จัดการ</span>
+          </div>
+        </li>`;
+      todoList.forEach((todo, index) => {
+const todoItem = document.createElement('li');
+      todoItem.className = 'list-group-item todo-item';
+      todoItem.innerHTML = `
+          <input type="text" id="todo-text-${index}" value="${todo}" class="form-control me-2" readonly
+                 onblur="updateTodo(${index})" onkeypress="if(event.key === 'Enter') updateTodo(${index})">
+          <button class="btn edit-button btn-sm me-2" onclick="editTodo(${index})"><i class="fa fa-edit"></i></button>
+          <button class="btn del-button btn-sm" onclick="removeTodo(${index})"><i class="fa fa-trash"></i></button>`;
+    todoListElement.appendChild(todoItem);
+  });
+}
+
+let agencyShow = [];
+let selectedAgency = [];
+
+const loadAgencyLoad = () => {
+  google.script.run.withSuccessHandler(function(retrievedAgency) {
+    agencyShow = retrievedAgency;
+    agencyRenderTable(agencyShow);
+  }).selectUsersAgency();
+};
+
+const agencyRenderTable = (ageToRender) => {
+  const table = document.getElementById('agencyTable');
+  table.innerHTML = '';
+  ageToRender.forEach((rowAge, index) => {
+    const row = table.insertRow();
+    const checkboxCell = row.insertCell(0);
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = selectedAgency.includes(rowAge);
+    checkbox.addEventListener('change', function() {
+      if (checkbox.checked) {
+        if (!selectedAgency.includes(rowAge)) {
+          selectedAgency.push(rowAge);
+          agencyUpdateSelected();
+        }
+      } else {
+        selectedAgency = selectedAgency.filter(u => u !== rowAge);
+        agencyUpdateSelected();
+      }
+    });
+    checkboxCell.appendChild(checkbox);
+    row.insertCell(1).innerHTML = index + 1;
+    row.insertCell(2).innerHTML = rowAge.agencyName;
+    const selectCell = row.insertCell(3);
+    const button = document.createElement('button');
+    button.className = 'btn btn-sm edit-button';
+    button.innerHTML = 'ส่งข้อมูล';
+    button.addEventListener('click', function() {
+      if (!selectedAgency.includes(rowAge)) {
+        selectedAgency.push(rowAge);
+        agencyUpdateSelected();
+      }
+    });
+    selectCell.appendChild(button);
+  });
+};
+
+const agencyUpdateSelected = () => {
+  const selectedTable = document.getElementById('selectedAgencyTable');
+  selectedTable.innerHTML = '';
+  selectedAgency.forEach((rowAge, index) => {
+    const row = selectedTable.insertRow();
+    row.insertCell(0).innerHTML = index + 1;
+    row.insertCell(1).innerHTML = rowAge.agencyName;
+    row.insertCell(2).innerHTML = '<input type="text" class="form-control" placeholder="กรอกไปรษณีย์อิเล็กทรอนิกส์" required>';
+    const aliasCell = row.insertCell(3);
+    const select = document.createElement('select');
+    select.className = 'form-select';
+    ['@gmail.com', '@hotmail.com', '@outlook.com', '@yahoo.com'].forEach(alias => {
+      const option = document.createElement('option');
+      option.value = alias;
+      option.text = alias;
+      select.appendChild(option);
+    });
+    aliasCell.appendChild(select);
+    const deleteCell = row.insertCell(4);
+    const deleteButton = document.createElement('button');
+    deleteButton.className = 'btn btn-sm del-button';
+    deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+    deleteButton.addEventListener('click', function() {
+      selectedAgency = selectedAgency.filter(u => u !== rowAge);
+      agencyUpdateSelected();
+      agencyRenderTable(agencyShow);
+    });
+    deleteCell.appendChild(deleteButton);
+  });
+  agencyRenderTable(agencyShow);
+};
+
+const agencyResetCheckboxes = () => {
+  selectedAgency = [];
+  agencyUpdateSelected();
+};
+
+const filterAgency = () => {
+  const searchTerm = document.getElementById('searchAgency').value.toLowerCase();
+  const filteredAgency = agencyShow.filter(rowAge => rowAge.agencyName.toLowerCase().includes(searchTerm));
+  agencyRenderTable(filteredAgency);
+};
+</script>

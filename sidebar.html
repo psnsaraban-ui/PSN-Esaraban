@@ -1,0 +1,82 @@
+<div class="sidebar position-fixed top-0 bottom-0 bg-white border-end shadow">
+  <div class="d-flex align-items-center p-3">
+    <a role="button" class="sidebar-logo text-uppercase fw-bold text-decoration-none text-indigo fs-4" id="textSystem"></a>
+    <i class="sidebar-toggle ri-arrow-right-circle-fill set-icons-menu ms-auto fs-5 d-none d-md-block" id="onsideManu"></i>
+  </div>
+  <ul class="sidebar-menu p-3 m-0 mb-0">
+    <li class="sidebar-menu-item active-home" id="manuLi1"><a role="button" onclick="manu1()"><i class="ri-home-8-line sidebar-menu-item-icon"></i> หน้าหลัก</a></li>
+    <li class="sidebar-menu-divider mt-3 mb-1 text-uppercase">จัดการข้อมูลหลัก</li>
+      <li class="sidebar-menu-item has-dropdown">
+        <a role="button"><i class="ri-git-repository-line sidebar-menu-item-icon"></i>ทะเบียนหนังสือ<i class="ri-arrow-down-s-line sidebar-menu-item-accordion ms-auto"></i></a>
+          <ul class="sidebar-dropdown-menu">
+            <li class="sidebar-dropdown-menu-item" style="list-style-type: none;" id="manuLi2"><a href="#" role="button" onclick="manu2()"><i class="ri-search-eye-line"></i>&nbsp;ค้นหาสารบรรณ</a></li>
+            <li class="sidebar-dropdown-menu-item has-dropdown" style="list-style-type: none;"><a href="#" role="button"><i class="ri-arrow-right-s-fill"></i> ลงรับหนังสือ<i class="ri-arrow-down-s-line sidebar-menu-item-accordion ms-auto"></i></a>
+              <ul class="sidebar-dropdown-menu">
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;" id="manuLi3"><a href="#" role="button" onclick="manu3()"><i class="ri-arrow-right-s-fill"></i> ลงรับภายนอก</a></li>
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;" id="manuLi4"><a href="#" role="button" onclick="manu4()"><i class="ri-arrow-right-s-fill"></i> ลงรับภายใน</a></li>
+              </ul>
+            </li>
+
+            <li class="sidebar-dropdown-menu-item has-dropdown" style="list-style-type: none;"><a href="#" role="button"><i class="ri-arrow-right-s-fill"></i> ส่งออก/บันทึก/คำสั่ง/ฯ<i class="ri-arrow-down-s-line sidebar-menu-item-accordion ms-auto"></i></a>
+              <ul class="sidebar-dropdown-menu">
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;" id="manuLi5"><a href="#" role="button" onclick="manu5()"><i class="ri-arrow-right-s-fill"></i> หนังสือส่งออก</a></li>
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;" id="manuLi6"><a href="#" role="button" onclick="manu6()"><i class="ri-arrow-right-s-fill"></i> บันทึกข้อความ</a></li>
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;" id="manuLi7"><a href="#" role="button" onclick="manu7()"><i class="ri-arrow-right-s-fill"></i> คำสั่ง</a></li>
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;" id="manuLi8"><a href="#" role="button" onclick="manu8()"><i class="ri-arrow-right-s-fill"></i> สัญญา</a></li>
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;" id="manuLi9"><a href="#" role="button" onclick="manu9(9)"><i class="ri-arrow-right-s-fill"></i> ประกาศ</a></li>
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;" id="manuLi10"><a href="#" role="button" onclick="manu10(10)"><i class="ri-arrow-right-s-fill"></i> ประชาสัมพันธ์</a></li>
+              </ul>
+            </li>
+
+          <li class="sidebar-dropdown-menu-item has-dropdown" style="list-style-type: none;">
+            <a role="button"><i class="ri-arrow-right-s-fill"></i> ทะเบียนส่ง/ติดตาม<i class="ri-arrow-down-s-line sidebar-menu-item-accordion ms-auto"></i></a>
+              <ul class="sidebar-dropdown-menu">
+                <li class="sidebar-dropdown-menu-item has-dropdown" style="list-style-type: none;">
+                  <a role="button"><i class="ri-arrow-right-s-fill"></i> หน่วยงานภายใน<i class="ri-arrow-down-s-line sidebar-menu-item-accordion ms-auto"></i></a>
+                  <ul class="sidebar-dropdown-menu" >
+                    <li class="sidebar-dropdown-menu-item" style="list-style-type: none;" id="manuLi11"><a href="#" role="button" onclick="manu11(11)"><i class="ri-arrow-right-s-fill"></i> ทะเบียนส่ง/ติดตาม</a></li>
+                  </ul>
+                </li>
+                <li class="sidebar-dropdown-menu-item has-dropdown" id="manuLi12" style="list-style-type: none;">
+                  <a role="button"><i class="ri-arrow-right-s-fill"></i> หน่วยงานภายนอก<i class="ri-arrow-down-s-line sidebar-menu-item-accordion ms-auto"></i></a>
+                  <ul class="sidebar-dropdown-menu" >
+                    <li class="sidebar-dropdown-menu-item" style="list-style-type: none;" ><a href="#" role="button" onclick="manu12(12)"><i class="ri-arrow-right-s-fill"></i> ทะบียนส่งอีเมล์</a></li>
+                  </ul>
+                </li>
+              </ul>
+          </li>
+          </ul>
+      </li>
+
+    <li class="sidebar-menu-divider mt-3 mb-1 text-uppercase">จัดการข้อมูลทั่วไป</li>
+      <li class="sidebar-menu-item has-dropdown">
+        <a role="button"><i class="ri-user-line sidebar-menu-item-icon"></i>ผู้ใช้งาน<i class="ri-arrow-down-s-line sidebar-menu-item-accordion ms-auto"></i></a>
+          <ul class="sidebar-dropdown-menu">
+            <li class="sidebar-dropdown-menu-item" style="list-style-type: none;" id="manuLi13"><a href="#" role="button" onclick="manu13()"><i class="ri-arrow-right-s-fill"></i> การเข้าใช้งาน</a></li>
+            <li class="sidebar-dropdown-menu-item has-dropdown" style="list-style-type: none;" id="manuLi14"><a href="#" role="button"><i class="ri-arrow-right-s-fill"></i> จัดการข้อมูลผู้ใช้งาน<i class="ri-arrow-down-s-line sidebar-menu-item-accordion ms-auto"></i></a>
+              <ul class="sidebar-dropdown-menu">
+                  <li class="sidebar-dropdown-menu-item" style="list-style-type: none;"><a href="#" role="button" onclick="manu14()"><i class="ri-arrow-right-s-fill"></i> ตารางผู้ใช้งาน</a></li>
+              </ul>
+            </li>
+          </ul>
+      </li>
+      <li class="sidebar-menu-item has-dropdown" id="manuLi15">
+        <a role="button"><i class="ri-settings-5-line sidebar-menu-item-icon"></i>ตั้งค่าระบบ<i class="ri-arrow-down-s-line sidebar-menu-item-accordion ms-auto"></i></a>
+          <ul class="sidebar-dropdown-menu">
+            <li class="sidebar-dropdown-menu-item" style="list-style-type: none;"><a href="#" role="button" onclick="manu15()"><i class="ri-settings-5-line"></i>&nbsp;ตั้งค่าระบบ</a></li>
+            <li class="sidebar-dropdown-menu-item has-dropdown" style="list-style-type: none;"><a href="#" role="button"><i class="ri-settings-5-line"></i>&nbsp;ตั้งค่าอื่น ๆ<i class="ri-arrow-down-s-line sidebar-menu-item-accordion ms-auto"></i></a>
+              <ul class="sidebar-dropdown-menu">
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;"><a href="#" role="button" onclick="loadTodos('Agency')"><i class="ri-arrow-right-s-fill"></i> หน่วยงาน</a></li>
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;"><a href="#" role="button" onclick="loadTodos('Position')"><i class="ri-arrow-right-s-fill"></i> ตำแหน่ง</a></li>
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;"><a href="#" role="button" onclick="loadTodos('Department')"><i class="ri-arrow-right-s-fill"></i> กลุ่มงาน</a></li>
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;"><a href="#" role="button" onclick="loadTodos('Objective')"><i class="ri-arrow-right-s-fill"></i> วัตถุประสงค์</a></li>
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;"><a href="#" role="button" onclick="loadTodos('ClassSpeed')"><i class="ri-arrow-right-s-fill"></i> ชั้นความเร็ว</a></li>
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;"><a href="#" role="button" onclick="loadTodos('ClassSecret')"><i class="ri-arrow-right-s-fill"></i> ชั้นความลับ</a></li>
+                <li class="sidebar-dropdown-menu-item" style="list-style-type: none;"><a href="#" role="button" onclick="loadTodos('Response')"><i class="ri-arrow-right-s-fill"></i> สถานะการตอบ</a></li>
+              </ul>
+            </li>
+          </ul>
+      </li>
+    <li class="sidebar-menu-item active-close"><a role="button" data-bs-target="#logoutModal" data-bs-toggle="modal"><i class="ri-logout-box-line sidebar-menu-item-icon"></i> ออกจากระบบ</a></li>
+  </ul>
+</div>

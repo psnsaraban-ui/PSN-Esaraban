@@ -1,0 +1,263 @@
+<div class="py-4"> 
+<ul class="box-info">
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/qwjfapmb.json"
+      trigger="loop"
+      delay="2000"
+      state="in-reveal"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>ทั้งหมด</p>
+      <h3 id="countingDataA1">0 <span style="font-size: 12px">(ฉบับ)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/guqkthkk.json"
+      trigger="loop"
+      delay="2000"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>เสร็จสิ้น</p>
+      <h3 id="countingDataA3">0 <span style="font-size: 12px">(ฉบับ)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+        src="https://cdn.lordicon.com/lzgqzxrq.json"
+        trigger="loop"
+        delay="2000"
+        state="in-reveal"
+        style="width:80px;height:80px;">
+    </lord-icon>
+    <span class="text">
+      <p>รอดำเนินการ</p>
+      <h3 id="countingDataA2">0 <span style="font-size: 12px">(ฉบับ)</span></h3>        
+    </span>
+  </li>
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/jqnbdcqr.json"
+      trigger="loop"
+      delay="2000"
+      state="in-reveal"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>ยกเลิก</p>
+      <h3 id="countingDataA4">0 <span style="font-size: 12px">(ฉบับ)</span></h3>               
+    </span>
+  </li>
+</ul>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-12 col-xl-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white">
+        <div class="row">
+          <div class="col-4">
+            <i class="fa-solid fa-book-open-reader" style="color: var(--box3)"></i> ทะเบียนหนังสือรับ
+          </div>
+          <div class="col-8 d-flex justify-content-end">
+            <select id="searchDataA" class="form-select me-2" style="width: 200px;">
+              <option selected value="">💽 ทั้งหมด</option>
+              <option value="รอดำเนินการ">⏰ รอดำเนินการ</option>
+              <option value="เสร็จสิ้น">✅ เสร็จสิ้น</option>
+              <option value="ยกเลิก">❌ ยกเลิก</option>
+            </select>
+            <button type="button" class="btn upload-button me-2" onclick="exportExcel(1)">Excel</button>
+            <button type="button" class="btn set-button" data-bs-target="#DataASetModal" data-bs-toggle="modal">ลงทะเบียน</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body rounded-4">
+        <table id="showDataA" class="table table-sm nowrap" style="width:100%"></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const claerModalDataA = () => {
+  $('#updatadataA1').hide();
+  $('#updatadataA2').hide();
+  $('#dataDataAInputKey').val("")
+  $('#dataDataAInput1').val("")
+  $('#dataDataAInput2').val("")
+  $('#dataDataAInput3').val("")
+  $('#dataDataAInput4').val("")
+  $('#dataDataAInput5').val("")
+  $('#dataDataAInput6').val("")
+  $('#dataDataAInput7').val("")
+  $('#dataDataAInput8').val("")
+  $('#dataDataAInput9').val("")
+  $("#fileDataA11").val("")
+  $("#fileDataA12").val("")
+  $("#fileDataA13").val("")
+  resetUploadSwitches();
+  const inputdateA4 = document.getElementById('dataDataAInput4') 
+  inputdateA4.type = "date";
+  const inputdateA6 = document.getElementById('dataDataAInput6') 
+  inputdateA6.type = "date";
+}
+
+const submitAddDataA = async (form) => {
+  event.preventDefault();
+  $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+
+  const formData = ['dataDataAInputKey', 'dataDataAInput1', 'dataDataAInput2', 'dataDataAInput3', 'dataDataAInput4', 'dataDataAInput5', 'dataDataAInput6', 'dataDataAInput7', 'dataDataAInput8', 'dataDataAInput9', 'dataDataAInput10']
+    .reduce((obj, id) => {
+      obj[id] = $(`#${id}`).val();
+      return obj;
+    }, {});
+
+  formData.myfileDataA11 = $('#fileDataA11').prop('files')[0];
+  formData.myfileDataA12 = $('#fileDataA12').prop('files')[0] ? await getBase64($('#fileDataA12').prop('files')[0]) : "";
+  formData.myfileDataA13 = $('#fileDataA13').prop('files')[0] ? await getBase64($('#fileDataA13').prop('files')[0]) : "";
+
+  if (isFormDataAIncomplete(formData)) {
+    createToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน", 3);
+    $.LoadingOverlay("hide");
+    return;
+  }
+
+  if (formData.myfileDataA11) {
+    formData.myfileDataA11 = await processPdfDataA(formData.myfileDataA11);
+  }
+
+  if (formData.dataDataAInputKey === "") {
+    google.script.run.withSuccessHandler(onSuccessDataA).addDataA(formData);
+  } else {
+    google.script.run.withSuccessHandler(onSuccessDataA).upDateDataA(formData);
+  }
+};
+
+const isFormDataAIncomplete = (data) => {
+  return !data.dataDataAInput2 || !data.dataDataAInput3 || !data.dataDataAInput5 || !data.dataDataAInput6 || !data.dataDataAInput7 || !data.dataDataAInput8 || !data.dataDataAInput9 || (data.dataDataAInputKey === "" && !data.myfileDataA11);
+};
+
+const getBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = error => reject(error);
+    reader.readAsDataURL(file);
+  });
+};
+
+const processPdfDataA = async (file) => {
+  const reader = new FileReader();
+  return new Promise((resolve, reject) => {
+    reader.onload = async function (event) {
+      const pdfBytes = event.target.result;
+      const { PDFDocument, rgb } = PDFLib;
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+
+      const pngUrl1 = 'https://raw.githubusercontent.com/EPICCODING17/LOGO/main/stampEpic2.png';
+      const pngImageBytes1 = await fetch(pngUrl1).then((res) => res.arrayBuffer());
+      const pngImage1 = await pdfDoc.embedPng(pngImageBytes1);
+      const pngDims1 = pngImage1.scale(0.13);
+
+      const pngUrl2 = 'https://raw.githubusercontent.com/EPICCODING17/LOGO/main/stampEpic3.png';
+      const pngImageBytes2 = await fetch(pngUrl2).then((res) => res.arrayBuffer());
+      const pngImage2 = await pdfDoc.embedPng(pngImageBytes2);
+      const pngDims2 = pngImage2.scale(0.13);
+
+      pdfDoc.registerFontkit(fontkit);
+      const thaiFontBytes = await fetch('https://script-app.github.io/font/THSarabunNew.ttf').then(res => res.arrayBuffer());
+      const thaiFont = await pdfDoc.embedFont(thaiFontBytes);
+
+      const page = pdfDoc.getPages()[0];
+      const title = 'Epic Coding Channel';
+      const textSize = 16;
+
+      const date = new Date().toLocaleDateString("th-TH", { day: "numeric", month: "long", year: "numeric" });
+      const time = new Date().toLocaleTimeString("th-TH", { hour: 'numeric', minute: 'numeric' });
+
+      page.drawImage(pngImage1, { x: 429, y: 740, width: pngDims1.width, height: pngDims1.height });
+      page.drawImage(pngImage2, { x: 40, y: 175, width: pngDims2.width, height: pngDims2.height });
+
+      const codeIDDataA = await new Promise((resolve, reject) => {
+        google.script.run.withSuccessHandler((codeID) => {
+          resolve(codeID);
+        }).generateIDDataA();
+      });
+
+      page.drawText(title, { x: 455, y: 807, size: textSize, font: thaiFont, color: rgb(0, 0, 1) });
+      page.drawText(codeIDDataA, { x: 485, y: 791, font: thaiFont, size: 16, color: rgb(0, 0, 1) });
+      page.drawText(date, { x: 470, y: 775, font: thaiFont, size: 16, color: rgb(0, 0, 1) });
+      page.drawText(time, { x: 495, y: 759, font: thaiFont, size: 16, color: rgb(0, 0, 1) });
+
+      const pdfBytesUpdated = await pdfDoc.save();
+      const pdfFileBase64Updated = await getBase64(new Blob([pdfBytesUpdated], { type: 'application/pdf' }));
+
+      resolve(pdfFileBase64Updated);
+    };
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
+};
+
+const onSuccessDataA = (res) => {
+  $('#DataASetModal').modal('hide');
+  claerModalDataA();
+  $.LoadingOverlay("hide");
+  createToast("✅ บันทึกข้อมูลสำเร็จ", 1);
+  resetUploadSwitches();
+  insertDataA();
+}
+
+const editDataA = (el) => {
+  const row = el.parentNode.parentNode.cells;
+  const idDataA = row[0].textContent.trim();
+  const dataDataAInput1 = row[1].textContent.trim();
+  const dataDataAInput2 = row[2].textContent.trim();
+  const dataDataAInput3 = row[3].textContent.trim();
+  const dataDataAInput4 = row[4].textContent.trim();
+  const dataDataAInput5 = row[5].textContent.trim();
+  const dataDataAInput6 = row[6].textContent.trim();
+  const dataDataAInput7 = row[7].textContent.trim();
+  const dataDataAInput8 = row[8].textContent.trim();
+  const dataDataAInput9 = row[9].textContent.trim();
+  const dataDataAInput10 = row[10].textContent.trim();
+  const inputdateA4 = document.getElementById('dataDataAInput4') 
+  inputdateA4.type = "text";
+  const inputdate6 = document.getElementById('dataDataAInput6') 
+  inputdate6.type = "text";
+  $('#DataASetModal').modal('show');
+  $('#updatadataA1').show();
+  $('#updatadataA2').show();
+  $('#dataDataAInputKey').val(idDataA);
+  $('#dataDataAInput1').val(dataDataAInput1);
+  $('#dataDataAInput2').val(dataDataAInput2);
+  $('#dataDataAInput3').val(dataDataAInput3);
+  $('#dataDataAInput4').val(dataDataAInput4);
+  $('#dataDataAInput5').val(dataDataAInput5);
+  $('#dataDataAInput6').val(dataDataAInput6);
+  $('#dataDataAInput7').val(dataDataAInput7);
+  $('#dataDataAInput8').val(dataDataAInput8);
+  $('#dataDataAInput9').val(dataDataAInput9);
+  $('#dataDataAInput10').val(dataDataAInput10);
+}
+
+const delDataA = (el) => {
+  const record = el.parentNode.parentNode.cells[0].innerText;
+  $('#confirmBtnDel').off('click').on('click', function() {
+    $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+    $('#DelDataModal').modal('hide');
+    google.script.run.withSuccessHandler(function() {
+      $.LoadingOverlay("hide");
+      insertDataA();
+      createToast("⛔ ลบข้อมูลสำเร็จ", 0);
+    }).delRecDataA(record);
+  });
+  $('#xDelconfirmData').off('click').on('click', function() {
+    $('#DelDataModal').modal('hide');
+  });
+  $('#DelDataModal').modal('show');
+}
+</script>

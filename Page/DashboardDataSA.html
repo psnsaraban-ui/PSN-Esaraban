@@ -1,0 +1,156 @@
+<div class="py-4"> 
+<ul class="box-info">
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/qwjfapmb.json"
+      trigger="loop"
+      delay="2000"
+      state="in-reveal"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>ทั้งหมด</p>
+      <h3 id="countingDataSA1">0 <span style="font-size: 12px">(ฉบับ)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/guqkthkk.json"
+      trigger="loop"
+      delay="2000"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>ตรวจสอบแล้ว</p>
+      <h3 id="countingDataSA3">0 <span style="font-size: 12px">(ฉบับ)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+        src="https://cdn.lordicon.com/lzgqzxrq.json"
+        trigger="loop"
+        delay="2000"
+        state="in-reveal"
+        style="width:80px;height:80px;">
+    </lord-icon>
+    <span class="text">
+      <p>รอตรวจสอบ</p>
+      <h3 id="countingDataSA2">0 <span style="font-size: 12px">(ฉบับ)</span></h3>        
+    </span>
+  </li>
+  <li>
+    <lord-icon
+        src="https://cdn.lordicon.com/ujncgmlm.json"
+        trigger="loop"
+        deley="2000"
+        state="in-reveal"
+        style="width:80px;height:80px;">
+    </lord-icon>
+    <span class="text">
+      <p>ติดตาม</p>
+      <h3 id="countingDataSA4">0 <span style="font-size: 12px">(ฉบับ)</span></h3>               
+    </span>
+  </li>
+</ul>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-12 col-xl-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white">
+        <div class="row">
+          <div class="col-4">
+            <i class="fa-solid fa-book-open-reader" style="color: var(--box3)"></i> ทะเบียนส่งภายนอก
+          </div>
+          <div class="col-8 d-flex justify-content-end">
+            <select id="searchDataSA1" class="form-select me-2" style="width: 200px;">
+              <option selected value="">💽 ทั้งหมด</option>
+              <option value="หนังสือรับ">✅ หนังสือรับ</option>
+              <option value="หนังสือส่ง">✅ หนังสือส่ง</option>
+              <option value="บันทึกข้อความ">✅ บันทึกข้อความ</option>
+              <option value="คำสั่ง">✅ คำสั่ง</option>
+              <option value="สัญญา">✅ สัญญา</option>
+            </select>
+            <select id="searchDataSA2" class="form-select me-2" style="width: 200px;">
+              <option selected value="">💽 ทั้งหมด</option>
+              <option value="รอตรวจสอบ">⏰ รอตรวจสอบ</option>
+              <option value="เสร็จสิ้น">✅ เสร็จสิ้น</option>
+              <option value="ติดตาม">⚠️ ติดตาม</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="card-body rounded-4">
+        <table id="showDataSA" class="table table-sm nowrap" style="width:100%"></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const sendDataSA = (el) => {
+  const row = el.parentNode.parentNode;
+  const record = row.cells[0].innerText;
+  const type = row.cells[1].innerText;
+  const status = row.cells[2].innerText;
+  const sendDate = row.cells[3].innerText;
+  const number = row.cells[4].innerText;
+  const subject = row.cells[5].innerText;
+  const receiverName = row.cells[6].innerText;
+  const department = row.cells[7].innerText;
+  const details = row.cells[8].innerText;
+
+  document.getElementById('dataDataSAInput1').value = '';
+  $('#dataSAModal').modal('show');
+  document.getElementById('confirmBtn').setAttribute('data-record', record);
+  document.getElementById('confirmBtn').setAttribute('data-receiver', receiverName);
+  document.getElementById('rejectBtn').setAttribute('data-record', record);
+  document.getElementById('rejectBtn').setAttribute('data-receiver', receiverName);
+
+  const recordDetails = `
+    <p><strong>🆔 เลขที่เอกสาร : </strong> ${record} <strong>📋 ประเภท:</strong> ${type}</p>
+    <p><strong>🔔 สถานะ:</strong> ${status} <strong>📅 วันที่ส่ง:</strong> ${sendDate}</p>
+    <p><strong>🆔 เลขที่:</strong> ${number}</p>
+    <p><strong>📝 เรื่อง:</strong> ${subject}</p>
+    <p><strong>👦 ชื่อผู้รับ:</strong> ${receiverName} <strong>🏢 หน่วยงาน:</strong> ${department}</p>
+    <p><strong>📝 รายละเอียด:</strong> ${details}</p>
+  `;
+  document.getElementById('recordDetails').innerHTML = recordDetails;
+}
+
+const saveData = (action) => {
+  const record = document.getElementById(action + 'Btn').getAttribute('data-record');
+  const receiverName = document.getElementById(action + 'Btn').getAttribute('data-receiver');
+  const sigSA = document.getElementById('user-show4').innerHTML;
+  const remark = document.getElementById('dataDataSAInput1').value;
+  const saveData = { record, receiverName, sigSA, remark, action };
+
+  $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+
+  google.script.run.withSuccessHandler(() => {
+    $.LoadingOverlay("hide");
+    $('#dataSAModal').modal('hide');
+    createToast("✅ ยืนยันรายการสำเร็จ", 1);
+    insertDataSA();
+  }).sigSaveDataSA(saveData);
+}
+
+const followDataSA = (el) => {
+  const row = el.parentNode.parentNode;
+  const record = row.cells[0].innerText;
+  const receiverName = row.cells[6].innerText;
+  $('#confirmBtnfollow').off('click').on('click', function() {
+    $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+    $('#followDataModal').modal('hide');
+    google.script.run.withSuccessHandler(function() {
+      $.LoadingOverlay("hide");
+      insertDataSA();
+      createToast("✅ ติดตามข้อมูลสำเร็จ", 0);
+    }).followRecord(record, receiverName);
+  });
+  $('#xDelconfirmfollow').off('click').on('click', function() {
+    $('#followDataModal').modal('hide');
+  });
+  $('#followDataModal').modal('show');
+}
+</script>

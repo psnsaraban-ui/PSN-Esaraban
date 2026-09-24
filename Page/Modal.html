@@ -1,0 +1,951 @@
+<div class="modal fade" id="dataSendModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4">
+        <h5 class="mb-0 fw-medium text-center mt-2 mb-2" style="color: var(--box1);">📩 ส่งออกหน่วยงาน <span id="dataSendTitle" style="font-size: 12px; color: var(--box4);"></span></h5>
+        <div class="d-flex justify-content-center">
+          <select class="form-select" id="searchDataSend" style="width: 200px;" onchange="filterUsersByDepartment()"></select>
+        </div>
+        <form id="formSendData" onsubmit="submitSendData(this)">
+          <div class="row">
+            <div class="col-md-12">
+              <input type="text" class="form-control" id="sendDataInputKey" name="sendDataInputKey" hidden>
+              <input type="text" class="form-control mt-2" id="sendDataInput1" name="sendDataInput1" style="display:none" readonly>
+              <input type="text" class="form-control mt-2" id="sendFileData1" name="sendFileData1" style="display:none" readonly>
+              <input type="text" class="form-control mt-2" id="sendFileData2" name="sendFileData2" style="display:none" readonly>
+              <input type="text" class="form-control mt-2" id="sendFileData3" name="sendFileData3" style="display:none" readonly>
+              <input type="text" class="form-control" id="sendDataType" name="sendDataType" hidden>
+            </div>
+          </div>      
+          <div class="row mt-4">
+            <div class="col-md-12">
+              <div style="max-height: 200px; overflow-y: auto;">
+                <table class="table table-sm custom-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">ลำดับ</th>
+                      <th scope="col">ชื่อผู้รับ</th>
+                      <th scope="col">หน่วยงาน</th>
+                      <th scope="col">จัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="userTable"></tbody>
+                </table>
+              </div>
+            </div>
+            <hr class="opacity-10 my-3">
+            <h6 class="mb-0 fw-medium text-center mt-2 mb-2" style="color: var(--box3);">🏢 หน่วยงาน/รายชื่อผู้แจ้ง</h6>
+            <div class="col-md-12">
+              <div style="max-height: 200px; overflow-y: auto;">
+                <table class="table table-sm custom-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">ลำดับ</th>
+                      <th scope="col">ชื่อผู้รับ</th>
+                      <th scope="col">หน่วยงาน</th>
+                      <th scope="col">ลบ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="selectedUserTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <hr class="opacity-10 my-3">
+          <h6 class="mb-0 fw-medium text-center mt-2 mb-2" style="color: var(--box3);">📝 รายละเอียดแนบ</h6>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="mb-1">
+                <textarea type="text" class="form-control" id="sendDataInput2" name="sendDataInput2" placeholder="กรุณากรอกรายละเอียด" required></textarea>
+              </div>    
+            </div>
+          </div>
+        </form>
+        <div class="mt-2 text-end">
+          <button type="submit" form="formSendData" class="btn set-button">ส่งข้อมูล</button>
+          <button type="button" class="btn edit-button" onclick="resetCheckboxes()">ตั้งใหม่</button>
+          <button type="button" class="btn del-button" onclick="clearSendData()" data-bs-dismiss="modal">ยกเลิก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="AgencySendModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4">
+        <h5 class="mb-0 fw-medium text-center mt-2 mb-2" style="color: var(--box1);">📩 ส่งออกนอกหน่วยงาน</h5>
+        <form id="formSendAgency" onsubmit="submitSendAgency(this)">
+          <div class="row">
+            <div class="col-md-12">
+              <input type="text" class="form-control" id="agencyDataInputKey" name="agencyDataInputKey" hidden>
+              <input type="text" class="form-control mt-2" id="agencyDataInput1" name="agencyDataInput1" style="display:none" readonly>
+              <input type="text" class="form-control mt-2" id="agencyDataInput2" name="agencyDataInput2" style="display:none" readonly>
+              <input type="text" class="form-control mt-2" id="agencyDataInput3" name="agencyDataInput3" style="display:none" readonly>
+              <input type="text" class="form-control mt-2" id="agencyFileData1" name="agencyFileData1" style="display:none" readonly>
+            </div>
+          </div>  
+          <div class="row">
+            <div class="col-md-12">
+              <input type="text" id="searchAgency" class="form-control" placeholder="🔍ค้นหารายการ..." onkeyup="filterAgency()">
+            </div>
+          </div>
+          <div class="row mt-4">
+            <div class="col-md-12">
+              <div style="max-height: 200px; overflow-y: auto;">
+                <table class="table table-sm custom-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">เลือก</th>
+                      <th scope="col">ลำดับ</th>
+                      <th scope="col">หน่วยงาน</th>
+                      <th scope="col">จัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="agencyTable"></tbody>
+                </table>
+              </div>
+            </div>
+            <hr class="opacity-10 my-3">
+            <h6 class="mb-0 fw-medium text-center mt-2 mb-2" style="color: var(--box3);">🏢 หน่วยงานภายนอก</h6>
+            <div class="col-md-12">
+              <div style="max-height: 200px; overflow-y: auto;">
+                <table class="table table-sm custom-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">ลำดับ</th>
+                      <th scope="col">ถึง</th>
+                      <th scope="col">อีเมล์</th>
+                      <th scope="col">นามแฝง</th>
+                      <th scope="col">ลบ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="selectedAgencyTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <hr class="opacity-10 my-3">
+          <h6 class="mb-0 fw-medium text-center mt-2 mb-2" style="color: var(--box3);">📝 รายละเอียดแนบ</h6>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="mb-1">
+                <textarea type="text" class="form-control" id="agencyDataInput4" name="agencyDataInput4" placeholder="กรุณากรอกรายละเอียด" required></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <div class="mb-1">
+                <select class="form-select" id="agencyDataInput5" name="agencyDataInput5" required></select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-1">
+                <input type="text" class="form-control " id="agencyDataInput6" name="agencyDataInput6" readonly>
+              </div>
+            </div>
+          </div>
+        </form>
+        <div class="mt-2 text-end">
+          <button type="submit" form="formSendAgency" class="btn set-button">ส่งอีเมล์</button>
+          <button type="button" class="btn del-button" onclick="agencyResetCheckboxes()" data-bs-dismiss="modal">ยกเลิก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ModalDataSetA" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="width: 400px;">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4 text-center">
+          <h5 class="mb-0 fw-medium  text-center mt-2" style="color: var(--box1);">📝 รายการหน่วยงาน</h5>
+          <select class="form-control my-auto mt-2"  id="SetdataDataAInput7" name="SetdataDataAInput7" style="color: var(--box3);" required>
+            <option selected disabled value="">กรุณาเลือกรายการ</option>
+          </select>
+        <div class="mt-2">
+          <button type="button" class="btn set-button" id="confirmSetA">ตกลง</button>
+          <button type="button" class="btn del-button" data-bs-dismiss="modal">ยกเลิก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ModalDataSetB" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="width: 400px;">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4 text-center">
+          <h5 class="mb-0 fw-medium  text-center mt-2" style="color: var(--box1);">📝 รายการผู้บริหาร</h5>
+          <select class="form-control my-auto mt-2"  id="SetdataDataAInput8" name="SetdataDataAInput8" style="color: var(--box3);" required>
+            <option selected disabled value="">กรุณาเลือกรายการ</option>
+          </select>
+        <div class="mt-2">
+          <button type="button" class="btn set-button" id="confirmSetB">ตกลง</button>
+          <button type="button" class="btn del-button" data-bs-dismiss="modal">ยกเลิก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ModalDataSetC" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="width: 400px;">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4 text-center">
+          <h5 class="mb-0 fw-medium  text-center mt-2" style="color: var(--box1);">📝 รายการผู้บริหาร</h5>
+          <select class="form-control my-auto mt-2"  id="SetdataDataCInput3" name="SetdataDataCInput3" style="color: var(--box3);" required>
+            <option selected disabled value="">กรุณาเลือกรายการ</option>
+          </select>
+        <div class="mt-2">
+          <button type="button" class="btn set-button" id="confirmSetC">ตกลง</button>
+          <button type="button" class="btn del-button" data-bs-dismiss="modal">ยกเลิก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ModalDataSetD" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="width: 400px;">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4 text-center">
+          <h5 class="mb-0 fw-medium  text-center mt-2" style="color: var(--box1);">📝 รายการหน่วยงาน</h5>
+          <select class="form-control my-auto mt-2"  id="SetdataDataCInput4" name="SetdataDataCInput4" style="color: var(--box3);" required>
+            <option selected disabled value="">กรุณาเลือกรายการ</option>
+          </select>
+        <div class="mt-2">
+          <button type="button" class="btn set-button" id="confirmSetD">ตกลง</button>
+          <button type="button" class="btn del-button" data-bs-dismiss="modal">ยกเลิก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="DataASetModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4">
+        <h5 class="mb-0 fw-medium  text-center mt-2" style="color: var(--box1);">📝 ฟอร์มทะเบียนรับ <span style="font-size: 14px; color: var(--box4);">ภายนอก</span></h5>
+<form id="formDataA" onsubmit="submitAddDataA(this)">
+  <input type="text" class="form-control" id="dataDataAInputKey" name="dataDataAInputKey" hidden>
+  <div class="row mt-2">
+    <div class="col-md-6" id="updatadataA1" style="display:none">
+      <div class="mb-1">
+        <label class="control-label">สถานะ <span class="text-danger">*</span></label>
+          <select class="form-select" id="dataDataAInput1" name="dataDataAInput1">
+            <option selected value="">กรุณาเลือกรายการ</option>
+            <option value="รอดำเนินการ">⏰ รอดำเนินการ</option>
+            <option value="เสร็จสิ้น">✅ เสร็จสิ้น</option>
+            <option value="ยกเลิก">❌ ยกเลิก</option>
+          </select>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="mb-1">
+        <label class="control-label">ความเร่งด่วน <span class="text-danger">*</span></label>
+          <select class="form-select" id="dataDataAInput2" name="dataDataAInput2"></select>
+      </div>
+    </div>
+      <div class="col-md-6">
+        <div class="mb-1">
+        <label class="control-label">ชั้นความลับ <span class="text-danger">*</span></label>
+          <select class="form-select" id="dataDataAInput3" name="dataDataAInput3"></select>
+        </div>
+      </div>
+      <div class="col-md-6" id="updatadataA2" style="display:none">
+        <div class="mb-1">
+        <label class="control-label">รับวันที่ <span class="text-danger">*</span></label>
+        <input type="date" class="form-control" id="dataDataAInput4" name="dataDataAInput4">
+        </div>
+      </div>
+    </div>
+
+  <div class="row mt-2">
+    <div class="col-md-6">
+       <div class="mb-1">
+          <label class="control-label"> เลขที่หนังสือ <span class="text-danger">*</span></label>
+          <input type="text" class="form-control " id="dataDataAInput5" name="dataDataAInput5" placeholder="กรุณากรอกเลขที่หนังสือ">
+       </div>
+    </div>
+    <div class="col-md-6">
+       <div class="mb-1">
+          <label class="control-label"> ลงวันที่ <span class="text-danger">*</span></label>
+          <input type="date" class="form-control " id="dataDataAInput6" name="dataDataAInput6">
+       </div>  
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-6">
+      <label class="control-label">จาก <span class="text-danger">*</span></label>
+       <div class="mb-1" style="display: flex; align-items: center;">
+          <input type="text" class="form-control me-2" id="dataDataAInput7" name="dataDataAInput7" placeholder="กรุณาเลือกข้อมูล" readonly>
+          <button type="button" class="btn set-button" id="searchBtnInput7"><i class="fa-solid fa-magnifying-glass"></i></button>
+       </div>
+    </div>
+    <div class="col-md-6">
+        <label class="control-label">ถึง <span class="text-danger">*</span></label>
+       <div class="mb-1" style="display: flex; align-items: center;">
+          <input type="text" class="form-control me-2" id="dataDataAInput8" name="dataDataAInput8" placeholder="กรุณาเลือกข้อมูล" readonly>
+          <button type="button" class="btn set-button" id="searchBtnInput8"><i class="fa-solid fa-magnifying-glass"></i></button>
+       </div>  
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-12">
+       <div class="mb-1">
+          <label class="control-label">เรื่อง <span class="text-danger">*</span></label>
+          <textarea type="text" class="form-control " id="dataDataAInput9" name="dataDataAInput9" laceholder="กรุณากรอกเรื่อง"></textarea>
+       </div>    
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-6">
+       <div class="mb-1">
+          <label class="control-label"> ผู้ลงทะเบียน <span class="text-danger">*</span></label>
+          <input type="text" class="form-control " style="color: var(--box3);" id="dataDataAInput10" name="dataDataAInput10" readonly>
+       </div>    
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-12">
+      <div class="mb-1">
+<div class="form-check form-switch">
+  <input class="form-check-input" type="checkbox" id="uploadSwitchA1" onchange="toggleUploadFileA1()">
+  <label class="form-check-label" for="uploadSwitchA1">เปิดการอัปโหลดไฟล์ <span class="text-danger">*</span></label>
+</div>
+      </div>
+    <div id="uploadFileSectionA1" style="display:none">
+      <label for="fileDataA11" class="control-label"><i class="fa-solid fa-file-pdf text-danger"></i> อัปโหลดข้อมูล <span class="text-danger">*</span></label>
+      <input type="file" class="form-control " id="fileDataA11" name="myfileDataA11" accept="application/pdf">
+    </div>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-12">
+      <div class="mb-1">
+<div class="form-check form-switch">
+  <input class="form-check-input" type="checkbox" id="uploadSwitchA2" onchange="toggleUploadFileA2()">
+  <label class="form-check-label" for="uploadSwitchA2">เปิดการอัปโหลดเอกสารแนบ</label>
+</div>
+      </div>
+    <div id="uploadFileSectionA2" style="display:none">
+      <label for="fileDataA12" class="control-label"><i class="fa-solid fa-file-pdf text-danger"></i> อัปโหลดข้อมูล <span class="text-danger">*</span></label>
+      <input type="file" class="form-control " id="fileDataA12" name="myfileDataA12" accept="application/pdf">
+    </div>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-12">
+      <div class="mb-1">
+<div class="form-check form-switch">
+  <input class="form-check-input" type="checkbox" id="uploadSwitchA3" onchange="toggleUploadFileA3()">
+  <label class="form-check-label" for="uploadSwitchA3">เปิดการอัปโหลดเอกสารแนบ</label>
+</div>
+      </div>
+    <div id="uploadFileSectionA3" style="display:none">
+      <label for="fileDataA13" class="control-label"><i class="fa-solid fa-file-pdf text-danger"></i> อัปโหลดข้อมูล <span class="text-danger">*</span></label>
+      <input type="file" class="form-control" id="fileDataA13" name="myfileDataA13" accept="application/pdf">
+    </div>
+    </div>
+  </div>
+
+  <div class="mt-2 text-end">
+    <button type="submit" class="btn set-button" >บันทึกข้อมูล</button>
+    <button type="button" class="btn del-button" onclick="claerModalDataA()" data-bs-dismiss="modal">ยกเลิก</button>
+  </div>
+</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="DataBSetModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4">
+        <h5 class="mb-0 fw-medium  text-center mt-2" style="color: var(--box1);">📝 ฟอร์มทะเบียนรับ <span style="font-size: 14px; color: var(--box4);">ภายใน</span></h5>
+<form id="formDataB" onsubmit="submitAddDataB(this)">
+  <input type="text" class="form-control" id="dataDataBInputKey" name="dataDataBInputKey" hidden>
+  <div class="row mt-2">
+    <div class="col-md-6" id="updatadataB1" style="display:none">
+      <div class="mb-1">
+        <label class="control-label">สถานะ <span class="text-danger">*</span></label>
+          <select class="form-select" id="dataDataBInput1" name="dataDataBInput1">
+            <option selected value="">กรุณาเลือกรายการ</option>
+            <option value="รอดำเนินการ">⏰ รอดำเนินการ</option>
+            <option value="เสร็จสิ้น">✅ เสร็จสิ้น</option>
+            <option value="ยกเลิก">❌ ยกเลิก</option>
+          </select>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="mb-1">
+        <label class="control-label">ความเร่งด่วน <span class="text-danger">*</span></label>
+        <select class="form-select" id="dataDataBInput2" name="dataDataBInput2"></select>
+      </div>
+    </div>
+      <div class="col-md-6">
+        <div class="mb-1">
+        <label class="control-label">ชั้นความลับ <span class="text-danger">*</span></label>
+          <select class="form-select" id="dataDataBInput3" name="dataDataBInput3"></select>
+        </div>
+      </div>
+      <div class="col-md-6" id="updatadataB2" style="display:none">
+        <div class="mb-1">
+        <label class="control-label">รับวันที่ <span class="text-danger">*</span></label>
+        <input type="date" class="form-control" id="dataDataBInput4" name="dataDataBInput4">
+        </div>
+      </div>
+    </div>
+
+  <div class="row mt-2">
+    <div class="col-md-6">
+       <div class="mb-1">
+          <label class="control-label"> เลขที่หนังสือ <span class="text-danger">*</span></label>
+          <input type="text" class="form-control " id="dataDataBInput5" name="dataDataBInput5" placeholder="กรุณากรอกเลขที่หนังสือ">
+       </div>
+    </div>
+    <div class="col-md-6">
+       <div class="mb-1">
+          <label class="control-label"> ลงวันที่ <span class="text-danger">*</span></label>
+          <input type="date" class="form-control " id="dataDataBInput6" name="dataDataBInput6">
+       </div>  
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-12">
+       <div class="mb-1">
+          <label class="control-label">เรื่อง <span class="text-danger">*</span></label>
+          <textarea type="text" class="form-control " id="dataDataBInput7" name="dataDataBInput7" laceholder="กรุณากรอกเรื่อง"></textarea>
+       </div>    
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-6">
+       <div class="mb-1">
+          <label class="control-label"> ผู้ลงทะเบียน <span class="text-danger">*</span></label>
+          <input type="text" class="form-control " style="color: var(--box3);" id="dataDataBInput8" name="dataDataBInput8" readonly>
+       </div>    
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-12">
+      <div class="mb-1">
+<div class="form-check form-switch">
+  <input class="form-check-input" type="checkbox" id="uploadSwitchB1" onchange="toggleUploadFileB1()">
+  <label class="form-check-label" for="uploadSwitchB1">เปิดการอัปโหลดไฟล์ <span class="text-danger">*</span></label>
+</div>
+      </div>
+    <div id="uploadFileSectionB1" style="display:none">
+      <label for="fileDataB9" class="control-label"><i class="fa-solid fa-file-pdf text-danger"></i> อัปโหลดข้อมูล <span class="text-danger">*</span></label>
+      <input type="file" class="form-control " id="fileDataB9" name="myfileDataB9" accept="application/pdf">
+    </div>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-12">
+      <div class="mb-1">
+<div class="form-check form-switch">
+  <input class="form-check-input" type="checkbox" id="uploadSwitchB2" onchange="toggleUploadFileB2()">
+  <label class="form-check-label" for="uploadSwitchB2">เปิดการอัปโหลดเอกสารแนบ</label>
+</div>
+      </div>
+    <div id="uploadFileSectionB2" style="display:none">
+      <label for="fileDataB10" class="control-label"><i class="fa-solid fa-file-pdf text-danger"></i> อัปโหลดข้อมูล <span class="text-danger">*</span></label>
+      <input type="file" class="form-control " id="fileDataB10" name="myfileDataB10" accept="application/pdf">
+    </div>
+    </div>
+  </div>
+
+  <div class="mt-2 text-end">
+    <button type="submit" class="btn set-button" >บันทึกข้อมูล</button>
+    <button type="button" class="btn del-button" onclick="claerModalDataB()" data-bs-dismiss="modal">ยกเลิก</button>
+  </div>
+</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="DataCSetModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4">
+        <h5 class="mb-0 fw-medium  text-center mt-2" style="color: var(--box1);">📝 ฟอร์มทะเบียนส่งออก</h5>
+<form id="formDataC" onsubmit="submitAddDataC(this)">
+  <input type="text" class="form-control" id="dataDataCInputKey" name="dataDataCInputKey" hidden>
+  <div class="row mt-2">
+    <div class="col-md-6" id="updatadataC1" style="display:none">
+      <div class="mb-1">
+        <label class="control-label">สถานะ <span class="text-danger">*</span></label>
+          <select class="form-select" id="dataDataCInput1" name="dataDataCInput1">
+            <option selected value="">กรุณาเลือกรายการ</option>
+            <option value="รอดำเนินการ">⏰ รอดำเนินการ</option>
+            <option value="เสร็จสิ้น">✅ เสร็จสิ้น</option>
+            <option value="ยกเลิก">❌ ยกเลิก</option>
+          </select>
+      </div>
+    </div>
+      <div class="col-md-6" id="updatadataC2" style="display:none">
+        <div class="mb-1">
+        <label class="control-label">ลงวันที่ <span class="text-danger">*</span></label>
+        <input type="date" class="form-control" id="dataDataCInput2" name="dataDataCInput2">
+        </div>
+      </div>
+    </div>
+
+  <div class="row mt-2">
+    <div class="col-md-6">
+      <label class="control-label">จาก <span class="text-danger">*</span></label>
+       <div class="mb-1" style="display: flex; align-items: center;">
+          <input type="text" class="form-control me-2" id="dataDataCInput3" name="dataDataCInput3" placeholder="กรุณาเลือกข้อมูล" readonly>
+          <button type="button" class="btn set-button" id="searchBtnInput3"><i class="fa-solid fa-magnifying-glass"></i></button>
+       </div>
+    </div>
+    <div class="col-md-6">
+        <label class="control-label">ถึง <span class="text-danger">*</span></label>
+       <div class="mb-1" style="display: flex; align-items: center;">
+          <input type="text" class="form-control me-2" id="dataDataCInput4" name="dataDataCInput4" placeholder="กรุณาเลือกข้อมูล" readonly>
+          <button type="button" class="btn set-button" id="searchBtnInput4"><i class="fa-solid fa-magnifying-glass"></i></button>
+       </div>  
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-12">
+       <div class="mb-1">
+          <label class="control-label">เรื่อง <span class="text-danger">*</span></label>
+          <textarea type="text" class="form-control " id="dataDataCInput5" name="dataDataCInput5" laceholder="กรุณากรอกเรื่อง"></textarea>
+       </div>    
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-6">
+       <div class="mb-1">
+          <label class="control-label"> หน่วยงาน <span class="text-danger">*</span></label>
+          <input type="text" class="form-control " style="color: var(--box3);" id="dataDataCInput6" name="dataDataCInput6" readonly>
+       </div>    
+    </div>
+    <div class="col-md-6">
+       <div class="mb-1">
+          <label class="control-label"> ผู้ลงทะเบียน <span class="text-danger">*</span></label>
+          <input type="text" class="form-control " style="color: var(--box3);" id="dataDataCInput7" name="dataDataCInput7" readonly>
+       </div>    
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-12">
+      <div class="mb-1">
+<div class="form-check form-switch">
+  <input class="form-check-input" type="checkbox" id="uploadSwitchC1" onchange="toggleUploadFileC1()">
+  <label class="form-check-label" for="uploadSwitchC1">เปิดการอัปโหลดไฟล์ <span class="text-danger">*</span></label>
+</div>
+      </div>
+    <div id="uploadFileSectionC1" style="display:none">
+      <label for="fileDataC8" class="control-label"><i class="fa-solid fa-file-pdf text-danger"></i> อัปโหลดข้อมูล <span class="text-danger">*</span></label>
+      <input type="file" class="form-control " id="fileDataC8" name="myfileDataC8" accept="application/pdf">
+    </div>
+    </div>
+  </div>
+
+  <div class="mt-2 text-end">
+    <button type="submit" class="btn set-button" >บันทึกข้อมูล</button>
+    <button type="button" class="btn del-button" onclick="claerModalDataC()" data-bs-dismiss="modal">ยกเลิก</button>
+  </div>
+</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="DataDSetModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4">
+        <h5 class="mb-0 fw-medium text-center mt-2" style="color: var(--box1);">📝 ทะเบียน <span style="font-size: 12px; color: var(--box4);">บันทึกข้อความ</span></h5>
+        <form id="formDataD" onsubmit="submitAddDataD(this)">
+          <input type="text" class="form-control" id="dataDataDInputKey" name="dataDataDInputKey" hidden>
+          <div class="row mt-2">
+            <div class="col-md-6" id="updatadataD1" style="display:none">
+              <div class="mb-1">
+                <label class="control-label">สถานะ <span class="text-danger">*</span></label>
+                <select class="form-select" id="dataDataDInput1" name="dataDataDInput1">
+                  <option selected value="">กรุณาเลือกรายการ</option>
+                  <option value="รอดำเนินการ">⏰ รอดำเนินการ</option>
+                  <option value="เสร็จสิ้น">✅ เสร็จสิ้น</option>
+                  <option value="ยกเลิก">❌ ยกเลิก</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6" id="updatadataD2" style="display:none">
+              <div class="mb-1">
+                <label class="control-label">ลงวันที่ <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="dataDataDInput2" name="dataDataDInput2">
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="mb-1">
+                <label class="control-label">เรื่อง <span class="text-danger">*</span></label>
+                <textarea type="text" class="form-control" id="dataDataDInput3" name="dataDataDInput3" placeholder="กรุณากรอกเรื่อง"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <div class="mb-1">
+                <label class="control-label"> หน่วยงาน <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" style="color: var(--box3);" id="dataDataDInput4" name="dataDataDInput4" readonly>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-1">
+                <label class="control-label"> ผู้ลงทะเบียน <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" style="color: var(--box3);" id="dataDataDInput5" name="dataDataDInput5" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="mb-1">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="uploadSwitchD1" onchange="toggleUploadFileD1()">
+                  <label class="form-check-label" for="uploadSwitchD1">เปิดการอัปโหลดไฟล์ <span class="text-danger">*</span></label>
+                </div>
+              </div>
+              <div id="uploadFileSectionD1" style="display:none">
+                <label for="fileDataD6" class="control-label"><i class="fa-solid fa-file-pdf text-danger"></i> อัปโหลดข้อมูล <span class="text-danger">*</span></label>
+                <input type="file" class="form-control" id="fileDataD6" name="myfileDataD6" accept="application/pdf">
+              </div>
+            </div>
+          </div>
+          <div class="mt-2 text-end">
+            <button type="submit" class="btn set-button">บันทึกข้อมูล</button>
+            <button type="button" class="btn del-button" onclick="clearModalDataD()" data-bs-dismiss="modal">ยกเลิก</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="DataESetModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4">
+        <h5 class="mb-0 fw-medium text-center mt-2" style="color: var(--box1);">📝 ทะเบียน <span style="font-size: 12px; color: var(--box4);">คำสั่ง</span></h5>
+        <form id="formDataE" onsubmit="submitAddDataE(this)">
+          <input type="text" class="form-control" id="dataDataEInputKey" name="dataDataEInputKey" hidden>
+          <div class="row mt-2">
+            <div class="col-md-6" id="updatadataE1" style="display:none">
+              <div class="mb-1">
+                <label class="control-label">สถานะ <span class="text-danger">*</span></label>
+                <select class="form-select" id="dataDataEInput1" name="dataDataEInput1">
+                  <option selected value="">กรุณาเลือกรายการ</option>
+                  <option value="รอดำเนินการ">⏰ รอดำเนินการ</option>
+                  <option value="เสร็จสิ้น">✅ เสร็จสิ้น</option>
+                  <option value="ยกเลิก">❌ ยกเลิก</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6" id="updatadataE2" style="display:none">
+              <div class="mb-1">
+                <label class="control-label">ลงวันที่ <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="dataDataEInput2" name="dataDataEInput2">
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="mb-1">
+                <label class="control-label">เรื่อง <span class="text-danger">*</span></label>
+                <textarea type="text" class="form-control" id="dataDataEInput3" name="dataDataEInput3" placeholder="กรุณากรอกเรื่อง"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <div class="mb-1">
+                <label class="control-label"> หน่วยงาน <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" style="color: var(--box3);" id="dataDataEInput4" name="dataDataEInput4" readonly>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-1">
+                <label class="control-label"> ผู้ลงทะเบียน <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" style="color: var(--box3);" id="dataDataEInput5" name="dataDataEInput5" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="mb-1">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="uploadSwitchE1" onchange="toggleUploadFileE1()">
+                  <label class="form-check-label" for="uploadSwitchE1">เปิดการอัปโหลดไฟล์ <span class="text-danger">*</span></label>
+                </div>
+              </div>
+              <div id="uploadFileSectionE1" style="display:none">
+                <label for="fileDataE6" class="control-label"><i class="fa-solid fa-file-pdf text-danger"></i> อัปโหลดข้อมูล <span class="text-danger">*</span></label>
+                <input type="file" class="form-control" id="fileDataE6" name="myfileDataE6" accept="application/pdf">
+              </div>
+            </div>
+          </div>
+          <div class="mt-2 text-end">
+            <button type="submit" class="btn set-button">บันทึกข้อมูล</button>
+            <button type="button" class="btn del-button" onclick="clearModalDataE()" data-bs-dismiss="modal">ยกเลิก</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="DataFSetModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4">
+        <h5 class="mb-0 fw-medium text-center mt-2" style="color: var(--box1);">📝 ทะเบียน <span style="font-size: 12px; color: var(--box4);">สัญญา</span></h5>
+        <form id="formDataF" onsubmit="submitAddDataF(this)">
+          <input type="text" class="form-control" id="dataDataFInputKey" name="dataDataFInputKey" hidden>
+          <div class="row mt-2">
+            <div class="col-md-6" id="updatadataF1" style="display:none">
+              <div class="mb-1">
+                <label class="control-label">สถานะ <span class="text-danger">*</span></label>
+                <select class="form-select" id="dataDataFInput1" name="dataDataFInput1">
+                  <option selected value="">กรุณาเลือกรายการ</option>
+                  <option value="รอดำเนินการ">⏰ รอดำเนินการ</option>
+                  <option value="เสร็จสิ้น">✅ เสร็จสิ้น</option>
+                  <option value="ยกเลิก">❌ ยกเลิก</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6" id="updatadataF2" style="display:none">
+              <div class="mb-1">
+                <label class="control-label">ลงวันที่ <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="dataDataFInput2" name="dataDataFInput2">
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="mb-1">
+                <label class="control-label">เรื่อง <span class="text-danger">*</span></label>
+                <textarea type="text" class="form-control" id="dataDataFInput3" name="dataDataFInput3" placeholder="กรุณากรอกเรื่อง"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <div class="mb-1">
+                <label class="control-label"> หน่วยงาน <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" style="color: var(--box3);" id="dataDataFInput4" name="dataDataFInput4" readonly>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-1">
+                <label class="control-label"> ผู้ลงทะเบียน <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" style="color: var(--box3);" id="dataDataFInput5" name="dataDataFInput5" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="mb-1">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="uploadSwitchF1" onchange="toggleUploadFileF1()">
+                  <label class="form-check-label" for="uploadSwitchF1">เปิดการอัปโหลดไฟล์ <span class="text-danger">*</span></label>
+                </div>
+              </div>
+              <div id="uploadFileSectionF1" style="display:none">
+                <label for="fileDataF6" class="control-label"><i class="fa-solid fa-file-pdf text-danger"></i> อัปโหลดข้อมูล <span class="text-danger">*</span></label>
+                <input type="file" class="form-control" id="fileDataF6" name="myfileDataF6" accept="application/pdf">
+              </div>
+            </div>
+          </div>
+          <div class="mt-2 text-end">
+            <button type="submit" class="btn set-button">บันทึกข้อมูล</button>
+            <button type="button" class="btn del-button" onclick="clearModalDataF()" data-bs-dismiss="modal">ยกเลิก</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="DataGSetModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4">
+        <h5 class="mb-0 fw-medium text-center mt-2" style="color: var(--box1);">📝 ประกาศ</h5>
+        <form id="formDataG" onsubmit="submitAddDataG(this)">
+          <input type="text" class="form-control" id="dataDataGInputKey" name="dataDataGInputKey" hidden>
+          <div class="row mt-2">
+            <div class="col-md-6" id="updatadataG1" style="display:none">
+              <div class="mb-1">
+                <label class="control-label">สถานะ <span class="text-danger">*</span></label>
+                <select class="form-select" id="dataDataGInput1" name="dataDataGInput1">
+                  <option selected value="">กรุณาเลือกรายการ</option>
+                  <option value="รอประกาศ">⏰ รอประกาศ</option>
+                  <option value="ประกาศ">✅ ประกาศ</option>
+                  <option value="ยกเลิก">❌ ยกเลิก</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6" id="updatadataG2" style="display:none">
+              <div class="mb-1">
+                <label class="control-label">ลงวันที่ <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="dataDataGInput3" name="dataDataGInput3">
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="mb-1">
+                <label class="control-label">เรื่อง <span class="text-danger">*</span></label>
+                <textarea type="text" class="form-control" id="dataDataGInput2" name="dataDataGInput2" placeholder="กรุณากรอกเรื่อง"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <div class="mb-1">
+                <label class="control-label"> ผู้ลงทะเบียน <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" style="color: var(--box3);" id="dataDataGInput4" name="dataDataGInput4" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="mb-1">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="uploadSwitchG1" onchange="toggleUploadFileG1()">
+                  <label class="form-check-label" for="uploadSwitchG1">เปิดการอัปโหลดไฟล์ <span class="text-danger">*</span></label>
+                </div>
+              </div>
+              <div id="uploadFileSectionG1" style="display:none">
+                <label for="fileDataG5" class="control-label"><i class="fa-solid fa-file-pdf text-danger"></i> อัปโหลดข้อมูล <span class="text-danger">*</span></label>
+                <input type="file" class="form-control" id="fileDataG5" name="myfileDataG5" accept="application/pdf">
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-2 text-end">
+            <button type="submit" class="btn set-button">บันทึกข้อมูล</button>
+            <button type="button" class="btn del-button" onclick="clearModalDataG()" data-bs-dismiss="modal">ยกเลิก</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="DataHSetModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4">
+        <h5 class="mb-0 fw-medium text-center mt-2" style="color: var(--box1);">📝 ประชาสัมพันธ์</h5>
+        <form id="formDataH" onsubmit="submitAddDataH(this)">
+          <input type="text" class="form-control" id="dataDataHInputKey" name="dataDataHInputKey" hidden>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="mb-1">
+                <label class="control-label">เรื่อง <span class="text-danger">*</span></label>
+                <textarea type="text" class="form-control" id="dataDataHInput1" name="dataDataHInput1" placeholder="กรุณากรอกเรื่อง"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="mb-1">
+                <label class="control-label">รายละเอียด <span class="text-danger">*</span></label>
+                <textarea type="text" class="form-control" id="dataDataHInput2" name="dataDataHInput2" placeholder="กรุณากรอกรายละเอียด"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <div class="mb-1">
+                <label class="control-label">ผู้โพสต์ <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" style="color: var(--box3);" id="dataDataHInput3" name="dataDataHInput3" readonly>
+              </div>
+            </div>
+            <div class="col-md-6" id="updatadataH1" style="display:none">
+              <div class="mb-1">
+                <label class="control-label">วันที่โพสต์ <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="dataDataHInput4" name="dataDataHInput4">
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="mb-1">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="uploadSwitchH1" onchange="toggleUploadFileH1()">
+                  <label class="form-check-label" for="uploadSwitchH1">เปิดการอัปโหลดไฟล์ <span class="text-danger">*</span></label>
+                </div>
+              </div>
+              <div id="uploadFileSectionH1" style="display:none">
+                <label for="fileDataH5" class="control-label"><i class="fa-solid fa-file-pdf text-danger"></i> อัปโหลดข้อมูล <span class="text-danger">*</span></label>
+                <input type="file" class="form-control" id="fileDataH5" name="myfileDataH5" accept="application/pdf">
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-2 text-end">
+            <button type="submit" class="btn set-button">บันทึกข้อมูล</button>
+            <button type="button" class="btn del-button" onclick="clearModalDataH()" data-bs-dismiss="modal">ยกเลิก</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="dataSAModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-5">
+      <div class="modal-body p-4">
+        <h5 class="mb-0 fw-medium text-center mb-2 mt-2" style="color: var(--box1);">📝 รับเอกสาร</h5>
+        <span id="user-show4" style="display:none"></span>
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <div id="recordDetails"></div>
+          </div>
+        </div>
+        <hr class="opacity-10 my-3">
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <div class="mb-1">
+              <label class="control-label">หมายเหตุ <span class="text-danger">*</span></label>
+              <textarea type="text" class="form-control" id="dataDataSAInput1" name="dataDataSAInput1" placeholder="กรุณากรอกหมายเหตุ"></textarea>
+            </div>
+          </div>
+        </div>
+        <hr class="opacity-10 my-3">
+        <div class="mt-2 text-end">
+          <button type="button" class="btn set-button" id="confirmBtn" onclick="saveData('confirm')">ยืนยัน</button>
+          <button type="button" class="btn edit-button" id="rejectBtn" onclick="saveData('reject')">ตีกลับ</button>
+          <button type="button" class="btn del-button" data-bs-dismiss="modal">ยกเลิก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

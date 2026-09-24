@@ -1,0 +1,113 @@
+<div class="py-4"> 
+<ul class="box-info">
+  <li>
+    <lord-icon
+        src="https://cdn.lordicon.com/kjtalhau.json"
+        trigger="loop"
+        delay="2000"
+        state="in-reveal"
+        style="width:80px;height:80px;">
+    </lord-icon>
+    <span class="text">
+    <span class="text">
+      <h3>Update</h3>  
+      <p>System Version 5</p>        
+    </span>              
+    </span>
+  </li>
+  <li>
+    <lord-icon
+        src="https://cdn.lordicon.com/kiynvdns.json"
+        trigger="loop"
+        deley="2000"
+        state="in-reveal"
+        style="width:80px;height:80px;">
+    </lord-icon>
+    <span class="text">
+      <p>ประกาศทั้งหมด </p>
+      <h3 id="countingDataG">0 <span style="font-size: 12px">(จำนวน)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+        src="https://cdn.lordicon.com/kiynvdns.json"
+        trigger="loop"
+        deley="2000"
+        state="in-reveal"
+        style="width:80px;height:80px;">
+    </lord-icon>
+    <span class="text">
+      <p>ประชาสัมพันธ์ทั้งหมด </p>
+      <h3 id="countingDataH">0 <span style="font-size: 12px">(จำนวน)</span></h3>        
+    </span>
+  </li>
+  <li>
+    <lord-icon
+        src="https://cdn.lordicon.com/pyarizrk.json"
+        trigger="loop"
+        delay="2000"
+        state="in-reveal"
+        style="width:80px;height:80px;">
+    </lord-icon>
+    <span class="text">
+      <p>ผู้ใช้งานระบบทั้งหมด</p>
+      <h3 id="countingRecUser">0 <span style="font-size: 12px">(คน)</span></h3>              
+    </span>
+  </li>
+</ul>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-6 col-xl-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white">   
+        <div class="row">
+          <div class="col-8">
+            📣 ประกาศล่าสุด
+          </div>
+          <div class="col-4">
+            <input type="text" id="DataGAction" class="form-control float-sm-end" placeholder="🔍ค้นหารายการ...">
+          </div>
+        </div>
+      </div>
+      <div class="card-body rounded-4">
+<div class="table-responsive">
+  <table id="ActiveTableDataG" class="table table-sm">
+    <thead>
+      <tr class="text-center">
+        <th scope="col">รายละเอียดประกาศ</th>
+      </tr>
+    </thead>
+    <tbody id="ActiveTableDataG-body"></tbody>
+  </table>
+</div>
+      </div>
+    </div>
+  </div>  
+  <div class="col-12 col-lg-6 col-xl-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white">
+        <div class="row">
+          <div class="col-8">
+            📢 ประชาสัมพันธ์ล่าสุด
+          </div>
+          <div class="col-4">
+            <input type="text" id="DataHAction" class="form-control float-sm-end" placeholder="🔍ค้นหารายการ...">
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+<div class="table-responsive">
+  <table id="ActiveTableDataH" class="table table-sm">
+    <thead>
+      <tr class="text-center">
+        <th scope="col">รายละเอียดประชาสัมพันธ์</th>
+      </tr>
+    </thead>
+    <tbody id="ActiveTableDataH-body"></tbody>
+  </table>
+</div>
+      </div>
+    </div>           
+  </div>
+</div>

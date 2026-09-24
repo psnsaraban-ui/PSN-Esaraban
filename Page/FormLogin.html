@@ -1,0 +1,110 @@
+<section id="pageformLogin">
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+	<div class="form-wrapper">
+		<h5 class="form-title"><img class="navbar-profile-image" img src="" id="logoLogin" alt="Image"> <strong  id="textLogin"></strong></h5>
+		<form id="formLogin">
+			<div class="form-group">
+				<label class="required"><i class="fa-solid fa-circle-user text-primary"></i> Username</label>
+				<input type="text" id="username" placeholder="กรุณากรอกชื่อผู้ใช้งาน" required>
+			</div>
+			<div class="form-group">
+				<label class="required"><i class="fa-solid fa-lock text-primary"></i> Password</label>
+				<input type="password" id="password" placeholder="กรุณากรอกรหัสผ่าน" required>
+			</div>
+			<button type="submit" class="btnl btnl-blue" value="Login" onclick="login()">Login</button>
+		</form>
+	</div>
+</div>
+</section>
+<style>
+:root {
+	--black: #222;
+	--blue: #335DFF;
+	--blue-d-1: #204AEE;
+	--grey-l-1: #F5F5F5;
+	--grey: #EEE;
+	--grey-d-1: #888;
+	--yellow: #FFC652;
+	--white: #FFF;
+	--red: #F00000;
+}
+
+.mb-4 {
+	margin-bottom: 1rem;
+}
+.btnl {
+	padding: .75rem 1.5rem;
+	background: transparent;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	transition: background .2s;
+	border-radius: .25rem;
+	font-size: 1rem;
+	font-weight: 500;
+}
+.btnl-blue {
+  background-color: var(--bs-set);
+  color: var(--bs-light);
+  transition: all 0.3s;
+}
+.btnl-blue:hover {
+  background-color: var(--bs-upload);
+  color: var(--bs-light);
+  transition: all 0.3s;
+  transform: scale(1.1);
+}
+
+.form-wrapper {
+	padding: 2rem;
+	background: var(--white);
+	border-radius: 20px;
+	max-width: 576px;
+	width: 100%;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	margin: 1rem 0;
+}
+.form-title {
+	font-size: 1.25rem;
+	margin-bottom: .5rem;
+	font-weight: 600;
+  color: var(--bs-set);
+}
+.form-detail {
+	color: var(--grey-d-1);
+	margin-bottom: 2rem;
+}
+.form-group {
+	margin-bottom: 1.5rem;
+}
+.form-group input {
+	width: 100%;
+	padding: .75rem 1rem;
+	border: 1px solid var(--grey);
+	outline: none;
+	border-radius: .25rem;
+	font-size: 1rem;
+}
+.form-group input:focus,
+.form-group input:not(:placeholder-shown) {
+	background: var(--grey-l-1);
+}
+.form-group input::placeholder {
+	color: var(--grey-d-1);
+}
+.form-group label {
+	display: inline-block;
+	margin-bottom: .25rem;
+}
+label.required::after {
+	content: ' *';
+	color: var(--red);
+}
+.form-link {
+	color: var(--blue);
+	text-decoration: none;
+}
+.form-link:hover {
+	text-decoration: underline;
+}
+</style>

@@ -1,0 +1,155 @@
+<div class="py-4"> 
+<ul class="box-info">
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/qwjfapmb.json"
+      trigger="loop"
+      delay="2000"
+      state="in-reveal"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>ทั้งหมด</p>
+      <h3 id="countingDataG1">0 <span style="font-size: 12px">(ฉบับ)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/guqkthkk.json"
+      trigger="loop"
+      delay="2000"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>ประกาศ</p>
+      <h3 id="countingDataG3">0 <span style="font-size: 12px">(ฉบับ)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+        src="https://cdn.lordicon.com/lzgqzxrq.json"
+        trigger="loop"
+        delay="2000"
+        state="in-reveal"
+        style="width:80px;height:80px;">
+    </lord-icon>
+    <span class="text">
+      <p>รอประกาศ</p>
+      <h3 id="countingDataG2">0 <span style="font-size: 12px">(ฉบับ)</span></h3>        
+    </span>
+  </li>
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/jqnbdcqr.json"
+      trigger="loop"
+      delay="2000"
+      state="in-reveal"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>ยกเลิก</p>
+      <h3 id="countingDataG4">0 <span style="font-size: 12px">(ฉบับ)</span></h3>               
+    </span>
+  </li>
+</ul>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-12 col-xl-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white">
+        <div class="row">
+          <div class="col-4">
+            <i class="fa-solid fa-book-open-reader" style="color: var(--box3)"></i> ประกาศ
+          </div>
+          <div class="col-8 d-flex justify-content-end">
+            <select id="searchDataG" class="form-select me-2" style="width: 200px;">
+              <option selected value="">💽 ทั้งหมด</option>
+              <option value="รอประกาศ">⏰ รอประกาศ</option>
+              <option value="ประกาศ">✅ ประกาศ</option>
+              <option value="ยกเลิก">❌ ยกเลิก</option>
+            </select>
+            <button type="button" class="btn upload-button me-2" onclick="exportExcel(7)">Excel</button>
+            <button type="button" class="btn set-button" data-bs-target="#DataGSetModal" data-bs-toggle="modal">ลงทะเบียน</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body rounded-4">
+        <table id="showDataG" class="table table-sm nowrap" style="width:100%"></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const clearModalDataG = () => {
+  $('#updatadataG1, #updatadataG2').hide();
+  $('#dataDataGInputKey, #dataDataGInput1, #dataDataGInput2, #dataDataGInput3, #fileDataG5').val("");
+  resetUploadSwitches();
+  document.getElementById('dataDataGInput3').type = "date";
+}
+
+const submitAddDataG = (obj) => {
+  event.preventDefault();
+  const dataDataGInputKey = $('#dataDataGInputKey').val();
+  const dataDataGInput1 = $('#dataDataGInput1').val();
+  const dataDataGInput2 = $('#dataDataGInput2').val();
+  const dataDataGInput3 = $('#dataDataGInput3').val();
+  const dataDataGInput4 = $('#dataDataGInput4').val();
+  const fileDataG5 = $('#fileDataG5').val();
+  if (!dataDataGInput2 || !dataDataGInput4) {
+    createToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน", 3);
+    $.LoadingOverlay("hide");
+    return;
+  }
+  $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+  const successDataG = function(res) {
+    $('#DataGSetModal').modal('hide');
+    $('#dataDataGInputKey, #dataDataGInput1, #dataDataGInput2, #dataDataGInput3, #fileDataG5').val("");
+    $.LoadingOverlay("hide");
+    createToast(dataDataGInputKey === "" ? "✅ บันทึกข้อมูลสำเร็จ" : "✅ แก้ไขข้อมูลสำเร็จ", 1);
+    insertDataG();
+    clearModalDataG();
+  };
+  if (dataDataGInputKey === "") {
+    google.script.run.withSuccessHandler(successDataG).addDataG(obj);
+  } else {
+    google.script.run.withSuccessHandler(successDataG).upDateDataG(obj);
+  }
+}
+
+const editDataG = (el) => {
+  const row = el.parentNode.parentNode.cells;
+  const idDataG = row[0].textContent.trim();
+  const dataDataGInput1 = row[1].textContent.trim();
+  const dataDataGInput2 = row[2].textContent.trim();
+  const dataDataGInput3 = row[3].textContent.trim();
+  const dataDataGInput4 = row[4].textContent.trim();
+  document.getElementById('dataDataGInput3').type = "text";
+  $('#DataGSetModal').modal('show');
+  $('#updatadataG1').show();
+  $('#updatadataG2').show();
+  $('#dataDataGInputKey').val(idDataG);
+  $('#dataDataGInput1').val(dataDataGInput1);
+  $('#dataDataGInput2').val(dataDataGInput2);
+  $('#dataDataGInput3').val(dataDataGInput3);
+  $('#dataDataGInput4').val(dataDataGInput4);
+}
+
+const delDataG = (el) => {
+  const record = el.parentNode.parentNode.cells[0].innerText;
+  $('#confirmBtnDel').off('click').on('click', function() {
+    $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+    $('#DelDataModal').modal('hide');
+    google.script.run.withSuccessHandler(function() {
+      $.LoadingOverlay("hide");
+      insertDataG();
+      createToast("⛔ ลบข้อมูลสำเร็จ", 0);
+    }).delRecDataG(record);
+  });
+  $('#xDelconfirmData').off('click').on('click', function() {
+    $('#DelDataModal').modal('hide');
+  });
+  $('#DelDataModal').modal('show');
+}
+</script>

@@ -1,0 +1,210 @@
+<div class="py-4"> 
+<ul class="box-info">
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/qwjfapmb.json"
+      trigger="loop"
+      delay="2000"
+      state="in-reveal"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>ทั้งหมด</p>
+      <h3 id="countingDataB1">0 <span style="font-size: 12px">(ฉบับ)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/guqkthkk.json"
+      trigger="loop"
+      delay="2000"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>เสร็จสิ้น</p>
+      <h3 id="countingDataB3">0 <span style="font-size: 12px">(ฉบับ)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+        src="https://cdn.lordicon.com/lzgqzxrq.json"
+        trigger="loop"
+        delay="2000"
+        state="in-reveal"
+        style="width:80px;height:80px;">
+    </lord-icon>
+    <span class="text">
+      <p>รอดำเนินการ</p>
+      <h3 id="countingDataB2">0 <span style="font-size: 12px">(ฉบับ)</span></h3>        
+    </span>
+  </li>
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/jqnbdcqr.json"
+      trigger="loop"
+      delay="2000"
+      state="in-reveal"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>ยกเลิก</p>
+      <h3 id="countingDataB4">0 <span style="font-size: 12px">(ฉบับ)</span></h3>               
+    </span>
+  </li>
+</ul>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-12 col-xl-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white">
+        <div class="row">
+          <div class="col-4">
+            <i class="fa-solid fa-book-open-reader" style="color: var(--box3)"></i> ทะเบียนหนังสือรับ
+          </div>
+          <div class="col-8 d-flex justify-content-end">
+            <select id="searchDataB" class="form-select me-2" style="width: 200px;">
+              <option selected value="">💽 ทั้งหมด</option>
+              <option value="รอดำเนินการ">⏰ รอดำเนินการ</option>
+              <option value="เสร็จสิ้น">✅ เสร็จสิ้น</option>
+              <option value="ยกเลิก">❌ ยกเลิก</option>
+            </select>
+            <button type="button" class="btn upload-button me-2" onclick="exportExcel(2)">Excel</button>
+            <button type="button" class="btn set-button" data-bs-target="#DataBSetModal" data-bs-toggle="modal">ลงทะเบียน</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body rounded-4">
+        <table id="showDataB" class="table table-sm nowrap" style="width:100%"></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const claerModalDataB = () => {
+  $('#updatadataB1').hide();
+  $('#updatadataB2').hide();
+  $('#dataDataBInputKey').val("")
+  $('#dataDataBInput1').val("")
+  $('#dataDataBInput2').val("")
+  $('#dataDataBInput3').val("")
+  $('#dataDataBInput4').val("")
+  $('#dataDataBInput5').val("")
+  $('#dataDataBInput6').val("")
+  $('#dataDataBInput7').val("")
+  $("#fileDataB9").val("")
+  $("#fileDataB10").val("")
+  resetUploadSwitches();
+  const inputdateB4 = document.getElementById('dataDataBInput4') 
+  inputdateB4.type = "date";
+  const inputdateB6 = document.getElementById('dataDataBInput6') 
+  inputdateB6.type = "date";
+}
+
+const submitAddDataB = (obj) => {
+  event.preventDefault();
+  const dataDataBInputKey = $('#dataDataBInputKey').val();
+  const dataDataBInput2 = $('#dataDataBInput2').val();
+  const dataDataBInput3 = $('#dataDataBInput3').val();
+  const dataDataBInput5 = $('#dataDataBInput5').val();
+  const dataDataBInput6 = $('#dataDataBInput6').val();
+  const dataDataBInput7 = $('#dataDataBInput7').val();
+  const dataDataBInput8 = $('#dataDataBInput8').val();
+  const fileDataB9 = $('#fileDataB9').val();
+
+  if (dataDataBInputKey === "" && (!dataDataBInput2 || !dataDataBInput3 || !dataDataBInput5 || !dataDataBInput6 || !dataDataBInput7 || !dataDataBInput8 || !fileDataB9)) {
+    createToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน", 3);
+    $.LoadingOverlay("hide");
+    return;
+  } else if (dataDataBInputKey !== "" && (!dataDataBInput2 || !dataDataBInput3 || !dataDataBInput5 || !dataDataBInput6 || !dataDataBInput7 || !dataDataBInput8)) {
+    createToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน", 3);
+    $.LoadingOverlay("hide");
+    return;
+  }
+
+  $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+
+  if (dataDataBInputKey === "") {
+    google.script.run.withSuccessHandler(function(res) {
+      $('#DataBSetModal').modal('hide');
+      $('#dataDataBInput1').val("")
+      $('#dataDataBInput2').val("")
+      $('#dataDataBInput3').val("")
+      $('#dataDataBInput4').val("")
+      $('#dataDataBInput5').val("")
+      $('#dataDataBInput6').val("")
+      $('#dataDataBInput7').val("")
+      $("#fileDataB9").val("")
+      $("#fileDataB10").val("")
+      $.LoadingOverlay("hide");
+      createToast("✅ บันทึกข้อมูลสำเร็จ", 1);
+      resetUploadSwitches();
+      insertDataB();
+    }).addDataB(obj);
+  } else {
+    google.script.run.withSuccessHandler(function(res) {
+      $('#DataBSetModal').modal('hide');
+      $('#dataDataBInput1').val("")
+      $('#dataDataBInput2').val("")
+      $('#dataDataBInput3').val("")
+      $('#dataDataBInput4').val("")
+      $('#dataDataBInput5').val("")
+      $('#dataDataBInput6').val("")
+      $('#dataDataBInput7').val("")
+      $("#fileDataB9").val("")
+      $("#fileDataB10").val("")
+      $.LoadingOverlay("hide");
+      createToast("✅ แก้ไขข้อมูลสำเร็จ", 1);
+      resetUploadSwitches();
+      insertDataB();
+    }).upDateDataB(obj);
+  }
+};
+
+const editDataB = (el) => {
+  const row = el.parentNode.parentNode.cells;
+  const idDataB = row[0].textContent.trim();
+  const dataDataBInput1 = row[1].textContent.trim();
+  const dataDataBInput2 = row[2].textContent.trim();
+  const dataDataBInput3 = row[3].textContent.trim();
+  const dataDataBInput4 = row[4].textContent.trim();
+  const dataDataBInput5 = row[5].textContent.trim();
+  const dataDataBInput6 = row[6].textContent.trim();
+  const dataDataBInput7 = row[7].textContent.trim();
+  const dataDataBInput8 = row[8].textContent.trim();
+  const inputdateB4 = document.getElementById('dataDataBInput4') 
+  inputdateB4.type = "text";
+  const inputdateB6 = document.getElementById('dataDataBInput6') 
+  inputdateB6.type = "text";
+  $('#DataBSetModal').modal('show');
+  $('#updatadataB1').show();
+  $('#updatadataB2').show();
+  $('#dataDataBInputKey').val(idDataB);
+  $('#dataDataBInput1').val(dataDataBInput1);
+  $('#dataDataBInput2').val(dataDataBInput2);
+  $('#dataDataBInput3').val(dataDataBInput3);
+  $('#dataDataBInput4').val(dataDataBInput4);
+  $('#dataDataBInput5').val(dataDataBInput5);
+  $('#dataDataBInput6').val(dataDataBInput6);
+  $('#dataDataBInput7').val(dataDataBInput7);
+  $('#dataDataBInput8').val(dataDataBInput8);
+}
+
+const delDataB = (el) => {
+  const record = el.parentNode.parentNode.cells[0].innerText;
+  $('#confirmBtnDel').off('click').on('click', function() {
+    $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+    $('#DelDataModal').modal('hide');
+    google.script.run.withSuccessHandler(function() {
+      $.LoadingOverlay("hide");
+      insertDataB();
+      createToast("⛔ ลบข้อมูลสำเร็จ", 0);
+    }).delRecDataB(record);
+  });
+  $('#xDelconfirmData').off('click').on('click', function() {
+    $('#DelDataModal').modal('hide');
+  });
+  $('#DelDataModal').modal('show');
+}
+</script>

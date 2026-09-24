@@ -1,0 +1,156 @@
+<div class="py-4"> 
+<ul class="box-info">
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/qwjfapmb.json"
+      trigger="loop"
+      delay="2000"
+      state="in-reveal"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>ทั้งหมด</p>
+      <h3 id="countingDataD1">0 <span style="font-size: 12px">(ฉบับ)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/guqkthkk.json"
+      trigger="loop"
+      delay="2000"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>เสร็จสิ้น</p>
+      <h3 id="countingDataD3">0 <span style="font-size: 12px">(ฉบับ)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+        src="https://cdn.lordicon.com/lzgqzxrq.json"
+        trigger="loop"
+        delay="2000"
+        state="in-reveal"
+        style="width:80px;height:80px;">
+    </lord-icon>
+    <span class="text">
+      <p>รอดำเนินการ</p>
+      <h3 id="countingDataD2">0 <span style="font-size: 12px">(ฉบับ)</span></h3>        
+    </span>
+  </li>
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/jqnbdcqr.json"
+      trigger="loop"
+      delay="2000"
+      state="in-reveal"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>ยกเลิก</p>
+      <h3 id="countingDataD4">0 <span style="font-size: 12px">(ฉบับ)</span></h3>               
+    </span>
+  </li>
+</ul>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-12 col-xl-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white">
+        <div class="row">
+          <div class="col-4">
+            <i class="fa-solid fa-book-open-reader" style="color: var(--box3)"></i> ทะเบียนบันทึกข้อความ
+          </div>
+          <div class="col-8 d-flex justify-content-end">
+            <select id="searchDataD" class="form-select me-2" style="width: 200px;">
+              <option selected value="">💽 ทั้งหมด</option>
+              <option value="รอดำเนินการ">⏰ รอดำเนินการ</option>
+              <option value="เสร็จสิ้น">✅ เสร็จสิ้น</option>
+              <option value="ยกเลิก">❌ ยกเลิก</option>
+            </select>
+            <button type="button" class="btn upload-button me-2" onclick="exportExcel(4)">Excel</button>
+            <button type="button" class="btn set-button" data-bs-target="#DataDSetModal" data-bs-toggle="modal">ลงทะเบียน</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body rounded-4">
+        <table id="showDataD" class="table table-sm nowrap" style="width:100%"></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const clearModalDataD = () => {
+  $('#updatadataD1, #updatadataD2').hide();
+  $('#dataDataDInputKey, #dataDataDInput1, #dataDataDInput2, #dataDataDInput3, #fileDataD6').val("");
+  resetUploadSwitches();
+  document.getElementById('dataDataDInput2').type = "date";
+}
+
+const submitAddDataD = (obj) => {
+  event.preventDefault();
+  const dataDataDInputKey = $('#dataDataDInputKey').val();
+  const dataDataDInput3 = $('#dataDataDInput3').val();
+  const dataDataDInput4 = $('#dataDataDInput4').val();
+  const dataDataDInput5 = $('#dataDataDInput5').val();
+  const fileDataD6 = $('#fileDataD6').val();
+  if (!dataDataDInput3 || !dataDataDInput4 || !dataDataDInput5) {
+    createToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน", 3);
+    $.LoadingOverlay("hide");
+    return;
+  }
+  $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+  const successDataD = function(res) {
+    $('#DataDSetModal').modal('hide');
+    $('#dataDataDInput1, #dataDataDInput2, #dataDataDInput3, #fileDataD6').val("");
+    $.LoadingOverlay("hide");
+    createToast(dataDataDInputKey === "" ? "✅ บันทึกข้อมูลสำเร็จ" : "✅ แก้ไขข้อมูลสำเร็จ", 1);
+    insertDataD();
+    resetUploadSwitches();
+  };
+  if (dataDataDInputKey === "") {
+    google.script.run.withSuccessHandler(successDataD).addDataD(obj);
+  } else {
+    google.script.run.withSuccessHandler(successDataD).upDateDataD(obj);
+  }
+}
+
+const editDataD = (el) => {
+  const row = el.parentNode.parentNode.cells;
+  const idDataD = row[0].textContent.trim();
+  const dataDataDInput1 = row[1].textContent.trim();
+  const dataDataDInput2 = row[2].textContent.trim();
+  const dataDataDInput3 = row[3].textContent.trim();
+  const dataDataDInput4 = row[4].textContent.trim();
+  const dataDataDInput5 = row[5].textContent.trim();
+  document.getElementById('dataDataDInput2').type = "text";
+  $('#DataDSetModal').modal('show');
+  $('#updatadataD1').show();
+  $('#updatadataD2').show();
+  $('#dataDataDInputKey').val(idDataD);
+  $('#dataDataDInput1').val(dataDataDInput1);
+  $('#dataDataDInput2').val(dataDataDInput2);
+  $('#dataDataDInput3').val(dataDataDInput3);
+  $('#dataDataDInput4').val(dataDataDInput4);
+  $('#dataDataDInput5').val(dataDataDInput5);
+}
+
+const delDataD = (el) => {
+  const record = el.parentNode.parentNode.cells[0].innerText;
+  $('#confirmBtnDel').off('click').on('click', function() {
+    $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+    $('#DelDataModal').modal('hide');
+    google.script.run.withSuccessHandler(function() {
+      $.LoadingOverlay("hide");
+      insertDataD();
+      createToast("⛔ ลบข้อมูลสำเร็จ", 0);
+    }).delRecDataD(record);
+  });
+  $('#xDelconfirmData').off('click').on('click', function() {
+    $('#DelDataModal').modal('hide');
+  });
+  $('#DelDataModal').modal('show');
+}
+</script>

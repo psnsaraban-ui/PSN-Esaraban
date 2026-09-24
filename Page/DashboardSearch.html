@@ -1,0 +1,94 @@
+<div class="py-4"> 
+<ul class="box-info">
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/qwjfapmb.json"
+      trigger="loop"
+      delay="2000"
+      state="in-reveal"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>ทั้งหมด</p>
+      <h3 id="countingSearch1">0 <span style="font-size: 12px">(ฉบับ)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/guqkthkk.json"
+      trigger="loop"
+      delay="2000"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>เสร็จสิ้น</p>
+      <h3 id="countingSearch3">0 <span style="font-size: 12px">(ฉบับ)</span></h3>                
+    </span>
+  </li>
+  <li>
+    <lord-icon
+        src="https://cdn.lordicon.com/lzgqzxrq.json"
+        trigger="loop"
+        delay="2000"
+        state="in-reveal"
+        style="width:80px;height:80px;">
+    </lord-icon>
+    <span class="text">
+      <p>รอดำเนินการ</p>
+      <h3 id="countingSearch2">0 <span style="font-size: 12px">(ฉบับ)</span></h3>        
+    </span>
+  </li>
+  <li>
+    <lord-icon
+      src="https://cdn.lordicon.com/jqnbdcqr.json"
+      trigger="loop"
+      delay="2000"
+      state="in-reveal"
+      style="width:80px;height:80px">
+    </lord-icon>
+    <span class="text">
+      <p>ยกเลิก</p>
+      <h3 id="countingSearch4">0 <span style="font-size: 12px">(ฉบับ)</span></h3>               
+    </span>
+  </li>
+</ul>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-12 col-xl-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white">
+        <div class="row">
+          <div class="col-4">
+            <i class="fa-solid fa-book-open-reader" style="color: var(--box3)"></i> ค้นหาทะเบียนสารบรรณ
+          </div>
+          <div class="col-8 d-flex justify-content-end">
+            <select id="searchSearch1" class="form-select me-2" style="width: 200px;">
+              <option selected value="">💽 ทั้งหมด</option>
+              <option value="รอดำเนินการ">⏰ รอดำเนินการ</option>
+              <option value="เสร็จสิ้น">✅ เสร็จสิ้น</option>
+              <option value="ยกเลิก">❌ ยกเลิก</option>
+            </select>
+            <select id="searchSearch2" class="form-select me-2" style="width: 200px;">
+              <option selected value="">💽 ทั้งหมด</option>
+              <option value="หนังสือรับ">✅ หนังสือรับ</option>
+              <option value="หนังสือส่ง">✅ หนังสือส่ง</option>
+              <option value="บันทึกข้อความ">✅ บันทึกข้อความ</option>
+              <option value="คำสั่ง">✅ คำสั่ง</option>
+              <option value="สัญญา">✅ สัญญา</option>
+            </select>
+            <select id="searchSearch3" class="form-select me-2" style="width: 200px;">
+              <option selected value="">💽 ทั้งหมด</option>
+              <option value="2566">✅ 2566</option>
+              <option value="2567">❌ 2567</option>
+              <option value="2568">❌ 2568</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="card-body rounded-4">
+        <table id="showDataSearch" class="table table-sm nowrap" style="width:100%"></table>
+      </div>
+    </div>
+  </div>
+</div>

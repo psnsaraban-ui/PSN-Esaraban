@@ -1,0 +1,92 @@
+<div class="row g-3 mt-2">
+  <div class="col-12 col-lg-12 col-xl-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white">
+        <div class="row">
+          <div class="col-4">
+            <i class="fa-solid fa-book-open-reader" style="color: var(--box3)"></i> ประชาสัมพันธ์
+          </div>
+          <div class="col-8 d-flex justify-content-end">
+            <button type="button" class="btn upload-button me-2" onclick="exportExcel(8)">Excel</button>
+            <button type="button" class="btn set-button" data-bs-target="#DataHSetModal" data-bs-toggle="modal">ลงทะเบียน</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body rounded-4">
+        <table id="showDataH" class="table table-sm nowrap" style="width:100%"></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const clearModalDataH = () => {
+  $('#updatadataH1').hide();
+  $('#dataDataHInputKey, #dataDataHInput1, #dataDataHInput2, #dataDataHInput4, #fileDataH5').val("");
+  resetUploadSwitches();
+  document.getElementById('dataDataHInput4').type = "date";
+}
+
+const submitAddDataH = (obj) => {
+  event.preventDefault();
+  const dataDataHInputKey = $('#dataDataHInputKey').val();
+  const dataDataHInput1 = $('#dataDataHInput1').val();
+  const dataDataHInput2 = $('#dataDataHInput2').val();
+  const dataDataHInput3 = $('#dataDataHInput3').val();
+  const dataDataHInput4 = $('#dataDataHInput4').val();
+  const fileDataH5 = $('#fileDataH5').val();
+  if (!dataDataHInput1 || !dataDataHInput2 || !dataDataHInput3) {
+    createToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน", 3);
+    $.LoadingOverlay("hide");
+    return;
+  }
+  $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+  const successDataH = function(res) {
+    $('#DataHSetModal').modal('hide');
+    $('#dataDataHInputKey, #dataDataHInput1, #dataDataHInput2, #dataDataHInput4, #fileDataH5').val("");
+    $.LoadingOverlay("hide");
+    createToast(dataDataHInputKey === "" ? "✅ บันทึกข้อมูลสำเร็จ" : "✅ แก้ไขข้อมูลสำเร็จ", 1);
+    insertDataH();
+    clearModalDataH();
+  };
+  if (dataDataHInputKey === "") {
+    google.script.run.withSuccessHandler(successDataH).addDataH(obj);
+  } else {
+    google.script.run.withSuccessHandler(successDataH).upDateDataH(obj);
+  }
+}
+
+const editDataH = (el) => {
+  const row = el.parentNode.parentNode.cells;
+  const idDataH = row[0].textContent.trim();
+  const dataDataHInput1 = row[1].textContent.trim();
+  const dataDataHInput2 = row[2].textContent.trim();
+  const dataDataHInput3 = row[3].textContent.trim();
+  const dataDataHInput4 = row[4].textContent.trim();
+  document.getElementById('dataDataHInput4').type = "text";
+  $('#DataHSetModal').modal('show');
+  $('#updatadataH1').show();
+  $('#dataDataHInputKey').val(idDataH);
+  $('#dataDataHInput1').val(dataDataHInput1);
+  $('#dataDataHInput2').val(dataDataHInput2);
+  $('#dataDataHInput3').val(dataDataHInput3);
+  $('#dataDataHInput4').val(dataDataHInput4);
+}
+
+const delDataH = (el) => {
+  const record = el.parentNode.parentNode.cells[0].innerText;
+  $('#confirmBtnDel').off('click').on('click', function() {
+    $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+    $('#DelDataModal').modal('hide');
+    google.script.run.withSuccessHandler(function() {
+      $.LoadingOverlay("hide");
+      insertDataH();
+      createToast("⛔ ลบข้อมูลสำเร็จ", 0);
+    }).delRecDataH(record);
+  });
+  $('#xDelconfirmData').off('click').on('click', function() {
+    $('#DelDataModal').modal('hide');
+  });
+  $('#DelDataModal').modal('show');
+}
+</script>

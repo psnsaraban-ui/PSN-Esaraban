@@ -6,7 +6,7 @@
         <div class="d-flex justify-content-center">
           <select class="form-select" id="searchDataSend" style="width: 200px;" onchange="filterUsersByDepartment()"></select>
         </div>
-        <form id="formSendData" onsubmit="submitSendData(this)">
+        <form id="formSendData" onsubmit="submitSendData(this, event)">
           <div class="row">
             <div class="col-md-12">
               <input type="text" class="form-control" id="sendDataInputKey" name="sendDataInputKey" hidden>
@@ -76,7 +76,7 @@
     <div class="modal-content rounded-5">
       <div class="modal-body p-4">
         <h5 class="mb-0 fw-medium text-center mt-2 mb-2" style="color: var(--box1);">📩 ส่งออกนอกหน่วยงาน</h5>
-        <form id="formSendAgency" onsubmit="submitSendAgency(this)">
+        <form id="formSendAgency" onsubmit="submitSendAgency(this, event)">
           <div class="row">
             <div class="col-md-12">
               <input type="text" class="form-control" id="agencyDataInputKey" name="agencyDataInputKey" hidden>
@@ -230,7 +230,7 @@
     <div class="modal-content rounded-5">
       <div class="modal-body p-4">
         <h5 class="mb-0 fw-medium  text-center mt-2" style="color: var(--box1);">📝 ฟอร์มทะเบียนรับ <span style="font-size: 14px; color: var(--box4);">ภายนอก</span></h5>
-<form id="formDataA" onsubmit="submitAddDataA(this)">
+<form id="formDataA" onsubmit="submitAddDataA(this, event)">
   <input type="text" class="form-control" id="dataDataAInputKey" name="dataDataAInputKey" hidden>
   <div class="row mt-2">
     <div class="col-md-6" id="updatadataA1" style="display:none">
@@ -374,7 +374,7 @@
     <div class="modal-content rounded-5">
       <div class="modal-body p-4">
         <h5 class="mb-0 fw-medium  text-center mt-2" style="color: var(--box1);">📝 ฟอร์มทะเบียนรับ <span style="font-size: 14px; color: var(--box4);">ภายใน</span></h5>
-<form id="formDataB" onsubmit="submitAddDataB(this)">
+<form id="formDataB" onsubmit="submitAddDataB(this, event)">
   <input type="text" class="form-control" id="dataDataBInputKey" name="dataDataBInputKey" hidden>
   <div class="row mt-2">
     <div class="col-md-6" id="updatadataB1" style="display:none">
@@ -486,7 +486,7 @@
     <div class="modal-content rounded-5">
       <div class="modal-body p-4">
         <h5 class="mb-0 fw-medium  text-center mt-2" style="color: var(--box1);">📝 ฟอร์มทะเบียนส่งออก</h5>
-<form id="formDataC" onsubmit="submitAddDataC(this)">
+<form id="formDataC" onsubmit="submitAddDataC(this, event)">
   <input type="text" class="form-control" id="dataDataCInputKey" name="dataDataCInputKey" hidden>
   <div class="row mt-2">
     <div class="col-md-6" id="updatadataC1" style="display:none">
@@ -579,7 +579,7 @@
     <div class="modal-content rounded-5">
       <div class="modal-body p-4">
         <h5 class="mb-0 fw-medium text-center mt-2" style="color: var(--box1);">📝 ทะเบียน <span style="font-size: 12px; color: var(--box4);">บันทึกข้อความ</span></h5>
-        <form id="formDataD" onsubmit="submitAddDataD(this)">
+        <form id="formDataD" onsubmit="submitAddDataD(this, event)">
           <input type="text" class="form-control" id="dataDataDInputKey" name="dataDataDInputKey" hidden>
           <div class="row mt-2">
             <div class="col-md-6" id="updatadataD1" style="display:none">
@@ -651,7 +651,7 @@
     <div class="modal-content rounded-5">
       <div class="modal-body p-4">
         <h5 class="mb-0 fw-medium text-center mt-2" style="color: var(--box1);">📝 ทะเบียน <span style="font-size: 12px; color: var(--box4);">คำสั่ง</span></h5>
-        <form id="formDataE" onsubmit="submitAddDataE(this)">
+        <form id="formDataE" onsubmit="submitAddDataE(this, event)">
           <input type="text" class="form-control" id="dataDataEInputKey" name="dataDataEInputKey" hidden>
           <div class="row mt-2">
             <div class="col-md-6" id="updatadataE1" style="display:none">
@@ -723,7 +723,7 @@
     <div class="modal-content rounded-5">
       <div class="modal-body p-4">
         <h5 class="mb-0 fw-medium text-center mt-2" style="color: var(--box1);">📝 ทะเบียน <span style="font-size: 12px; color: var(--box4);">สัญญา</span></h5>
-        <form id="formDataF" onsubmit="submitAddDataF(this)">
+        <form id="formDataF" onsubmit="submitAddDataF(this, event)">
           <input type="text" class="form-control" id="dataDataFInputKey" name="dataDataFInputKey" hidden>
           <div class="row mt-2">
             <div class="col-md-6" id="updatadataF1" style="display:none">
@@ -795,7 +795,7 @@
     <div class="modal-content rounded-5">
       <div class="modal-body p-4">
         <h5 class="mb-0 fw-medium text-center mt-2" style="color: var(--box1);">📝 ประกาศ</h5>
-        <form id="formDataG" onsubmit="submitAddDataG(this)">
+        <form id="formDataG" onsubmit="submitAddDataG(this, event)">
           <input type="text" class="form-control" id="dataDataGInputKey" name="dataDataGInputKey" hidden>
           <div class="row mt-2">
             <div class="col-md-6" id="updatadataG1" style="display:none">
@@ -862,7 +862,7 @@
     <div class="modal-content rounded-5">
       <div class="modal-body p-4">
         <h5 class="mb-0 fw-medium text-center mt-2" style="color: var(--box1);">📝 ประชาสัมพันธ์</h5>
-        <form id="formDataH" onsubmit="submitAddDataH(this)">
+        <form id="formDataH" onsubmit="submitAddDataH(this, event)">
           <input type="text" class="form-control" id="dataDataHInputKey" name="dataDataHInputKey" hidden>
           <div class="row mt-2">
             <div class="col-md-12">

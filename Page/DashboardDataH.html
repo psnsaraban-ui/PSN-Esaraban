@@ -27,20 +27,21 @@ const clearModalDataH = () => {
   document.getElementById('dataDataHInput4').type = "date";
 }
 
-const submitAddDataH = (obj) => {
+const submitAddDataH = async (obj, event) => {
   event.preventDefault();
   const dataDataHInputKey = $('#dataDataHInputKey').val();
   const dataDataHInput1 = $('#dataDataHInput1').val();
   const dataDataHInput2 = $('#dataDataHInput2').val();
   const dataDataHInput3 = $('#dataDataHInput3').val();
   const dataDataHInput4 = $('#dataDataHInput4').val();
-  const fileDataH5 = $('#fileDataH5').val();
+  const fileDataH5 = $('#fileDataH5').prop('files')[0];
   if (!dataDataHInput1 || !dataDataHInput2 || !dataDataHInput3) {
     createToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน", 3);
     $.LoadingOverlay("hide");
     return;
   }
   $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+  obj.myfileDataH5 = fileDataH5 ? await getBase64(fileDataH5) : "";
   const successDataH = function(res) {
     $('#DataHSetModal').modal('hide');
     $('#dataDataHInputKey, #dataDataHInput1, #dataDataHInput2, #dataDataHInput4, #fileDataH5').val("");

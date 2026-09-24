@@ -102,7 +102,7 @@ const claerModalDataB = () => {
   inputdateB6.type = "date";
 }
 
-const submitAddDataB = (obj) => {
+const submitAddDataB = async (obj, event) => {
   event.preventDefault();
   const dataDataBInputKey = $('#dataDataBInputKey').val();
   const dataDataBInput2 = $('#dataDataBInput2').val();
@@ -111,7 +111,8 @@ const submitAddDataB = (obj) => {
   const dataDataBInput6 = $('#dataDataBInput6').val();
   const dataDataBInput7 = $('#dataDataBInput7').val();
   const dataDataBInput8 = $('#dataDataBInput8').val();
-  const fileDataB9 = $('#fileDataB9').val();
+  const fileDataB9 = $('#fileDataB9').prop('files')[0];
+  const fileDataB10 = $('#fileDataB10').prop('files')[0];
 
   if (dataDataBInputKey === "" && (!dataDataBInput2 || !dataDataBInput3 || !dataDataBInput5 || !dataDataBInput6 || !dataDataBInput7 || !dataDataBInput8 || !fileDataB9)) {
     createToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน", 3);
@@ -124,6 +125,8 @@ const submitAddDataB = (obj) => {
   }
 
   $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+  obj.myfileDataB9 = fileDataB9 ? await getBase64(fileDataB9) : "";
+  obj.myfileDataB10 = fileDataB10 ? await getBase64(fileDataB10) : "";
 
   if (dataDataBInputKey === "") {
     google.script.run.withSuccessHandler(function(res) {

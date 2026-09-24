@@ -86,19 +86,13 @@ const claerModalDataC = () => {
   $('#updatadataC1').hide();
   $('#updatadataC2').hide();
   $('#dataDataCInputKey').val("")
-  $('#dataDataCInput1').val("")
-  $('#dataDataCInput2').val("")
-  $('#dataDataCInput3').val("")
-  $('#dataDataCInput4').val("")
-  $('#dataDataCInput5').val("")
-  $("#fileDataB9").val("")
-  $("#fileDataB10").val("")
+  $('#dataDataCInput1, #dataDataCInput2, #dataDataCInput3, #dataDataCInput4, #dataDataCInput5, #fileDataC8').val("")
   resetUploadSwitches();
   const inputdateC2 = document.getElementById('dataDataCInput2') 
   inputdateC2.type = "date";
 }
 
-const submitAddDataC = (obj) => {
+const submitAddDataC = async (obj, event) => {
   event.preventDefault();
   const dataDataCInputKey = $('#dataDataCInputKey').val();
   const dataDataCInput2 = $('#dataDataCInput2').val();
@@ -107,7 +101,7 @@ const submitAddDataC = (obj) => {
   const dataDataCInput5 = $('#dataDataCInput5').val();
   const dataDataCInput6 = $('#dataDataCInput6').val();
   const dataDataCInput7 = $('#dataDataCInput7').val();
-  const fileDataC8 = $('#fileDataC8').val();
+  const fileDataC8 = $('#fileDataC8').prop('files')[0];
 
   if (dataDataCInputKey === "" && (!dataDataCInput3 || !dataDataCInput4 || !dataDataCInput5 || !dataDataCInput6 || !dataDataCInput7)) {
     createToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน", 3);
@@ -120,6 +114,7 @@ const submitAddDataC = (obj) => {
   }
 
   $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+  obj.myfileDataC8 = fileDataC8 ? await getBase64(fileDataC8) : "";
 
   if (dataDataCInputKey === "") {
     google.script.run.withSuccessHandler(function(res) {

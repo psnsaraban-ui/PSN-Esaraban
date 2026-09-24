@@ -84,9 +84,7 @@ const addDataD = (obj) => {
   const lastRowID = sheetD.getLastRow();
   const codeIDDataD = generateIDDataD(lastRowID);
   const documentFolder = DriveApp.getFolderById(idfolder);
-  const createFileAndReturnUrl = (fileData, namePrefix) => {
-    return fileData.length > 0 ? documentFolder.createFile(fileData.setName(namePrefix + codeIDDataD)).getUrl() : "";
-  };
+  const createFileAndReturnUrl = (fileData, namePrefix) => createPdfFileFromBase64(documentFolder, fileData, namePrefix + codeIDDataD);
   const ucfileA1 = createFileAndReturnUrl(obj.myfileDataD6, "หนังสือบันทึกข้อความ(ไฟล์หลัก)")|| "";
   const d = new Date(); 
   const curdate = d.getDate(); 
@@ -125,8 +123,8 @@ const upDateDataD = (obj) => {
   const documentFolder = DriveApp.getFolderById(idfolder);
 
   var ucfileA1 = "";
-  if (obj.myfileDataD6.length > 0) {
-    ucfileA1 = documentFolder.createFile(obj.myfileDataD6.setName("หนังสือบันทึกข้อความ(ไฟล์หลัก)" + obj.dataDataDInputKey)).getUrl();
+  if (obj.myfileDataD6) {
+    ucfileA1 = createPdfFileFromBase64(documentFolder, obj.myfileDataD6, "หนังสือบันทึกข้อความ(ไฟล์หลัก)" + obj.dataDataDInputKey);
     const oldfile = sheetD.getRange(rowIndex + 1, 7).getValue().split('/')[5];
     if (oldfile) {
       DriveApp.getFileById(oldfile).setTrashed(true);
@@ -180,9 +178,7 @@ const addDataE = (obj) => {
   const lastRowID = sheetE.getLastRow();
   const codeIDDataE = generateIDDataE(lastRowID);
   const documentFolder = DriveApp.getFolderById(idfolder);
-  const createFileAndReturnUrl = (fileData, namePrefix) => {
-    return fileData.length > 0 ? documentFolder.createFile(fileData.setName(namePrefix + codeIDDataE)).getUrl() : "";
-  };
+  const createFileAndReturnUrl = (fileData, namePrefix) => createPdfFileFromBase64(documentFolder, fileData, namePrefix + codeIDDataE);
   const ucfileA1 = createFileAndReturnUrl(obj.myfileDataE6, "หนังสือคำสั่ง(ไฟล์หลัก)")|| "";
   const d = new Date(); 
   const curdate = d.getDate(); 
@@ -221,8 +217,8 @@ const upDateDataE = (obj) => {
   const documentFolder = DriveApp.getFolderById(idfolder);
 
   var ucfileA1 = "";
-  if (obj.myfileDataE6.length > 0) {
-    ucfileA1 = documentFolder.createFile(obj.myfileDataE6.setName("หนังสือคำสั่ง(ไฟล์หลัก)" + obj.dataDataEInputKey)).getUrl();
+  if (obj.myfileDataE6) {
+    ucfileA1 = createPdfFileFromBase64(documentFolder, obj.myfileDataE6, "หนังสือคำสั่ง(ไฟล์หลัก)" + obj.dataDataEInputKey);
     const oldfile = sheetE.getRange(rowIndex + 1, 7).getValue().split('/')[5];
     if (oldfile) {
       DriveApp.getFileById(oldfile).setTrashed(true);
@@ -276,9 +272,7 @@ const addDataF = (obj) => {
   const lastRowID = sheetF.getLastRow();
   const codeIDDataF = generateIDDataF(lastRowID);
   const documentFolder = DriveApp.getFolderById(idfolder);
-  const createFileAndReturnUrl = (fileData, namePrefix) => {
-    return fileData.length > 0 ? documentFolder.createFile(fileData.setName(namePrefix + codeIDDataF)).getUrl() : "";
-  };
+  const createFileAndReturnUrl = (fileData, namePrefix) => createPdfFileFromBase64(documentFolder, fileData, namePrefix + codeIDDataF);
   const ucfileA1 = createFileAndReturnUrl(obj.myfileDataF6, "หนังสือสัญญา(ไฟล์หลัก)")|| "";
   const d = new Date(); 
   const curdate = d.getDate(); 
@@ -317,8 +311,8 @@ const upDateDataF = (obj) => {
   const documentFolder = DriveApp.getFolderById(idfolder);
 
   var ucfileA1 = "";
-  if (obj.myfileDataF6.length > 0) {
-    ucfileA1 = documentFolder.createFile(obj.myfileDataF6.setName("หนังสือสัญญา(ไฟล์หลัก)" + obj.dataDataFInputKey)).getUrl();
+  if (obj.myfileDataF6) {
+    ucfileA1 = createPdfFileFromBase64(documentFolder, obj.myfileDataF6, "หนังสือสัญญา(ไฟล์หลัก)" + obj.dataDataFInputKey);
     const oldfile = sheetF.getRange(rowIndex + 1, 7).getValue().split('/')[5];
     if (oldfile) {
       DriveApp.getFileById(oldfile).setTrashed(true);

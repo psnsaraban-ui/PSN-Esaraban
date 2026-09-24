@@ -89,19 +89,20 @@ const clearModalDataF = () => {
   document.getElementById('dataDataFInput2').type = "date";
 }
 
-const submitAddDataF = (obj) => {
+const submitAddDataF = async (obj, event) => {
   event.preventDefault();
   const dataDataFInputKey = $('#dataDataFInputKey').val();
   const dataDataFInput3 = $('#dataDataFInput3').val();
   const dataDataFInput4 = $('#dataDataFInput4').val();
   const dataDataFInput5 = $('#dataDataFInput5').val();
-  const fileDataF6 = $('#fileDataF6').val();
+  const fileDataF6 = $('#fileDataF6').prop('files')[0];
   if (!dataDataFInput3 || !dataDataFInput4 || !dataDataFInput5) {
     createToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน", 3);
     $.LoadingOverlay("hide");
     return;
   }
   $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
+  obj.myfileDataF6 = fileDataF6 ? await getBase64(fileDataF6) : "";
   const successDataF = function(res) {
     $('#DataFSetModal').modal('hide');
     $('#dataDataFInput1, #dataDataFInput2, #dataDataFInput3, #fileDataF6').val("");

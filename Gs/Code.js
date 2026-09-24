@@ -14,6 +14,13 @@ const include = (filename) => {
   return HtmlService.createHtmlOutputFromFile(filename).getContent()
 }
 
+const createPdfFileFromBase64 = (folder, base64Data, filename) => {
+  if (!base64Data) return "";
+  const bytes = Utilities.base64Decode(base64Data);
+  const blob = Utilities.newBlob(bytes, MimeType.PDF, filename);
+  return folder.createFile(blob).getUrl();
+}
+
 const getDataSearch = () => {
   const sheet = SpreadsheetApp.openById(sheetDataSearch);
   const sheetset = sheet.getSheetByName("DataSearch"); 

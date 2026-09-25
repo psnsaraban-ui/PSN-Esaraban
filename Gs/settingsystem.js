@@ -35,6 +35,7 @@ const settingGS = (data) => {
 const selectDataFromSheet = (sheetName) => {
   var sheet = SpreadsheetApp.openById(sheetDataSet).getSheetByName(sheetName);
   var getLastRow = sheet.getLastRow();
+  if (getLastRow < 2) return [];
   var data = sheet.getRange(2, 2, getLastRow - 1, 1).getValues().flat();
   return data;
 }
@@ -49,16 +50,18 @@ const selectResponse = () => selectDataFromSheet("Response");
 
 const getTodos = (sheetName) => {
   var sheet = SpreadsheetApp.openById(sheetDataSet).getSheetByName(sheetName);
+  if (sheet.getLastRow() < 2) return [];
   var data = sheet.getRange('B2:B' + sheet.getLastRow()).getValues();
   return data.flat().filter(Boolean);
 }
 
 const saveTodos = (data) => {
   var sheet = SpreadsheetApp.openById(sheetDataSet).getSheetByName(data.sheetName);
-  sheet.getRange(2, 2, sheet.getLastRow() - 1, 1).clearContent();
-  data.todos.forEach((todo, index) => {
-    sheet.getRange(index + 2, 2).setValue(todo);
-  });
+  var lastRow = sheet.getLastRow();
+  if (lastRow > 1) sheet.getRange(2, 2, lastRow - 1, 1).clearContent();
+  if (data.todos.length > 0) {
+    sheet.getRange(2, 2, data.todos.length, 1).setValues(data.todos.map(todo => [todo]));
+  }
 }
 
 const selectUsersToken = () => {
@@ -224,6 +227,16 @@ function sendNotify(msg, setting, imageUrls = []) {
     };
     UrlFetchApp.fetch(setting.token, options);
   }
+}
+
+function testTelegramBot() {
+  const telegramSetting = getNotificationSettings().find(setting => setting.id === "2");
+  if (!telegramSetting) {
+    throw new Error('ไม่พบการตั้งค่า Telegram ที่เปิดใช้งานในชีต Notification');
+  }
+
+  sendNotify('ทดสอบการส่งข้อความจาก I-OFFICE สำเร็จ', telegramSetting);
+  return 'ส่งข้อความทดสอบไปยัง Telegram แล้ว';
 }
 
 // function sendNotify(msg, tokens, imgUrl) {

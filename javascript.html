@@ -27,7 +27,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.20.0/dist/bootstrap-table.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-table/dist/locale/bootstrap-table-th-TH.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
@@ -35,17 +34,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
 
 <script>
-  var signaturePadUser = new SignaturePad(document.getElementById('signatureCanvas'));
-  var clearButtonA = document.getElementById('clearButtonA');
-  var colorPickerA = document.getElementById('colorPickerA');
-  var currentColorA = '#000000'; 
+  const signatureCanvas = document.getElementById('signatureCanvas');
+  const clearButtonA = document.getElementById('clearButtonA');
+  const colorPickerA = document.getElementById('colorPickerA');
+  let currentColorA = '#000000';
+
+  if (signatureCanvas && clearButtonA && colorPickerA) {
+    const signaturePadUser = new SignaturePad(signatureCanvas);
+
     clearButtonA.addEventListener('click', function () {
-      signaturePadUser.clear();  
+      signaturePadUser.clear();
     });
+
     colorPickerA.addEventListener('input', function () {
       currentColorA = colorPickerA.value;
       signaturePadUser.penColor = currentColorA;
-});
+    });
+  }
 
 $(document).ready(function() {
   $('.sidebar-dropdown-menu').slideUp('fast');
@@ -204,10 +209,17 @@ window.addEventListener('load', function() {
 
 async function getIPAddress() {
   const ipAPI = "//api.ipify.org?format=json";
-  const response = await fetch(ipAPI); 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+  let response;
+  try {
+    response = await fetch(ipAPI, { signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+  if (!response.ok) throw new Error(`IP service returned ${response.status}`);
   const data = await response.json(); 
-  const inputValue = data.ip;
-  return inputValue;
+  return data.ip || "Unknown IP";
 }
 
 async function login(event){
@@ -219,9 +231,15 @@ async function login(event){
     return;
   }
   $.LoadingOverlay("show", {  image : "", fontawesome : "fa fa-spinner fa-spin" });
-  const ipCheck = await getIPAddress();
+  let ipCheck = "Unknown IP";
+  try {
+    ipCheck = await getIPAddress();
+  } catch (error) {
+    console.warn("Unable to determine client IP:", error);
+  }
   const userAgent = navigator.userAgent;
-  google.script.run.withSuccessHandler(function(data) {
+  google.script.run
+  .withSuccessHandler(function(data) {
     if (data) {
       const [idmember, user, pass, fname, dpm, status, profileuser, siguser] = data;
       const userData = { idmember, user, pass, fname, dpm, status, profileuser, siguser };
@@ -276,7 +294,13 @@ async function login(event){
       $("#dashboardPage").hide();
       localStorage.clear();
     }
-  }).checkLogin(username, password, ipCheck, userAgent);   
+  })
+  .withFailureHandler(function(error) {
+    $.LoadingOverlay("hide");
+    const message = error && error.message ? error.message : "ไม่สามารถเชื่อมต่อระบบตรวจสอบผู้ใช้งานได้";
+    createToast(`❌ ${message}`, 3);
+  })
+  .checkLogin(username, password, ipCheck, userAgent);
 }
 
 async function Logout() {

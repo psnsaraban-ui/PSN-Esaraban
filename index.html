@@ -2956,7 +2956,7 @@ const filterAgency = () => {
 <section id="pageformLogin">
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
 	<div class="form-wrapper">
-		<h5 class="form-title"><img class="navbar-profile-image" img src="" id="logoLogin" alt="Image"> <strong  id="textLogin"></strong></h5>
+		<h5 class="form-title"><img class="navbar-profile-image" src="https://psnsaraban-ui.github.io/PSN-Esaraban/assets/logo.svg" id="logoLogin" alt="Army Non-Commissioned Officer School"> <strong id="textLogin">Army Non-Commissioned Officer School</strong></h5>
 		<form id="formLogin">
 			<div class="form-group">
 				<label class="required"><i class="fa-solid fa-circle-user text-primary"></i> Username</label>
@@ -6734,6 +6734,9 @@ $(document).ready(function() {
   }
 });
 
+const brandLogoUrl = 'https://psnsaraban-ui.github.io/PSN-Esaraban/assets/logo.svg';
+const brandName = 'Army Non-Commissioned Officer School';
+
 function reLoad() {
   google.script.run.withSuccessHandler(function(url){
     window.open(url,'_top');
@@ -6748,8 +6751,8 @@ document.addEventListener('DOMContentLoaded', () => {
       $("#logoSystem").attr("src", data[13]);
       $("#textSystem").text(data[15]);
       $("#nameSystem").text(data[14]);
-      $("#logoLogin").attr("src", data[13]);
-      $("#textLogin").text(data[14]);
+      $("#logoLogin").attr("src", brandLogoUrl);
+      $("#textLogin").text(brandName);
   }).getSet();
 });
 
@@ -6765,8 +6768,8 @@ const addSetting = () => {
       $("#logoSystem").attr("src", data[13]);
       $("#textSystem").text(data[15]);
       $("#nameSystem").text(data[14]);
-      $("#logoLogin").attr("src", data[13]);
-      $("#textLogin").text(data[14]);
+      $("#logoLogin").attr("src", brandLogoUrl);
+      $("#textLogin").text(brandName);
     }).getSet();
     $.LoadingOverlay("hide");
     createToast("🛠️ บันทึกการตั้งค่าสำเร็จ", 1);

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Army Non-Commissioned Officer School</title>
+  <desc id="desc">Tactical Studies Section emblem</desc>
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff1a8"/>
+      <stop offset=".45" stop-color="#d9a62e"/>
+      <stop offset="1" stop-color="#fff0a0"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="7" stdDeviation="6" flood-color="#000" flood-opacity=".45"/>
+    </filter>
+  </defs>
+  <circle cx="256" cy="256" r="238" fill="#042d24" stroke="url(#gold)" stroke-width="12" filter="url(#shadow)"/>
+  <circle cx="256" cy="256" r="205" fill="none" stroke="url(#gold)" stroke-width="8"/>
+  <path d="M52 316h408l-33 42H85z" fill="#8e1118" stroke="url(#gold)" stroke-width="7"/>
+  <path d="M64 301h384l-35 28H99z" fill="#e5b83d" stroke="#3b2910" stroke-width="6"/>
+  <path d="M256 112l30 34v70h-60v-70z" fill="#0b3527" stroke="url(#gold)" stroke-width="8"/>
+  <path d="M233 170h46v105h-46z" fill="#d8a735" stroke="#4a3210" stroke-width="7"/>
+  <path d="M256 270l-23 38h46z" fill="#d8a735" stroke="#4a3210" stroke-width="6"/>
+  <path d="M230 205L124 141l-15 17 103 90zM282 205l106-64 15 17-103 90z" fill="url(#gold)" stroke="#4a3210" stroke-width="6"/>
+  <path d="M216 252L112 350l17 15 104-87zM296 252l104 98-17 15-104-87z" fill="url(#gold)" stroke="#4a3210" stroke-width="6"/>
+  <circle cx="112" cy="151" r="14" fill="#0b3527" stroke="url(#gold)" stroke-width="7"/>
+  <circle cx="400" cy="151" r="14" fill="#0b3527" stroke="url(#gold)" stroke-width="7"/>
+  <circle cx="128" cy="361" r="14" fill="#0b3527" stroke="url(#gold)" stroke-width="7"/>
+  <circle cx="384" cy="361" r="14" fill="#0b3527" stroke="url(#gold)" stroke-width="7"/>
+  <path d="M242 294h28v22h-28z" fill="#d8a735"/>
+  <text x="256" y="80" fill="#f3d77a" font-family="Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle">ARMY NON-COMMISSIONED OFFICER SCHOOL</text>
+  <text x="256" y="408" fill="#f3d77a" font-family="Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle">TACTICAL STUDIES SECTION</text>
+</svg>

@@ -2,52 +2,66 @@
 (() => {
   if (window.google && window.google.script && window.google.script.run) return;
 
-  const apiUrl = 'https://script.google.com/macros/s/AKfycbwRY0K59FddGG8F_VdLgHoQZRZImkqyVHXNa9ASzPvoUGx8g1k8AJj-jdOdw48Z2eMQGg/exec';
-  const createRunner = (successHandler = null, failureHandler = null, userObject = undefined) => new Proxy({}, {
+  const apiUrl = 'https://script.google.com/macros/s/AKfycbxEoJaHAyeC2A4lsgXnBsSijju8iOqz-Au_S9GQET0zsJFo1WedHCVJiyBaEqyvKyu4YQ/exec';
+  let successHandler = null;
+  let failureHandler = null;
+
+  const runApiCall = (functionName, args) => {
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ functionName, args })
+    })
+      .then(response => response.json())
+      .then(payload => {
+        if (!payload.ok) throw new Error(payload.error || 'Apps Script request failed');
+        if (successHandler) successHandler(payload.result);
+      })
+      .catch(error => {
+        if (failureHandler) failureHandler(error);
+        else console.error(error);
+      });
+  };
+
+  const runner = new Proxy({}, {
     get(_target, property) {
       if (property === 'withSuccessHandler') {
-        return callback => createRunner(callback, failureHandler, userObject);
+        return callback => {
+          successHandler = callback;
+          return runner;
+        };
       }
       if (property === 'withFailureHandler') {
-        return callback => createRunner(successHandler, callback, userObject);
+        return callback => {
+          failureHandler = callback;
+          return runner;
+        };
       }
-      if (property === 'withUserObject') {
-        return object => createRunner(successHandler, failureHandler, object);
-      }
+      if (property === 'withUserObject') return () => runner;
       return (...args) => {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 30000);
+        const currentSuccessHandler = successHandler;
+        const currentFailureHandler = failureHandler;
+        successHandler = null;
+        failureHandler = null;
         fetch(apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ functionName: property, args }),
-          signal: controller.signal
+          body: JSON.stringify({ functionName: property, args })
         })
-          .then(response => {
-            if (!response.ok) throw new Error(`Apps Script HTTP ${response.status}`);
-            return response.json();
-          })
+          .then(response => response.json())
           .then(payload => {
             if (!payload.ok) throw new Error(payload.error || 'Apps Script request failed');
-            if (successHandler) successHandler(payload.result, userObject);
+            if (currentSuccessHandler) currentSuccessHandler(payload.result);
           })
           .catch(error => {
-            if (failureHandler) {
-              failureHandler(error, userObject);
-            } else {
-              console.error(error);
-              if (window.jQuery && $.LoadingOverlay) $.LoadingOverlay('hide');
-              if (typeof window.createToast === 'function') {
-                window.createToast(`ไม่สามารถเชื่อมต่อระบบได้: ${error.message}`, 3);
-              }
-            }
-          })
-          .finally(() => clearTimeout(timeout));
+            if (currentFailureHandler) currentFailureHandler(error);
+            else console.error(error);
+          });
       };
     }
   });
 
   window.google = window.google || {};
-  window.google.script = { run: createRunner() };
+  window.google.script = { run: runner };
 })();
 </script>

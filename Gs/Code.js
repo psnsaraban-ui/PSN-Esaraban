@@ -6,6 +6,30 @@ function doGet(){
   .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
 }
 
+function doPost(e) {
+  try {
+    const request = JSON.parse(e.postData.contents || '{}');
+    const functionName = String(request.functionName || '');
+    if (!/^[A-Za-z_$][\w$]*$/.test(functionName)) {
+      throw new Error('Invalid function name');
+    }
+
+    const targetFunction = eval(functionName);
+    if (typeof targetFunction !== 'function') {
+      throw new Error('Function not found: ' + functionName);
+    }
+
+    const result = targetFunction.apply(null, Array.isArray(request.args) ? request.args : []);
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: true, result: result === undefined ? null : result }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: false, error: error.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
 const getURL = () => {
   return ScriptApp.getService().getUrl();
 }

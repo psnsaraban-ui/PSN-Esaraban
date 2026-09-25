@@ -1,0 +1,67 @@
+<script>
+(() => {
+  if (window.google && window.google.script && window.google.script.run) return;
+
+  const apiUrl = 'https://script.google.com/macros/s/AKfycbxEoJaHAyeC2A4lsgXnBsSijju8iOqz-Au_S9GQET0zsJFo1WedHCVJiyBaEqyvKyu4YQ/exec';
+  let successHandler = null;
+  let failureHandler = null;
+
+  const runApiCall = (functionName, args) => {
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ functionName, args })
+    })
+      .then(response => response.json())
+      .then(payload => {
+        if (!payload.ok) throw new Error(payload.error || 'Apps Script request failed');
+        if (successHandler) successHandler(payload.result);
+      })
+      .catch(error => {
+        if (failureHandler) failureHandler(error);
+        else console.error(error);
+      });
+  };
+
+  const runner = new Proxy({}, {
+    get(_target, property) {
+      if (property === 'withSuccessHandler') {
+        return callback => {
+          successHandler = callback;
+          return runner;
+        };
+      }
+      if (property === 'withFailureHandler') {
+        return callback => {
+          failureHandler = callback;
+          return runner;
+        };
+      }
+      if (property === 'withUserObject') return () => runner;
+      return (...args) => {
+        const currentSuccessHandler = successHandler;
+        const currentFailureHandler = failureHandler;
+        successHandler = null;
+        failureHandler = null;
+        fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ functionName: property, args })
+        })
+          .then(response => response.json())
+          .then(payload => {
+            if (!payload.ok) throw new Error(payload.error || 'Apps Script request failed');
+            if (currentSuccessHandler) currentSuccessHandler(payload.result);
+          })
+          .catch(error => {
+            if (currentFailureHandler) currentFailureHandler(error);
+            else console.error(error);
+          });
+      };
+    }
+  });
+
+  window.google = window.google || {};
+  window.google.script = { run: runner };
+})();
+</script>

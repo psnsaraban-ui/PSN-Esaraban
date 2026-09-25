@@ -1282,6 +1282,11 @@ let tableLogUs;
 
 const insertDataSearch = () => {
   google.script.run.withSuccessHandler(function(dataArray) {
+  dataArray = (Array.isArray(dataArray) ? dataArray : []).map((row) => {
+    const normalizedRow = Array.isArray(row) ? row.slice(0, 9) : [];
+    while (normalizedRow.length < 9) normalizedRow.push('');
+    return normalizedRow;
+  });
   var countingSearch1 = 0;
   var countingSearch2 = 0;
   var countingSearch3 = 0;

@@ -3,7 +3,8 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $templatePath = Join-Path $root 'AppsScript.html'
 $outputPath = Join-Path $root 'index.html'
-$template = Get-Content -Raw -LiteralPath $templatePath
+$utf8 = [Text.UTF8Encoding]::new($false)
+$template = [IO.File]::ReadAllText($templatePath, $utf8)
 
 $includePattern = '<\?!=\s*include\s*\([''\"]([^''\"]+)[''\"]\)\s*\?>'
 $staticHtml = [regex]::Replace($template, $includePattern, {
@@ -16,8 +17,8 @@ $staticHtml = [regex]::Replace($template, $includePattern, {
     if (-not (Test-Path -LiteralPath $includePath)) {
         throw "Included file not found: $relativePath"
     }
-    Get-Content -Raw -LiteralPath $includePath
+    [IO.File]::ReadAllText($includePath, $utf8)
 })
 
-[IO.File]::WriteAllText($outputPath, $staticHtml, [Text.UTF8Encoding]::new($false))
+[IO.File]::WriteAllText($outputPath, $staticHtml, $utf8)
 Write-Output "Built $outputPath"

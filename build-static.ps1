@@ -1,24 +1,22 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$templatePath = Join-Path $root 'AppsScript.html'
 $outputPath = Join-Path $root 'index.html'
 $utf8 = [Text.UTF8Encoding]::new($false)
-$template = [IO.File]::ReadAllText($templatePath, $utf8)
-
-$includePattern = '<\?!=\s*include\s*\([''\"]([^''\"]+)[''\"]\)\s*\?>'
-$staticHtml = [regex]::Replace($template, $includePattern, {
-    param($match)
-    $relativePath = $match.Groups[1].Value -replace '/', [IO.Path]::DirectorySeparatorChar
-    if ([IO.Path]::GetExtension($relativePath) -eq '') {
-        $relativePath += '.html'
-    }
-    $includePath = Join-Path $root $relativePath
-    if (-not (Test-Path -LiteralPath $includePath)) {
-        throw "Included file not found: $relativePath"
-    }
-    [IO.File]::ReadAllText($includePath, $utf8)
-})
-
-[IO.File]::WriteAllText($outputPath, $staticHtml, $utf8)
+$appScriptUrl = 'https://script.google.com/macros/s/AKfycbwRY0K59FddGG8F_VdLgHoQZRZImkqyVHXNa9ASzPvoUGx8g1k8AJj-jdOdw48Z2eMQGg/exec'
+$redirectHtml = @"
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="refresh" content="0;url=$appScriptUrl">
+    <title>PSN Saraban</title>
+</head>
+<body>
+    <p>กำลังเปิดระบบ PSN Saraban...</p>
+    <script>window.location.replace('$appScriptUrl');</script>
+</body>
+</html>
+"@
+[IO.File]::WriteAllText($outputPath, $redirectHtml, $utf8)
 Write-Output "Built $outputPath"

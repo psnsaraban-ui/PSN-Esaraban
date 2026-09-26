@@ -1369,7 +1369,7 @@ const insertDataSearch = () => {
     createdCell: (td, cellData, rowData, row, col) => {$(td).attr('data-file', cellData);}
   }],
       lengthMenu: [[10, 25, 50, 100, -1 ],['10', '25', '50','100', 'ทั้งหมด' ]],
-      order: [[0, 'abc']],
+      order: [[0, 'asc']],
       responsive: true,
       ordering: true,
       destroy:true,
@@ -6931,6 +6931,7 @@ async function login(event){
       $.LoadingOverlay("hide");
       $("#pageformLogin").hide();
       $("#dashboardPage").show();
+      manu1();
       $("#onsideManu").click();
       $('#user-show1').html(fname);
       $('#user-show2').html(dpm);
@@ -7388,7 +7389,9 @@ const saveTodosSet = () => {
 }
 
 const showPage = (pageNumber) => {
-  event.preventDefault();
+  if (typeof event !== 'undefined' && event && typeof event.preventDefault === 'function') {
+    event.preventDefault();
+  }
   $.LoadingOverlay("show", {image: "", fontawesome: "fa fa-spinner fa-spin"});
   for (let i = 1; i <= 15; i++) {
     $(`#page${i}`).toggle(i === pageNumber);

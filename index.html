@@ -3670,30 +3670,46 @@ const submitAddDataA = async (form, event) => {
   event.preventDefault();
   $.LoadingOverlay("show", { image: "", fontawesome: "fa fa-spinner fa-spin" });
 
-  const formData = ['dataDataAInputKey', 'dataDataAInput1', 'dataDataAInput2', 'dataDataAInput3', 'dataDataAInput4', 'dataDataAInput5', 'dataDataAInput6', 'dataDataAInput7', 'dataDataAInput8', 'dataDataAInput9', 'dataDataAInput10']
-    .reduce((obj, id) => {
-      obj[id] = $(`#${id}`).val();
-      return obj;
-    }, {});
+  try {
+    const formData = ['dataDataAInputKey', 'dataDataAInput1', 'dataDataAInput2', 'dataDataAInput3', 'dataDataAInput4', 'dataDataAInput5', 'dataDataAInput6', 'dataDataAInput7', 'dataDataAInput8', 'dataDataAInput9', 'dataDataAInput10']
+      .reduce((obj, id) => {
+        obj[id] = $(`#${id}`).val();
+        return obj;
+      }, {});
 
-  formData.myfileDataA11 = $('#fileDataA11').prop('files')[0];
-  formData.myfileDataA12 = $('#fileDataA12').prop('files')[0] ? await getBase64($('#fileDataA12').prop('files')[0]) : "";
-  formData.myfileDataA13 = $('#fileDataA13').prop('files')[0] ? await getBase64($('#fileDataA13').prop('files')[0]) : "";
+    formData.myfileDataA11 = $('#fileDataA11').prop('files')[0];
+    formData.myfileDataA12 = $('#fileDataA12').prop('files')[0] ? await getBase64($('#fileDataA12').prop('files')[0]) : "";
+    formData.myfileDataA13 = $('#fileDataA13').prop('files')[0] ? await getBase64($('#fileDataA13').prop('files')[0]) : "";
 
-  if (isFormDataAIncomplete(formData)) {
-    createToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน", 3);
+    if (isFormDataAIncomplete(formData)) {
+      createToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน", 3);
+      $.LoadingOverlay("hide");
+      return;
+    }
+
+    const handleSaveFailure = (error) => {
+      $.LoadingOverlay("hide");
+      console.error("DataA save failed:", error);
+      createToast("❌ บันทึกข้อมูลไม่สำเร็จ กรุณาตรวจสอบข้อมูลและลองอีกครั้ง", 3);
+    };
+
+    if (formData.myfileDataA11) {
+      formData.myfileDataA11 = await processPdfDataA(formData.myfileDataA11);
+    }
+
+    const runner = google.script.run
+      .withSuccessHandler(onSuccessDataA)
+      .withFailureHandler(handleSaveFailure);
+
+    if (formData.dataDataAInputKey === "") {
+      runner.addDataA(formData);
+    } else {
+      runner.upDateDataA(formData);
+    }
+  } catch (error) {
     $.LoadingOverlay("hide");
-    return;
-  }
-
-  if (formData.myfileDataA11) {
-    formData.myfileDataA11 = await processPdfDataA(formData.myfileDataA11);
-  }
-
-  if (formData.dataDataAInputKey === "") {
-    google.script.run.withSuccessHandler(onSuccessDataA).addDataA(formData);
-  } else {
-    google.script.run.withSuccessHandler(onSuccessDataA).upDateDataA(formData);
+    console.error("DataA file preparation failed:", error);
+    createToast("❌ เตรียมไฟล์ไม่สำเร็จ กรุณาตรวจสอบไฟล์แล้วลองอีกครั้ง", 3);
   }
 };
 
@@ -3714,49 +3730,53 @@ const processPdfDataA = async (file) => {
   const reader = new FileReader();
   return new Promise((resolve, reject) => {
     reader.onload = async function (event) {
-      const pdfBytes = event.target.result;
-      const { PDFDocument, rgb } = PDFLib;
-      const pdfDoc = await PDFDocument.load(pdfBytes);
+      try {
+        const pdfBytes = event.target.result;
+        const { PDFDocument, rgb } = PDFLib;
+        const pdfDoc = await PDFDocument.load(pdfBytes);
 
-      const pngUrl1 = 'https://raw.githubusercontent.com/EPICCODING17/LOGO/main/stampEpic2.png';
-      const pngImageBytes1 = await fetch(pngUrl1).then((res) => res.arrayBuffer());
-      const pngImage1 = await pdfDoc.embedPng(pngImageBytes1);
-      const pngDims1 = pngImage1.scale(0.13);
+        const pngUrl1 = 'https://raw.githubusercontent.com/EPICCODING17/LOGO/main/stampEpic2.png';
+        const pngImageBytes1 = await fetch(pngUrl1).then((res) => res.arrayBuffer());
+        const pngImage1 = await pdfDoc.embedPng(pngImageBytes1);
+        const pngDims1 = pngImage1.scale(0.13);
 
-      const pngUrl2 = 'https://raw.githubusercontent.com/EPICCODING17/LOGO/main/stampEpic3.png';
-      const pngImageBytes2 = await fetch(pngUrl2).then((res) => res.arrayBuffer());
-      const pngImage2 = await pdfDoc.embedPng(pngImageBytes2);
-      const pngDims2 = pngImage2.scale(0.13);
+        const pngUrl2 = 'https://raw.githubusercontent.com/EPICCODING17/LOGO/main/stampEpic3.png';
+        const pngImageBytes2 = await fetch(pngUrl2).then((res) => res.arrayBuffer());
+        const pngImage2 = await pdfDoc.embedPng(pngImageBytes2);
+        const pngDims2 = pngImage2.scale(0.13);
 
-      pdfDoc.registerFontkit(fontkit);
-      const thaiFontBytes = await fetch('https://script-app.github.io/font/THSarabunNew.ttf').then(res => res.arrayBuffer());
-      const thaiFont = await pdfDoc.embedFont(thaiFontBytes);
+        pdfDoc.registerFontkit(fontkit);
+        const thaiFontBytes = await fetch('https://script-app.github.io/font/THSarabunNew.ttf').then(res => res.arrayBuffer());
+        const thaiFont = await pdfDoc.embedFont(thaiFontBytes);
 
-      const page = pdfDoc.getPages()[0];
-      const title = 'Epic Coding Channel';
-      const textSize = 16;
+        const page = pdfDoc.getPages()[0];
+        const title = 'Epic Coding Channel';
+        const textSize = 16;
 
-      const date = new Date().toLocaleDateString("th-TH", { day: "numeric", month: "long", year: "numeric" });
-      const time = new Date().toLocaleTimeString("th-TH", { hour: 'numeric', minute: 'numeric' });
+        const date = new Date().toLocaleDateString("th-TH", { day: "numeric", month: "long", year: "numeric" });
+        const time = new Date().toLocaleTimeString("th-TH", { hour: 'numeric', minute: 'numeric' });
 
-      page.drawImage(pngImage1, { x: 429, y: 740, width: pngDims1.width, height: pngDims1.height });
-      page.drawImage(pngImage2, { x: 40, y: 175, width: pngDims2.width, height: pngDims2.height });
+        page.drawImage(pngImage1, { x: 429, y: 740, width: pngDims1.width, height: pngDims1.height });
+        page.drawImage(pngImage2, { x: 40, y: 175, width: pngDims2.width, height: pngDims2.height });
 
-      const codeIDDataA = await new Promise((resolve, reject) => {
-        google.script.run.withSuccessHandler((codeID) => {
-          resolve(codeID);
-        }).generateIDDataA();
-      });
+        const codeIDDataA = await new Promise((resolve, reject) => {
+          google.script.run.withSuccessHandler((codeID) => {
+            resolve(codeID);
+          }).withFailureHandler(reject).generateIDDataA();
+        });
 
-      page.drawText(title, { x: 455, y: 807, size: textSize, font: thaiFont, color: rgb(0, 0, 1) });
-      page.drawText(codeIDDataA, { x: 485, y: 791, font: thaiFont, size: 16, color: rgb(0, 0, 1) });
-      page.drawText(date, { x: 470, y: 775, font: thaiFont, size: 16, color: rgb(0, 0, 1) });
-      page.drawText(time, { x: 495, y: 759, font: thaiFont, size: 16, color: rgb(0, 0, 1) });
+        page.drawText(title, { x: 455, y: 807, size: textSize, font: thaiFont, color: rgb(0, 0, 1) });
+        page.drawText(codeIDDataA, { x: 485, y: 791, font: thaiFont, size: 16, color: rgb(0, 0, 1) });
+        page.drawText(date, { x: 470, y: 775, font: thaiFont, size: 16, color: rgb(0, 0, 1) });
+        page.drawText(time, { x: 495, y: 759, font: thaiFont, size: 16, color: rgb(0, 0, 1) });
 
-      const pdfBytesUpdated = await pdfDoc.save();
-      const pdfFileBase64Updated = await getBase64(new Blob([pdfBytesUpdated], { type: 'application/pdf' }));
+        const pdfBytesUpdated = await pdfDoc.save();
+        const pdfFileBase64Updated = await getBase64(new Blob([pdfBytesUpdated], { type: 'application/pdf' }));
 
-      resolve(pdfFileBase64Updated);
+        resolve(pdfFileBase64Updated);
+      } catch (error) {
+        reject(error);
+      }
     };
     reader.onerror = reject;
     reader.readAsArrayBuffer(file);

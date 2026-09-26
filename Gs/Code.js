@@ -13,6 +13,9 @@ function doPost(e) {
     if (!/^[A-Za-z_$][\w$]*$/.test(functionName)) {
       throw new Error('Invalid function name');
     }
+    if (functionName === 'migrateDataToSingleSpreadsheet') {
+      throw new Error('Run data migration from the Apps Script editor');
+    }
 
     const targetFunction = eval(functionName);
     if (typeof targetFunction !== 'function') {

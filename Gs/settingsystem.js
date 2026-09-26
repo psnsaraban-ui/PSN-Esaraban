@@ -2,22 +2,77 @@ var settingSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Setting
 var idfolder = settingSheet.getRange('B1').getDisplayValue();
 var sigFolder = settingSheet.getRange('B2').getDisplayValue();
 var imageFolder = settingSheet.getRange('B3').getDisplayValue();
-var sheetDataA = settingSheet.getRange('B4').getDisplayValue();
-var sheetDataB = settingSheet.getRange('B5').getDisplayValue();
-var sheetDataC = settingSheet.getRange('B6').getDisplayValue();
-var sheetDataDEF = settingSheet.getRange('B7').getDisplayValue();
-var sheetDataG = settingSheet.getRange('B8').getDisplayValue();
-var sheetDataH = settingSheet.getRange('B9').getDisplayValue();
-var sheetDataSA = settingSheet.getRange('B10').getDisplayValue();
-var sheetDataSB = settingSheet.getRange('B11').getDisplayValue();
-var sheetDataSearch = settingSheet.getRange('B12').getDisplayValue();
-var sheetDataSet = settingSheet.getRange('B13').getDisplayValue();
+var dataSpreadsheetId = SpreadsheetApp.getActiveSpreadsheet().getId();
+var sheetDataA = dataSpreadsheetId;
+var sheetDataB = dataSpreadsheetId;
+var sheetDataC = dataSpreadsheetId;
+var sheetDataDEF = dataSpreadsheetId;
+var sheetDataG = dataSpreadsheetId;
+var sheetDataH = dataSpreadsheetId;
+var sheetDataSA = dataSpreadsheetId;
+var sheetDataSB = dataSpreadsheetId;
+var sheetDataSearch = dataSpreadsheetId;
+var sheetDataSet = dataSpreadsheetId;
 var logoUrl = settingSheet.getRange('B14').getDisplayValue();
 var nameSystem = settingSheet.getRange('B15').getDisplayValue();
 
+function migrateDataToSingleSpreadsheet() {
+  const master = SpreadsheetApp.getActiveSpreadsheet();
+  const masterId = master.getId();
+  const settings = master.getSheetByName('Setting');
+  const sourceIds = settings.getRange('B4:B13').getDisplayValues().flat();
+  const sourceTabs = [
+    ['DataA'],
+    ['DataB'],
+    ['DataC'],
+    ['DataD', 'DataE', 'DataF'],
+    ['DataG'],
+    ['DataH'],
+    ['DataSA'],
+    ['DataSB'],
+    ['DataSearch'],
+    ['Agency', 'Position', 'Department', 'Objective', 'ClassSpeed', 'ClassSecret', 'Response']
+  ];
+  const migrationPlan = [];
+  const hasSameValues = (leftSheet, rightSheet) =>
+    JSON.stringify(leftSheet.getDataRange().getValues()) === JSON.stringify(rightSheet.getDataRange().getValues());
+
+  sourceTabs.forEach((tabNames, index) => {
+    const sourceId = sourceIds[index] || masterId;
+    const source = SpreadsheetApp.openById(sourceId);
+    tabNames.forEach(name => {
+      const sourceSheet = source.getSheetByName(name);
+      if (!sourceSheet) {
+        throw new Error('Source tab not found: ' + name);
+      }
+      const targetSheet = master.getSheetByName(name);
+      const alreadyCopied = sourceId !== masterId && targetSheet && targetSheet.getLastRow() > 0;
+      if (alreadyCopied && !hasSameValues(sourceSheet, targetSheet)) {
+        throw new Error('Target tab already contains different data: ' + name);
+      }
+      migrationPlan.push({ sourceId, sourceSheet, targetSheet, name, alreadyCopied });
+    });
+  });
+
+  const copiedTabs = [];
+  migrationPlan.forEach(item => {
+    if (item.sourceId === masterId || item.alreadyCopied) return;
+    if (item.targetSheet) master.deleteSheet(item.targetSheet);
+    item.sourceSheet.copyTo(master).setName(item.name);
+    copiedTabs.push(item.name);
+  });
+
+  settings.getRange('B4:B13').setValues(Array.from({ length: 10 }, () => [masterId]));
+  return { spreadsheetId: masterId, copiedTabs };
+}
+
 const getSet = () => {
-  var ss = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Setting');
-  var data = ss.getRange("B1:B").getDisplayValues();
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = spreadsheet.getSheetByName('Setting');
+  const data = ss.getRange('B1:B16').getDisplayValues();
+  for (let index = 3; index <= 12; index++) {
+    data[index] = [spreadsheet.getId()];
+  }
   return data;
 };
 
@@ -26,7 +81,7 @@ const settingGS = (data) => {
   var sheet = ss.getSheetByName('Setting');
   var valuesToSet = [];
   for (let i = 1; i <= 16; i++) {
-    valuesToSet.push([data[`set${i}`]]);
+    valuesToSet.push([i >= 4 && i <= 13 ? ss.getId() : data[`set${i}`]]);
   }
   var range = sheet.getRange(1, 2, valuesToSet.length, 1);
   range.setValues(valuesToSet);

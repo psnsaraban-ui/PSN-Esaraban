@@ -6877,11 +6877,20 @@ window.addEventListener('load', function() {
 })
 
 async function getIPAddress() {
-  const ipAPI = "//api.ipify.org?format=json";
-  const response = await fetch(ipAPI); 
-  const data = await response.json(); 
-  const inputValue = data.ip;
-  return inputValue;
+  const ipAPI = "https://api.ipify.org?format=json";
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 4000);
+  try {
+    const response = await fetch(ipAPI, { signal: controller.signal });
+    if (!response.ok) throw new Error(`IP service returned ${response.status}`);
+    const data = await response.json();
+    return data.ip || "Unknown";
+  } catch (error) {
+    console.warn("Unable to retrieve public IP; continuing login:", error);
+    return "Unknown";
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 async function login(event){
@@ -6895,7 +6904,16 @@ async function login(event){
   $.LoadingOverlay("show", {  image : "", fontawesome : "fa fa-spinner fa-spin" });
   const ipCheck = await getIPAddress();
   const userAgent = navigator.userAgent;
-  google.script.run.withSuccessHandler(function(data) {
+  let loginTimedOut = false;
+  const loginTimeoutId = setTimeout(() => {
+    loginTimedOut = true;
+    $.LoadingOverlay("hide");
+    createToast("❌ ระบบตอบสนองช้า กรุณาลองเข้าสู่ระบบอีกครั้ง", 3);
+  }, 20000);
+
+  const loginRunner = google.script.run.withSuccessHandler(function(data) {
+    if (loginTimedOut) return;
+    clearTimeout(loginTimeoutId);
     if (data) {
       const [idmember, user, pass, fname, dpm, status, profileuser, siguser] = data;
       const userData = { idmember, user, pass, fname, dpm, status, profileuser, siguser };
@@ -6950,7 +6968,14 @@ async function login(event){
       $("#dashboardPage").hide();
       localStorage.clear();
     }
-  }).checkLogin(username, password, ipCheck, userAgent);   
+  }).withFailureHandler(function(error) {
+    if (loginTimedOut) return;
+    clearTimeout(loginTimeoutId);
+    $.LoadingOverlay("hide");
+    console.error("Login request failed:", error);
+    createToast("❌ เชื่อมต่อระบบเข้าสู่ระบบไม่สำเร็จ กรุณาลองอีกครั้ง", 3);
+  });
+  loginRunner.checkLogin(username, password, ipCheck, userAgent);
 }
 
 async function Logout() {

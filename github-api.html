@@ -6,11 +6,24 @@
   let successHandler = null;
   let failureHandler = null;
 
+  const serializeArgs = args => args.map(argument => {
+    if (typeof HTMLFormElement === 'undefined' || !(argument instanceof HTMLFormElement)) return argument;
+
+    const formValues = {};
+    for (const [name, value] of new FormData(argument).entries()) {
+      if (typeof value === 'string') formValues[name] = value;
+    }
+    for (const name of Object.keys(argument)) {
+      if (/^myfileData[A-H]\d+$/.test(name)) formValues[name] = argument[name];
+    }
+    return formValues;
+  });
+
   const runApiCall = (functionName, args) => {
     fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ functionName, args })
+      body: JSON.stringify({ functionName, args: serializeArgs(args) })
     })
       .then(response => response.json())
       .then(payload => {
@@ -46,7 +59,7 @@
         fetch(apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ functionName: property, args })
+          body: JSON.stringify({ functionName: property, args: serializeArgs(args) })
         })
           .then(response => response.json())
           .then(payload => {

@@ -91,14 +91,20 @@ const clearModalDataG = () => {
 
 const submitAddDataG = async (obj, event) => {
   event.preventDefault();
+  obj = Object.fromEntries(new FormData(obj).entries());
+  const handleDataGSaveFailure = error => {
+    $.LoadingOverlay("hide");
+    console.error("DataG save failed:", error);
+    createToast(error && error.message ? error.message : "❌ บันทึกข้อมูลไม่สำเร็จ", 3);
+  };
   const dataDataGInputKey = $('#dataDataGInputKey').val();
   const dataDataGInput1 = $('#dataDataGInput1').val();
   const dataDataGInput2 = $('#dataDataGInput2').val();
   const dataDataGInput3 = $('#dataDataGInput3').val();
   const dataDataGInput4 = $('#dataDataGInput4').val();
   const fileDataG5 = $('#fileDataG5').prop('files')[0];
-  if (!dataDataGInput2 || !dataDataGInput4) {
-    createToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วน", 3);
+  if (!dataDataGInput2 || !dataDataGInput4 || (dataDataGInputKey === "" && !fileDataG5)) {
+    createToast("⚠️ กรุณากรอกข้อมูลให้ครบถ้วนและเลือกไฟล์ PDF", 3);
     $.LoadingOverlay("hide");
     return;
   }
@@ -113,9 +119,9 @@ const submitAddDataG = async (obj, event) => {
     clearModalDataG();
   };
   if (dataDataGInputKey === "") {
-    google.script.run.withSuccessHandler(successDataG).withFailureHandler(handleAppsScriptFailure).addDataG(obj);
+    google.script.run.withSuccessHandler(successDataG).withFailureHandler(handleDataGSaveFailure).addDataG(obj);
   } else {
-    google.script.run.withSuccessHandler(successDataG).withFailureHandler(handleAppsScriptFailure).upDateDataG(obj);
+    google.script.run.withSuccessHandler(successDataG).withFailureHandler(handleDataGSaveFailure).upDateDataG(obj);
   }
 }
 

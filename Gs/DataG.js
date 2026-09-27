@@ -18,6 +18,7 @@ function generateIDDataG(currentIDDataG) {
 }
 
 const addDataG = (obj) => {
+  if (!obj.myfileDataG5) throw new Error("กรุณาแนบไฟล์ PDF");
   const sheetG = SpreadsheetApp.openById(sheetDataG).getSheetByName('DataG');
   const lastRowID = sheetG.getLastRow();
   const codeIDDataG = generateIDDataG(lastRowID);

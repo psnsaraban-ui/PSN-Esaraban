@@ -1,4 +1,11 @@
-function doGet(){
+function doGet(e){
+  if (e && e.parameter && e.parameter.bridge === '1') {
+    const bridge = HtmlService.createTemplateFromFile('ApiBridge');
+    bridge.bridgeToken = e.parameter.token || '';
+    return bridge.evaluate()
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  }
+
   return HtmlService.createTemplateFromFile('AppsScript').evaluate()
   .setTitle(nameSystem)
   .setFaviconUrl(logoUrl)

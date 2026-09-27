@@ -104,6 +104,7 @@ const claerModalDataB = () => {
 
 const submitAddDataB = async (obj, event) => {
   event.preventDefault();
+  obj = Object.fromEntries(new FormData(obj).entries());
   const dataDataBInputKey = $('#dataDataBInputKey').val();
   const dataDataBInput2 = $('#dataDataBInput2').val();
   const dataDataBInput3 = $('#dataDataBInput3').val();

@@ -91,6 +91,7 @@ const clearModalDataE = () => {
 
 const submitAddDataE = async (obj, event) => {
   event.preventDefault();
+  obj = Object.fromEntries(new FormData(obj).entries());
   const dataDataEInputKey = $('#dataDataEInputKey').val();
   const dataDataEInput3 = $('#dataDataEInput3').val();
   const dataDataEInput4 = $('#dataDataEInput4').val();

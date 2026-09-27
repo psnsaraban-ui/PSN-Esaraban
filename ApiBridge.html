@@ -1,0 +1,27 @@
+<script>
+(() => {
+  const allowedParentOrigin = 'https://psnsaraban-ui.github.io';
+  const bridgeToken = '<?= bridgeToken ?>';
+
+  window.addEventListener('message', event => {
+    if (event.source !== window.top || event.origin !== allowedParentOrigin) return;
+
+    const request = event.data;
+    if (!request || request.type !== 'api:call' || request.token !== bridgeToken || !Number.isSafeInteger(request.id)) return;
+
+    const functionName = String(request.functionName || '');
+    if (!/^[A-Za-z_$][\w$]*$/.test(functionName) || ['doGet', 'doPost', 'include', 'migrateDataToSingleSpreadsheet'].includes(functionName)) {
+      window.top.postMessage({ type: 'api:result', token: bridgeToken, id: request.id, ok: false, error: 'Invalid function name' }, event.origin);
+      return;
+    }
+
+    const respond = result => window.top.postMessage({ type: 'api:result', token: bridgeToken, id: request.id, ...result }, event.origin);
+    const runner = google.script.run
+      .withSuccessHandler(result => respond({ ok: true, result }))
+      .withFailureHandler(error => respond({ ok: false, error: error && error.message ? error.message : String(error) }));
+    runner[functionName](...(Array.isArray(request.args) ? request.args : []));
+  });
+
+  window.top.postMessage({ type: 'api:ready', token: bridgeToken }, allowedParentOrigin);
+})();
+</script>

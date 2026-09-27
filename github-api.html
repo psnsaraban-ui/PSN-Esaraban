@@ -2,9 +2,29 @@
 (() => {
   if (window.google && window.google.script && window.google.script.run) return;
 
-  const apiUrl = 'https://script.google.com/macros/s/AKfycbxEoJaHAyeC2A4lsgXnBsSijju8iOqz-Au_S9GQET0zsJFo1WedHCVJiyBaEqyvKyu4YQ/exec';
-  let successHandler = null;
-  let failureHandler = null;
+  const bridgeUrl = 'https://script.google.com/macros/s/AKfycbxEoJaHAyeC2A4lsgXnBsSijju8iOqz-Au_S9GQET0zsJFo1WedHCVJiyBaEqyvKyu4YQ/exec?bridge=1';
+  const bridgeToken = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const frame = document.createElement('iframe');
+  const pendingCalls = new Map();
+  const queuedCalls = [];
+  let bridgeOrigin = '';
+  let bridgeWindow = null;
+  let bridgeReady = false;
+  let nextCallId = 0;
+
+  frame.title = 'Apps Script bridge';
+  frame.setAttribute('aria-hidden', 'true');
+  frame.style.cssText = 'position:fixed;width:0;height:0;border:0;visibility:hidden';
+  frame.src = `${bridgeUrl}&token=${encodeURIComponent(bridgeToken)}`;
+
+  const isTrustedBridgeOrigin = origin => {
+    try {
+      const host = new URL(origin).hostname;
+      return host === 'script.google.com' || host === 'script.googleusercontent.com' || /[-.]script\.googleusercontent\.com$/.test(host);
+    } catch (error) {
+      return false;
+    }
+  };
 
   const serializeArgs = args => args.map(argument => {
     if (typeof HTMLFormElement === 'undefined' || !(argument instanceof HTMLFormElement)) return argument;
@@ -19,62 +39,87 @@
     return formValues;
   });
 
-  const runApiCall = (functionName, args) => {
-    fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ functionName, args: serializeArgs(args) })
-    })
-      .then(response => response.json())
-      .then(payload => {
-        if (!payload.ok) throw new Error(payload.error || 'Apps Script request failed');
-        if (successHandler) successHandler(payload.result);
-      })
-      .catch(error => {
-        if (failureHandler) failureHandler(error);
-        else console.error(error);
-      });
+  const reportFailure = (call, error) => {
+    if (call.failureHandler) call.failureHandler(error, call.userObject);
+    else console.error(error);
   };
 
-  const runner = new Proxy({}, {
+  const dispatchCall = call => {
+    const id = ++nextCallId;
+    const timeoutId = setTimeout(() => {
+      pendingCalls.delete(id);
+      reportFailure(call, new Error('Apps Script request timed out'));
+    }, 90000);
+    pendingCalls.set(id, { ...call, timeoutId });
+    bridgeWindow.postMessage({
+      type: 'api:call',
+      token: bridgeToken,
+      id,
+      functionName: call.functionName,
+      args: call.args
+    }, bridgeOrigin);
+  };
+
+  const sendCall = (functionName, args, successHandler, failureHandler, userObject) => {
+    let serializedArgs;
+    try {
+      serializedArgs = serializeArgs(args);
+    } catch (error) {
+      reportFailure({ failureHandler, userObject }, error);
+      return;
+    }
+
+    const call = { functionName, args: serializedArgs, successHandler, failureHandler, userObject };
+    if (bridgeReady) dispatchCall(call);
+    else queuedCalls.push(call);
+  };
+
+  const createRunner = (successHandler, failureHandler, userObject) => new Proxy({}, {
     get(_target, property) {
-      if (property === 'withSuccessHandler') {
-        return callback => {
-          successHandler = callback;
-          return runner;
-        };
-      }
-      if (property === 'withFailureHandler') {
-        return callback => {
-          failureHandler = callback;
-          return runner;
-        };
-      }
-      if (property === 'withUserObject') return () => runner;
-      return (...args) => {
-        const currentSuccessHandler = successHandler;
-        const currentFailureHandler = failureHandler;
-        successHandler = null;
-        failureHandler = null;
-        fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ functionName: property, args: serializeArgs(args) })
-        })
-          .then(response => response.json())
-          .then(payload => {
-            if (!payload.ok) throw new Error(payload.error || 'Apps Script request failed');
-            if (currentSuccessHandler) currentSuccessHandler(payload.result);
-          })
-          .catch(error => {
-            if (currentFailureHandler) currentFailureHandler(error);
-            else console.error(error);
-          });
-      };
+      if (property === 'withSuccessHandler') return callback => createRunner(callback, failureHandler, userObject);
+      if (property === 'withFailureHandler') return callback => createRunner(successHandler, callback, userObject);
+      if (property === 'withUserObject') return value => createRunner(successHandler, failureHandler, value);
+      if (typeof property !== 'string' || !/^[A-Za-z_$][\w$]*$/.test(property)) return undefined;
+      return (...args) => sendCall(property, args, successHandler, failureHandler, userObject);
     }
   });
 
+  window.addEventListener('message', event => {
+    if (!isTrustedBridgeOrigin(event.origin)) return;
+    const message = event.data;
+    if (!message || typeof message !== 'object' || message.token !== bridgeToken) return;
+
+    if (message.type === 'api:ready') {
+      bridgeOrigin = event.origin;
+      bridgeWindow = event.source;
+      bridgeReady = true;
+      while (queuedCalls.length) dispatchCall(queuedCalls.shift());
+      return;
+    }
+
+    if (message.type !== 'api:result' || event.source !== bridgeWindow || !Number.isInteger(message.id)) return;
+    const call = pendingCalls.get(message.id);
+    if (!call) return;
+    clearTimeout(call.timeoutId);
+    pendingCalls.delete(message.id);
+    if (message.ok) {
+      if (call.successHandler) call.successHandler(message.result, call.userObject);
+    } else {
+      reportFailure(call, new Error(message.error || 'Apps Script request failed'));
+    }
+  });
+
+  setTimeout(() => {
+    if (bridgeReady) return;
+    const error = new Error('Apps Script bridge could not be loaded');
+    while (queuedCalls.length) reportFailure(queuedCalls.shift(), error);
+  }, 20000);
+
+  const attachFrame = () => document.body.appendChild(frame);
+  if (document.body) attachFrame();
+  else document.addEventListener('DOMContentLoaded', attachFrame, { once: true });
+
   window.google = window.google || {};
-  window.google.script = { run: runner };
+  window.google.script = { run: createRunner(null, null, null) };
 })();
 </script>

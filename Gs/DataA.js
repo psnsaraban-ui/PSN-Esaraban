@@ -115,6 +115,7 @@ const upDateDataA = (obj) => {
   const data = sheetA.getDataRange().getDisplayValues();
   const iddataA = data.map(r => r[0]);
   const rowIndex = iddataA.indexOf(obj.dataDataAInputKey);
+  if (rowIndex <= 0) throw new Error('Record not found');
   const documentFolder = DriveApp.getFolderById(idfolder);
 
   const createFileAndReturnUrl = (base64Data, namePrefix) => {
@@ -130,27 +131,27 @@ const upDateDataA = (obj) => {
 
   if (obj.myfileDataA11 && obj.myfileDataA11.length > 0) {
     ucfileA1 = createFileAndReturnUrl(obj.myfileDataA11, "หนังสือภายนอก(ไฟล์หลัก)");
-    const oldfile = sheetA.getRange(rowIndex + 1, 12).getValue().split('/')[5];
+    const oldfile = sheetA.getRange(rowIndex + 1, 12).getValue();
     if (oldfile) {
-      DriveApp.getFileById(oldfile).setTrashed(true);
+      deleteDriveFileIfExists(oldfile);
     }
     sheetA.getRange(rowIndex + 1, 12).setValue(ucfileA1);
   }
 
   if (obj.myfileDataA12 && obj.myfileDataA12.length > 0) {
     ucfileA2 = createFileAndReturnUrl(obj.myfileDataA12, "หนังสือภายนอก(เอกสารแนบ1)");
-    const oldfile = sheetA.getRange(rowIndex + 1, 13).getValue().split('/')[5];
+    const oldfile = sheetA.getRange(rowIndex + 1, 13).getValue();
     if (oldfile) {
-      DriveApp.getFileById(oldfile).setTrashed(true);
+      deleteDriveFileIfExists(oldfile);
     }
     sheetA.getRange(rowIndex + 1, 13).setValue(ucfileA2);
   }
 
   if (obj.myfileDataA13 && obj.myfileDataA13.length > 0) {
     ucfileA3 = createFileAndReturnUrl(obj.myfileDataA13, "หนังสือภายนอก(เอกสารแนบ2)");
-    const oldfile = sheetA.getRange(rowIndex + 1, 14).getValue().split('/')[5];
+    const oldfile = sheetA.getRange(rowIndex + 1, 14).getValue();
     if (oldfile) {
-      DriveApp.getFileById(oldfile).setTrashed(true);
+      deleteDriveFileIfExists(oldfile);
     }
     sheetA.getRange(rowIndex + 1, 14).setValue(ucfileA3);
   }
@@ -205,15 +206,11 @@ const delRecDataA = (record) =>  {
     const ucfileA1 = sheetA.getRange(rowIndex + 1, 12).getValue();
     const ucfileA2 = sheetA.getRange(rowIndex + 1, 13).getValue();
     const ucfileA3 = sheetA.getRange(rowIndex + 1, 14).getValue(); 
-    if(ucfileA1 !=""){
-      DriveApp.getFileById(ucfileA1.split('/')[5]).setTrashed(true)
-    }
-    if(ucfileA2 !=""){
-      DriveApp.getFileById(ucfileA2.split('/')[5]).setTrashed(true)
-    }
-    if(ucfileA3 !=""){
-      DriveApp.getFileById(ucfileA3.split('/')[5]).setTrashed(true)
-    }
+
+    deleteDriveFileIfExists(ucfileA1);
+    deleteDriveFileIfExists(ucfileA2);
+    deleteDriveFileIfExists(ucfileA3);
+
     sheetA.deleteRow(rowIndex + 1);
   }
 }

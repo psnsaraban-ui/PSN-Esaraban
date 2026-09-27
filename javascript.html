@@ -84,6 +84,14 @@ $(document).ready(function() {
 const brandLogoUrl = 'https://psnsaraban-ui.github.io/PSN-Esaraban/assets/logo.png';
 const brandName = 'PSN E-Saraban';
 
+function handleAppsScriptFailure(error) {
+  $.LoadingOverlay("hide");
+  console.error("Apps Script operation failed:", error);
+  if (typeof createToast === "function") {
+    createToast("❌ ดำเนินการไม่สำเร็จ กรุณาลองอีกครั้ง", 3);
+  }
+}
+
 function reLoad() {
   google.script.run.withSuccessHandler(function(url){
     window.open(url,'_top');
@@ -120,7 +128,7 @@ const addSetting = () => {
     }).getSet();
     $.LoadingOverlay("hide");
     createToast("🛠️ บันทึกการตั้งค่าสำเร็จ", 1);
-  }).settingGS(data);
+  }).withFailureHandler(handleAppsScriptFailure).settingGS(data);
 }
 
 const setDisPlayMenu = (status, menuItems) => {
@@ -593,7 +601,7 @@ const submitSendData = (obj, event) => {
     $.LoadingOverlay("hide");
     createToast("✅ ส่งข้อมูลสำเร็จ", 1);
     clearSendData();
-  }).sendAddDataSA(data);
+  }).withFailureHandler(handleAppsScriptFailure).sendAddDataSA(data);
 }
 
 const submitSendAgency = (obj, event) => {
@@ -637,7 +645,7 @@ const submitSendAgency = (obj, event) => {
     createToast("✅ ส่งข้อมูลสำเร็จ", 1);
     $('#formSendAgency')[0].reset();
     agencyResetCheckboxes();
-  }).sendDataAgency(data);
+  }).withFailureHandler(handleAppsScriptFailure).sendDataAgency(data);
 };
 
 const clearSendData = () => {

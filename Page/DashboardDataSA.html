@@ -132,7 +132,7 @@ const saveData = (action) => {
     $('#dataSAModal').modal('hide');
     createToast("✅ ยืนยันรายการสำเร็จ", 1);
     insertDataSA();
-  }).sigSaveDataSA(saveData);
+  }).withFailureHandler(handleAppsScriptFailure).sigSaveDataSA(saveData);
 }
 
 const followDataSA = (el) => {
@@ -146,7 +146,7 @@ const followDataSA = (el) => {
       $.LoadingOverlay("hide");
       insertDataSA();
       createToast("✅ ติดตามข้อมูลสำเร็จ", 0);
-    }).followRecord(record, receiverName);
+    }).withFailureHandler(handleAppsScriptFailure).followRecord(record, receiverName);
   });
   $('#xDelconfirmfollow').off('click').on('click', function() {
     $('#followDataModal').modal('hide');

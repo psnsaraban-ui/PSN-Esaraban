@@ -54,14 +54,15 @@ const upDateDataH = (obj) => {
   const data = sheetH.getDataRange().getDisplayValues()
   const iddataH = data.map(r=>r[0])
   const rowIndex = iddataH.indexOf(obj.dataDataHInputKey);
+  if (rowIndex <= 0) throw new Error('Record not found');
   const documentFolder = DriveApp.getFolderById(idfolder);
 
   var ucfileA1 = "";
   if (obj.myfileDataH5) {
     ucfileA1 = createPdfFileFromBase64(documentFolder, obj.myfileDataH5, "ประชาสัมพันธ์(ไฟล์หลัก)" + obj.dataDataHInputKey);
-    const oldfile = sheetH.getRange(rowIndex + 1, 6).getValue().split('/')[5];
+    const oldfile = sheetH.getRange(rowIndex + 1, 6).getValue();
     if (oldfile) {
-      DriveApp.getFileById(oldfile).setTrashed(true);
+      deleteDriveFileIfExists(oldfile);
     }
     sheetH.getRange(rowIndex + 1, 6).setValue(ucfileA1);
   }
@@ -88,7 +89,7 @@ const upDateDataH = (obj) => {
     sendNotify(msg, setting);
   });
 
-  return sheetH.getRange("A2:G" + sheetH.getLastRow()).getValues();
+  return sheetH.getRange("A2:F" + sheetH.getLastRow()).getValues();
 }
 
 const delRecDataH = (record) =>  {
@@ -98,9 +99,7 @@ const delRecDataH = (record) =>  {
   const rowIndex = iddataH.indexOf(record);
   if (rowIndex > -1) {
     const ucfileA1 = sheetH.getRange(rowIndex + 1, 6).getValue();
-    if(ucfileA1 !=""){
-      DriveApp.getFileById(ucfileA1.split('/')[5]).setTrashed(true)
-    }
+    deleteDriveFileIfExists(ucfileA1);
     sheetH.deleteRow(rowIndex + 1);
   }
 }

@@ -252,7 +252,7 @@ const updateMenu = (index, role, isChecked) => {
     $.LoadingOverlay("hide");
     renderSetMenu(allsetDataMenu);
     createToast("✅ บันทึกข้อมูลสำเร็จ", 1);
-  }).updateMenuStatus(menuItem, role, isChecked);
+  }).withFailureHandler(handleAppsScriptFailure).updateMenuStatus(menuItem, role, isChecked);
 }
 
 const createToast = (message, status, delay = 1000 * 5) => {

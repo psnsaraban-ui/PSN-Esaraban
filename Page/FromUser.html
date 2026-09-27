@@ -115,7 +115,7 @@ const checkDuplicate = () => {
   }).checkFnameUser(inputValue);
 }
 
-const saveRegister = (obj, event) =>{
+const saveRegister = (event) =>{
   event.preventDefault();
   $.LoadingOverlay("show", {  image : "", fontawesome : "fa fa-spinner fa-spin" }); 
     var formData = {}
@@ -149,7 +149,7 @@ const saveRegister = (obj, event) =>{
       $('#RegisterModal').modal('hide');
       $.LoadingOverlay("hide");
       createToast("🧑 เพิ่มผู้ใช้งานสำเร็จ", 1);
-    }).saveUser(formData);
+    }).withFailureHandler(handleAppsScriptFailure).saveUser(formData);
 }
 
 const editData = (el) => {
@@ -176,7 +176,7 @@ const editData = (el) => {
 }
 
 
-const editRegister = (obj, event) =>{
+const editRegister = (event) =>{
   event.preventDefault();
   $.LoadingOverlay("show", {  image : "", fontawesome : "fa fa-spinner fa-spin" }); 
     var formData = {}
@@ -215,7 +215,7 @@ const editRegister = (obj, event) =>{
       $("#textAddregis2").hide();
       $.LoadingOverlay("hide");
       createToast("🧑 แก้ไขผู้ใช้งานสำเร็จ", 1);
-    }).editUser(formData);
+    }).withFailureHandler(handleAppsScriptFailure).editUser(formData);
 }
 
 const delDataUser = (el) => {
@@ -227,7 +227,7 @@ const delDataUser = (el) => {
       $.LoadingOverlay("hide");
       insertDataUser();
       createToast("⛔ ลบข้อมูลสำเร็จ", 0);
-    }).delRecordU(record);
+    }).withFailureHandler(handleAppsScriptFailure).delRecordU(record);
   });
   $('#xDelconfirmData').off('click').on('click', function() {
     $('#DelDataModal').modal('hide');

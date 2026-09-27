@@ -8,6 +8,36 @@ const getDataLU = () => {
   return data
 }
 
+const getDriveFileIdFromUrl = (fileUrl) => {
+  if (!fileUrl || typeof fileUrl !== 'string') return '';
+
+  const normalized = fileUrl.trim().replace(/\\/g, '/');
+  const patterns = [
+    /\/d\/([A-Za-z0-9_-]+)/,
+    /[?&]id=([A-Za-z0-9_-]+)/,
+    /\/file\/d\/([A-Za-z0-9_-]+)/
+  ];
+
+  for (const pattern of patterns) {
+    const match = normalized.match(pattern);
+    if (match && match[1]) return match[1];
+  }
+
+  const parts = normalized.split('/');
+  const lastPart = parts[parts.length - 1].split('?')[0];
+  return lastPart && lastPart.length > 10 ? lastPart : '';
+};
+
+const deleteDriveFileIfExists = (fileUrl) => {
+  const fileId = getDriveFileIdFromUrl(fileUrl);
+  if (!fileId) return;
+
+  try {
+    DriveApp.getFileById(fileId).setTrashed(true);
+  } catch (error) {
+    Logger.log('deleteDriveFileIfExists failed: ' + fileUrl + ' | ' + error.message);
+  }
+};
 
 const getDataLogUS = (statususer) =>{
   var ss = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('LogUser'); 
@@ -89,6 +119,7 @@ const saveUser = (obj) => {
 
 const editUser = (obj) => {
   var rowIndex = iddataLU.indexOf(obj.registerDataID)
+  if (rowIndex <= 0) throw new Error('User not found');
   var folder = DriveApp.getFolderById(imageFolder);
   var profileUrl = "";
 
@@ -108,7 +139,7 @@ const editUser = (obj) => {
     profileUrl = obj.profile;
   }
   if (rowIndex > -1) {
-    sheetUsers.getRange(rowIndex+1,1,1,8).setValues([[obj.registerDataID, "'"+obj.registerData4, "'"+obj.registerData5, "'"+obj.registerData3, obj.registerData1, obj.registerData2, profileUrl]]);
+    sheetUsers.getRange(rowIndex+1,1,1,7).setValues([[obj.registerDataID, "'"+obj.registerData4, "'"+obj.registerData5, "'"+obj.registerData3, obj.registerData1, obj.registerData2, profileUrl]]);
   }
    var data = sheetUsers.getRange(rowIndex+1,1,1,sheetUsers.getLastColumn()).getDisplayValues()[0]
    return data;
@@ -120,15 +151,8 @@ const delRecordU = (record) =>  {
     const fileDlUser = sheetUsers.getRange(rowIndex + 1, 7).getValue();
     const sigDlUser = sheetUsers.getRange(rowIndex + 1, 8).getValue(); 
 
-    if (fileDlUser.includes("https://lh3.googleusercontent.com/d/")) {
-      const fileId = fileDlUser.split('/d/')[1];
-      DriveApp.getFileById(fileId).setTrashed(true);
-    }
-
-    if (sigDlUser.includes("https://lh3.googleusercontent.com/d/")) {
-      const fileId = sigDlUser.split('/d/')[1];
-      DriveApp.getFileById(fileId).setTrashed(true);
-    }
+    deleteDriveFileIfExists(fileDlUser);
+    deleteDriveFileIfExists(sigDlUser);
 
     sheetUsers.deleteRow(rowIndex + 1);
   }

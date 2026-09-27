@@ -951,7 +951,7 @@ function changePassword() {
       $('#ChangePasswordB').val("")
       createToast("✅ เปลี่ยนรหัสผ่านสำเร็จ", 1);
       $('#logoutModal').modal('show')
-    }).ChangePasswordMember(obj);  
+    }).withFailureHandler(handleAppsScriptFailure).ChangePasswordMember(obj);
   } 
 }
 
@@ -984,7 +984,7 @@ function saveUploadProfile(event) {
     $("#picadmin1").attr('src', response);
     $("#picadmin2").attr('src', response); 
     $('#logoutModal').modal('show') 
-  }).updateProfile(obj);
+  }).withFailureHandler(handleAppsScriptFailure).updateProfile(obj);
 }
 
 function saveUploadSig() {
@@ -1003,7 +1003,7 @@ function saveUploadSig() {
     signaturePadUser.clear();
     localStorage.setItem('Sig', response);
   $('#logoutModal').modal('show') 
-  }).saveUploadSig(obj);
+  }).withFailureHandler(handleAppsScriptFailure).saveUploadSig(obj);
 }
 </script>
   <div class="modal fade" id="RegisterModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="RegisterModalLabel" aria-hidden="true">
@@ -1123,7 +1123,7 @@ const checkDuplicate = () => {
   }).checkFnameUser(inputValue);
 }
 
-const saveRegister = (obj, event) =>{
+const saveRegister = (event) =>{
   event.preventDefault();
   $.LoadingOverlay("show", {  image : "", fontawesome : "fa fa-spinner fa-spin" }); 
     var formData = {}
@@ -1157,7 +1157,7 @@ const saveRegister = (obj, event) =>{
       $('#RegisterModal').modal('hide');
       $.LoadingOverlay("hide");
       createToast("🧑 เพิ่มผู้ใช้งานสำเร็จ", 1);
-    }).saveUser(formData);
+    }).withFailureHandler(handleAppsScriptFailure).saveUser(formData);
 }
 
 const editData = (el) => {
@@ -1184,7 +1184,7 @@ const editData = (el) => {
 }
 
 
-const editRegister = (obj, event) =>{
+const editRegister = (event) =>{
   event.preventDefault();
   $.LoadingOverlay("show", {  image : "", fontawesome : "fa fa-spinner fa-spin" }); 
     var formData = {}
@@ -1223,7 +1223,7 @@ const editRegister = (obj, event) =>{
       $("#textAddregis2").hide();
       $.LoadingOverlay("hide");
       createToast("🧑 แก้ไขผู้ใช้งานสำเร็จ", 1);
-    }).editUser(formData);
+    }).withFailureHandler(handleAppsScriptFailure).editUser(formData);
 }
 
 const delDataUser = (el) => {
@@ -1235,7 +1235,7 @@ const delDataUser = (el) => {
       $.LoadingOverlay("hide");
       insertDataUser();
       createToast("⛔ ลบข้อมูลสำเร็จ", 0);
-    }).delRecordU(record);
+    }).withFailureHandler(handleAppsScriptFailure).delRecordU(record);
   });
   $('#xDelconfirmData').off('click').on('click', function() {
     $('#DelDataModal').modal('hide');
@@ -3835,7 +3835,7 @@ const delDataA = (el) => {
       $.LoadingOverlay("hide");
       insertDataA();
       createToast("⛔ ลบข้อมูลสำเร็จ", 0);
-    }).delRecDataA(record);
+    }).withFailureHandler(handleAppsScriptFailure).delRecDataA(record);
   });
   $('#xDelconfirmData').off('click').on('click', function() {
     $('#DelDataModal').modal('hide');
@@ -3992,7 +3992,7 @@ const submitAddDataB = async (obj, event) => {
       createToast("✅ บันทึกข้อมูลสำเร็จ", 1);
       resetUploadSwitches();
       insertDataB();
-    }).addDataB(obj);
+    }).withFailureHandler(handleAppsScriptFailure).addDataB(obj);
   } else {
     google.script.run.withSuccessHandler(function(res) {
       $('#DataBSetModal').modal('hide');
@@ -4009,7 +4009,7 @@ const submitAddDataB = async (obj, event) => {
       createToast("✅ แก้ไขข้อมูลสำเร็จ", 1);
       resetUploadSwitches();
       insertDataB();
-    }).upDateDataB(obj);
+    }).withFailureHandler(handleAppsScriptFailure).upDateDataB(obj);
   }
 };
 
@@ -4051,7 +4051,7 @@ const delDataB = (el) => {
       $.LoadingOverlay("hide");
       insertDataB();
       createToast("⛔ ลบข้อมูลสำเร็จ", 0);
-    }).delRecDataB(record);
+    }).withFailureHandler(handleAppsScriptFailure).delRecDataB(record);
   });
   $('#xDelconfirmData').off('click').on('click', function() {
     $('#DelDataModal').modal('hide');
@@ -4193,7 +4193,7 @@ const submitAddDataC = async (obj, event) => {
       createToast("✅ บันทึกข้อมูลสำเร็จ", 1);
       resetUploadSwitches();
       insertDataC();
-    }).addDataC(obj);
+    }).withFailureHandler(handleAppsScriptFailure).addDataC(obj);
   } else {
     google.script.run.withSuccessHandler(function(res) {
       $('#DataCSetModal').modal('hide');
@@ -4207,7 +4207,7 @@ const submitAddDataC = async (obj, event) => {
       createToast("✅ แก้ไขข้อมูลสำเร็จ", 1);
       resetUploadSwitches();
       insertDataC();
-    }).upDateDataC(obj);
+    }).withFailureHandler(handleAppsScriptFailure).upDateDataC(obj);
   }
 };
 
@@ -4245,7 +4245,7 @@ const delDataC = (el) => {
       $.LoadingOverlay("hide");
       insertDataC();
       createToast("⛔ ลบข้อมูลสำเร็จ", 0);
-    }).delRecDataC(record);
+    }).withFailureHandler(handleAppsScriptFailure).delRecDataC(record);
   });
   $('#xDelconfirmData').off('click').on('click', function() {
     $('#DelDataModal').modal('hide');
@@ -4388,9 +4388,9 @@ const submitAddDataD = async (obj, event) => {
     resetUploadSwitches();
   };
   if (dataDataDInputKey === "") {
-    google.script.run.withSuccessHandler(successDataD).addDataD(obj);
+    google.script.run.withSuccessHandler(successDataD).withFailureHandler(handleAppsScriptFailure).addDataD(obj);
   } else {
-    google.script.run.withSuccessHandler(successDataD).upDateDataD(obj);
+    google.script.run.withSuccessHandler(successDataD).withFailureHandler(handleAppsScriptFailure).upDateDataD(obj);
   }
 }
 
@@ -4423,7 +4423,7 @@ const delDataD = (el) => {
       $.LoadingOverlay("hide");
       insertDataD();
       createToast("⛔ ลบข้อมูลสำเร็จ", 0);
-    }).delRecDataD(record);
+    }).withFailureHandler(handleAppsScriptFailure).delRecDataD(record);
   });
   $('#xDelconfirmData').off('click').on('click', function() {
     $('#DelDataModal').modal('hide');
@@ -4548,9 +4548,9 @@ const submitAddDataE = async (obj, event) => {
     resetUploadSwitches();
   };
   if (dataDataEInputKey === "") {
-    google.script.run.withSuccessHandler(successDataE).addDataE(obj);
+    google.script.run.withSuccessHandler(successDataE).withFailureHandler(handleAppsScriptFailure).addDataE(obj);
   } else {
-    google.script.run.withSuccessHandler(successDataE).upDateDataE(obj);
+    google.script.run.withSuccessHandler(successDataE).withFailureHandler(handleAppsScriptFailure).upDateDataE(obj);
   }
 }
 
@@ -4583,7 +4583,7 @@ const delDataE = (el) => {
       $.LoadingOverlay("hide");
       insertDataE();
       createToast("⛔ ลบข้อมูลสำเร็จ", 0);
-    }).delRecDataE(record);
+    }).withFailureHandler(handleAppsScriptFailure).delRecDataE(record);
   });
   $('#xDelconfirmData').off('click').on('click', function() {
     $('#DelDataModal').modal('hide');
@@ -4708,9 +4708,9 @@ const submitAddDataF = async (obj, event) => {
     resetUploadSwitches();
   };
   if (dataDataFInputKey === "") {
-    google.script.run.withSuccessHandler(successDataF).addDataF(obj);
+    google.script.run.withSuccessHandler(successDataF).withFailureHandler(handleAppsScriptFailure).addDataF(obj);
   } else {
-    google.script.run.withSuccessHandler(successDataF).upDateDataF(obj);
+    google.script.run.withSuccessHandler(successDataF).withFailureHandler(handleAppsScriptFailure).upDateDataF(obj);
   }
 }
 
@@ -4743,7 +4743,7 @@ const delDataF = (el) => {
       $.LoadingOverlay("hide");
       insertDataF();
       createToast("⛔ ลบข้อมูลสำเร็จ", 0);
-    }).delRecDataF(record);
+    }).withFailureHandler(handleAppsScriptFailure).delRecDataF(record);
   });
   $('#xDelconfirmData').off('click').on('click', function() {
     $('#DelDataModal').modal('hide');
@@ -4869,9 +4869,9 @@ const submitAddDataG = async (obj, event) => {
     clearModalDataG();
   };
   if (dataDataGInputKey === "") {
-    google.script.run.withSuccessHandler(successDataG).addDataG(obj);
+    google.script.run.withSuccessHandler(successDataG).withFailureHandler(handleAppsScriptFailure).addDataG(obj);
   } else {
-    google.script.run.withSuccessHandler(successDataG).upDateDataG(obj);
+    google.script.run.withSuccessHandler(successDataG).withFailureHandler(handleAppsScriptFailure).upDateDataG(obj);
   }
 }
 
@@ -4902,7 +4902,7 @@ const delDataG = (el) => {
       $.LoadingOverlay("hide");
       insertDataG();
       createToast("⛔ ลบข้อมูลสำเร็จ", 0);
-    }).delRecDataG(record);
+    }).withFailureHandler(handleAppsScriptFailure).delRecDataG(record);
   });
   $('#xDelconfirmData').off('click').on('click', function() {
     $('#DelDataModal').modal('hide');
@@ -4966,9 +4966,9 @@ const submitAddDataH = async (obj, event) => {
     clearModalDataH();
   };
   if (dataDataHInputKey === "") {
-    google.script.run.withSuccessHandler(successDataH).addDataH(obj);
+    google.script.run.withSuccessHandler(successDataH).withFailureHandler(handleAppsScriptFailure).addDataH(obj);
   } else {
-    google.script.run.withSuccessHandler(successDataH).upDateDataH(obj);
+    google.script.run.withSuccessHandler(successDataH).withFailureHandler(handleAppsScriptFailure).upDateDataH(obj);
   }
 }
 
@@ -4998,7 +4998,7 @@ const delDataH = (el) => {
       $.LoadingOverlay("hide");
       insertDataH();
       createToast("⛔ ลบข้อมูลสำเร็จ", 0);
-    }).delRecDataH(record);
+    }).withFailureHandler(handleAppsScriptFailure).delRecDataH(record);
   });
   $('#xDelconfirmData').off('click').on('click', function() {
     $('#DelDataModal').modal('hide');
@@ -5143,7 +5143,7 @@ const saveData = (action) => {
     $('#dataSAModal').modal('hide');
     createToast("✅ ยืนยันรายการสำเร็จ", 1);
     insertDataSA();
-  }).sigSaveDataSA(saveData);
+  }).withFailureHandler(handleAppsScriptFailure).sigSaveDataSA(saveData);
 }
 
 const followDataSA = (el) => {
@@ -5157,7 +5157,7 @@ const followDataSA = (el) => {
       $.LoadingOverlay("hide");
       insertDataSA();
       createToast("✅ ติดตามข้อมูลสำเร็จ", 0);
-    }).followRecord(record, receiverName);
+    }).withFailureHandler(handleAppsScriptFailure).followRecord(record, receiverName);
   });
   $('#xDelconfirmfollow').off('click').on('click', function() {
     $('#followDataModal').modal('hide');
@@ -5556,7 +5556,7 @@ const updateMenu = (index, role, isChecked) => {
     $.LoadingOverlay("hide");
     renderSetMenu(allsetDataMenu);
     createToast("✅ บันทึกข้อมูลสำเร็จ", 1);
-  }).updateMenuStatus(menuItem, role, isChecked);
+  }).withFailureHandler(handleAppsScriptFailure).updateMenuStatus(menuItem, role, isChecked);
 }
 
 const createToast = (message, status, delay = 1000 * 5) => {
@@ -6758,6 +6758,14 @@ $(document).ready(function() {
 const brandLogoUrl = 'https://psnsaraban-ui.github.io/PSN-Esaraban/assets/logo.png';
 const brandName = 'PSN E-Saraban';
 
+function handleAppsScriptFailure(error) {
+  $.LoadingOverlay("hide");
+  console.error("Apps Script operation failed:", error);
+  if (typeof createToast === "function") {
+    createToast("❌ ดำเนินการไม่สำเร็จ กรุณาลองอีกครั้ง", 3);
+  }
+}
+
 function reLoad() {
   google.script.run.withSuccessHandler(function(url){
     window.open(url,'_top');
@@ -6794,7 +6802,7 @@ const addSetting = () => {
     }).getSet();
     $.LoadingOverlay("hide");
     createToast("🛠️ บันทึกการตั้งค่าสำเร็จ", 1);
-  }).settingGS(data);
+  }).withFailureHandler(handleAppsScriptFailure).settingGS(data);
 }
 
 const setDisPlayMenu = (status, menuItems) => {
@@ -7267,7 +7275,7 @@ const submitSendData = (obj, event) => {
     $.LoadingOverlay("hide");
     createToast("✅ ส่งข้อมูลสำเร็จ", 1);
     clearSendData();
-  }).sendAddDataSA(data);
+  }).withFailureHandler(handleAppsScriptFailure).sendAddDataSA(data);
 }
 
 const submitSendAgency = (obj, event) => {
@@ -7311,7 +7319,7 @@ const submitSendAgency = (obj, event) => {
     createToast("✅ ส่งข้อมูลสำเร็จ", 1);
     $('#formSendAgency')[0].reset();
     agencyResetCheckboxes();
-  }).sendDataAgency(data);
+  }).withFailureHandler(handleAppsScriptFailure).sendDataAgency(data);
 };
 
 const clearSendData = () => {

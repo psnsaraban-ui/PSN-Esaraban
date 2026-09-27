@@ -273,7 +273,7 @@ const delDataA = (el) => {
       $.LoadingOverlay("hide");
       insertDataA();
       createToast("⛔ ลบข้อมูลสำเร็จ", 0);
-    }).delRecDataA(record);
+    }).withFailureHandler(handleAppsScriptFailure).delRecDataA(record);
   });
   $('#xDelconfirmData').off('click').on('click', function() {
     $('#DelDataModal').modal('hide');

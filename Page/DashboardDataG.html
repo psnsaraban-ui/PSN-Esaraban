@@ -113,9 +113,9 @@ const submitAddDataG = async (obj, event) => {
     clearModalDataG();
   };
   if (dataDataGInputKey === "") {
-    google.script.run.withSuccessHandler(successDataG).addDataG(obj);
+    google.script.run.withSuccessHandler(successDataG).withFailureHandler(handleAppsScriptFailure).addDataG(obj);
   } else {
-    google.script.run.withSuccessHandler(successDataG).upDateDataG(obj);
+    google.script.run.withSuccessHandler(successDataG).withFailureHandler(handleAppsScriptFailure).upDateDataG(obj);
   }
 }
 
@@ -146,7 +146,7 @@ const delDataG = (el) => {
       $.LoadingOverlay("hide");
       insertDataG();
       createToast("⛔ ลบข้อมูลสำเร็จ", 0);
-    }).delRecDataG(record);
+    }).withFailureHandler(handleAppsScriptFailure).delRecDataG(record);
   });
   $('#xDelconfirmData').off('click').on('click', function() {
     $('#DelDataModal').modal('hide');

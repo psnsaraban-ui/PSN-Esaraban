@@ -129,7 +129,7 @@ const submitAddDataC = async (obj, event) => {
       createToast("✅ บันทึกข้อมูลสำเร็จ", 1);
       resetUploadSwitches();
       insertDataC();
-    }).addDataC(obj);
+    }).withFailureHandler(handleAppsScriptFailure).addDataC(obj);
   } else {
     google.script.run.withSuccessHandler(function(res) {
       $('#DataCSetModal').modal('hide');
@@ -143,7 +143,7 @@ const submitAddDataC = async (obj, event) => {
       createToast("✅ แก้ไขข้อมูลสำเร็จ", 1);
       resetUploadSwitches();
       insertDataC();
-    }).upDateDataC(obj);
+    }).withFailureHandler(handleAppsScriptFailure).upDateDataC(obj);
   }
 };
 
@@ -181,7 +181,7 @@ const delDataC = (el) => {
       $.LoadingOverlay("hide");
       insertDataC();
       createToast("⛔ ลบข้อมูลสำเร็จ", 0);
-    }).delRecDataC(record);
+    }).withFailureHandler(handleAppsScriptFailure).delRecDataC(record);
   });
   $('#xDelconfirmData').off('click').on('click', function() {
     $('#DelDataModal').modal('hide');
